@@ -3,374 +3,340 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MediaHub</title>
+  <title>SocialHub</title>
   <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-dark.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/dist/tabler-icons.min.css" rel="stylesheet">
   <style>
-    :root { --bg: #000; --text: #fff; --accent: #ff0000; --glass: rgba(255,0,0,0.1); --border: rgba(255,0,0,0.2); }
-    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: all 0.4s; }
+    :root { --bg: #000; --text: #fff; --accent: #ff0000; --glass: rgba(255,0,0,0.15); --border: rgba(255,0,0,0.3); }
+    .dark { --bg: #0a0a0a; --glass: rgba(255,0,0,0.1); }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: 0.4s; }
     .glass { backdrop-filter: blur(20px); background: var(--glass); border: 1px solid var(--border); }
-    .gradient { background: linear-gradient(135deg, #000 0%, #ff0000 100%); }
-    .card { transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden; }
-    .card::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,0,0,0.1), transparent); transition: left 0.5s; }
-    .card:hover { transform: translateY(-12px) scale(1.03); box-shadow: 0 40px 80px rgba(255,0,0,0.3); }
-    .card:hover::before { left: 100%; }
-    .bento { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-    video { max-width: 100%; border-radius: 12px; }
-    #gameCanvas { background: #111; border: 2px solid #ff0000; border-radius: 8px; }
-    .modal { transition: all 0.3s; transform: scale(0.95); }
-    .modal.show { transform: scale(1); }
-    pre { overflow-x: auto; }
+    .card { transition: all 0.4s; }
+    .card:hover { transform: translateY(-12px); box-shadow: 0 40px 80px rgba(255,0,0,0.5); }
+    .bento { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+    video, iframe { width: 100%; height: 300px; border-radius: 12px; }
+    .online { width: 12px; height: 12px; background: #0f0; border-radius: 50%; }
+    .typing { font-style: italic; color: #ff5555; }
+    .notification { position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 12px 20px; border-radius: 12px; z-index: 1000; animation: slide 0.3s; }
+    @keyframes slide { from { transform: translateX(100%); } to { transform: translateX(0); } }
   </style>
 </head>
 <body class="min-h-screen">
 
   <!-- NAVBAR -->
-  <nav class="glass fixed top-0 w-full z-50 p-4 shadow-2xl">
+  <nav class="glass fixed top-0 w-full z-50 p-4">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
-      <h1 class="text-3xl font-black bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">MediaHub</h1>
-      <div class="flex gap-4">
-        <button onclick="showPage('home')" class="px-6 py-3 rounded-xl glass hover:bg-red-500/20 text-white">Home</button>
-        <button onclick="showPage('scripts')" class="px-6 py-3 rounded-xl glass hover:bg-red-500/20 text-white">Scripts</button>
-        <button onclick="showPage('videos')" class="px-6 py-3 rounded-xl glass hover:bg-red-500/20 text-white">Videos</button>
-        <button onclick="showPage('games')" class="px-6 py-3 rounded-xl glass hover:bg-red-500/20 text-white">Games</button>
-        <button onclick="showPage('dashboard')" id="dashBtn" class="hidden px-6 py-3 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white">Dashboard</button>
-        <button onclick="showSettings()" class="p-3 rounded-xl glass"><i class="ti ti-settings text-red-500"></i></button>
+      <h1 class="text-3xl font-black bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">SocialHub</h1>
+      <div class="flex gap-3">
+        <button onclick="show('home')" class="px-5 py-2 rounded glass">Home</button>
+        <button onclick="show('hub')" class="px-5 py-2 rounded glass">Hub</button>
+        <button onclick="show('chat')" class="px-5 py-2 rounded glass">Chat</button>
+        <button onclick="show('profile')" id="profileBtn" class="hidden px-5 py-2 rounded bg-gradient-to-r from-red-500 to-red-600 text-white">Me</button>
+        <button onclick="toggleDark()" class="p-2 rounded glass">Toggle</button>
       </div>
     </div>
   </nav>
 
   <!-- HOME -->
-  <div id="home" class="pt-32 pb-20 text-center">
-    <div class="max-w-5xl mx-auto px-6">
-      <h1 class="text-7xl font-black mb-6 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">Upload. Share. Play.</h1>
-      <p class="text-2xl mb-10 opacity-80">Scripts, Videos, Games — All in Black & Red Glory.</p>
-      <div id="auth" class="max-w-md mx-auto">
-        <input id="email" placeholder="you@mediahub.com" class="p-4 rounded-2xl w-full mb-4 glass text-lg" />
-        <input id="pass" type="password" placeholder="••••••••" class="p-4 rounded-2xl w-full mb-4 glass text-lg" />
-        <button onclick="login()" class="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition">Enter Hub</button>
-      </div>
+  <div id="home" class="pt-32 text-center">
+    <h1 class="text-7xl font-black mb-6 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">Social Gaming Hub</h1>
+    <div class="max-w-md mx-auto">
+      <input id="username" placeholder="Choose username" class="p-4 rounded-2xl w-full mb-4 glass" />
+      <button onclick="login()" class="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold">Join</button>
     </div>
   </div>
 
-  <!-- DASHBOARD -->
-  <div id="dashboard" class="hidden pt-32 max-w-7xl mx-auto px-6">
-    <h2 class="text-5xl font-black mb-10 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">Your Dashboard</h2>
-    <div class="bento mb-12">
-      <div class="glass p-8 rounded-3xl card text-center">
-        <i class="ti ti-file-code text-5xl mb-4 text-red-500"></i>
-        <h3 class="text-xl font-semibold">Scripts</h3>
-        <p class="text-4xl font-black" id="scriptCount">0</p>
-      </div>
-      <div class="glass p-8 rounded-3xl card text-center">
-        <i class="ti ti-video text-5xl mb-4 text-red-500"></i>
-        <h3 class="text-xl font-semibold">Videos</h3>
-        <p class="text-4xl font-black" id="videoCount">0</p>
-      </div>
-      <div class="glass p-8 rounded-3xl card text-center">
-        <i class="ti ti-controller text-5xl mb-4 text-red-500"></i>
-        <h3 class="text-xl font-semibold">Games Played</h3>
-        <p class="text-4xl font-black" id="gameCount">0</p>
-      </div>
+  <!-- HUB -->
+  <div id="hub" class="hidden pt-32 max-w-7xl mx-auto px-6">
+    <div class="flex justify-between mb-6">
+      <h2 class="text-5xl font-black bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">Content Hub</h2>
+      <button onclick="showUpload()" class="px-6 py-3 bg-red-600 text-white rounded-xl">+</button>
     </div>
-    <button onclick="showUpload()" class="fixed bottom-10 right-10 w-20 h-20 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-full text-4xl shadow-2xl hover:scale-110 transition flex items-center justify-center">+</button>
+    <div id="contentGrid" class="bento"></div>
   </div>
 
-  <!-- SCRIPTS HUB -->
-  <div id="scripts" class="hidden pt-32 max-w-7xl mx-auto px-6">
-    <div class="flex justify-between items-center mb-8">
-      <h2 class="text-5xl font-black bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">Script Hub</h2>
-      <input id="scriptSearch" placeholder="Search scripts..." class="p-4 rounded-2xl w-96 glass text-lg" onkeyup="filterScripts()" />
-    </div>
-    <div id="scriptGrid" class="bento"></div>
-  </div>
-
-  <!-- VIDEOS HUB -->
-  <div id="videos" class="hidden pt-32 max-w-7xl mx-auto px-6">
-    <div class="flex justify-between items-center mb-8">
-      <h2 class="text-5xl font-black bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">Video Hub</h2>
-      <input id="videoSearch" placeholder="Search videos..." class="p-4 rounded-2xl w-96 glass text-lg" onkeyup="filterVideos()" />
-    </div>
-    <div id="videoGrid" class="bento"></div>
-  </div>
-
-  <!-- GAMES HUB -->
-  <div id="games" class="hidden pt-32 max-w-7xl mx-auto px-6">
-    <h2 class="text-5xl font-black mb-8 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">Game Hub</h2>
-    <div class="bento">
-      <div class="glass p-8 rounded-3xl card text-center">
-        <h3 class="text-2xl font-bold mb-4">Tic-Tac-Toe</h3>
-        <canvas id="ticTacCanvas" width="300" height="300" class="mx-auto mb-4"></canvas>
-        <button onclick="startTicTacToe()" class="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-bold">Play</button>
-        <p id="ticTacStatus" class="mt-4"></p>
+  <!-- CHAT -->
+  <div id="chat" class="hidden pt-32 max-w-7xl mx-auto px-6 flex gap-6">
+    <div class="flex-1">
+      <h2 class="text-4xl font-black mb-4">Global Chat</h2>
+      <div id="globalChat" class="h-96 overflow-y-auto glass p-4 mb-4"></div>
+      <div class="flex gap-2">
+        <input id="globalMsg" placeholder="Type..." class="flex-1 p-3 rounded glass" onkeypress="sendGlobal(event)" />
+        <button onclick="sendGlobal()" class="px-6 py-3 bg-red-600 text-white rounded">Send</button>
       </div>
-      <div class="glass p-8 rounded-3xl card text-center">
-        <h3 class="text-2xl font-bold mb-4">Snake</h3>
-        <canvas id="snakeCanvas" width="400" height="400" class="mx-auto mb-4"></canvas>
-        <p>Use Arrow Keys • Score: <span id="snakeScore">0</span></p>
+    </div>
+    <div class="w-80">
+      <h3 class="text-2xl font-bold mb-4">Online Users</h3>
+      <div id="onlineUsers" class="space-y-2"></div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="profile" class="hidden pt-32 max-w-4xl mx-auto px-6">
+    <div class="glass p-8 rounded-3xl">
+      <div class="flex items-center gap-6 mb-6">
+        <img id="avatar" src="https://via.placeholder.com/120" class="w-32 h-32 rounded-full" />
+        <div>
+          <h2 id="profileName" class="text-4xl font-black"></h2>
+          <p id="profileBio" class="text-lg opacity-80"></p>
+        </div>
+      </div>
+      <button onclick="showSettings()" class="px-6 py-3 bg-red-600 text-white rounded-xl">Edit Profile</button>
+      <div class="grid grid-cols-3 gap-4 mt-8">
+        <div class="text-center"><p class="text-3xl font-bold" id="pLikes">0</p><p>Likes</p></div>
+        <div class="text-center"><p class="text-3xl font-bold" id="pContent">0</p><p>Content</p></div>
+        <div class="text-center"><p class="text-3xl font-bold" id="pMessages">0</p><p>Messages</p></div>
       </div>
     </div>
   </div>
 
   <!-- UPLOAD MODAL -->
   <div id="uploadModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-    <div class="glass p-10 rounded-3xl w-full max-w-2xl modal">
-      <h3 class="text-3xl font-black mb-6 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">Upload Content</h3>
-      <select id="uploadType" class="p-4 rounded-2xl w-full mb-4 glass text-lg">
-        <option value="script">Script (.js/.py)</option>
-        <option value="video">Video (.mp4/.webm)</option>
+    <div class="glass p-10 rounded-3xl w-full max-w-2xl">
+      <select id="uploadType" class="p-4 rounded-2xl w-full mb-4 glass">
+        <option value="video">Video</option>
+        <option value="game">Game (HTML)</option>
+        <option value="script">Script</option>
       </select>
-      <input id="uploadTitle" placeholder="Title" class="p-4 rounded-2xl w-full mb-4 glass text-lg" />
+      <input id="uploadTitle" placeholder="Title" class="p-4 rounded-2xl w-full mb-4 glass" />
       <input type="file" id="uploadFile" class="p-4 rounded-2xl w-full mb-4 glass" />
-      <div class="flex gap-4">
-        <button onclick="uploadContent()" class="flex-1 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold">Upload</button>
-        <button onclick="closeUpload()" class="flex-1 py-4 bg-gray-600 text-white rounded-2xl">Cancel</button>
-      </div>
+      <button onclick="upload()" class="w-full py-4 bg-red-600 text-white rounded-2xl">Upload</button>
     </div>
   </div>
 
   <!-- SETTINGS MODAL -->
   <div id="settingsModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-    <div class="glass p-8 rounded-3xl w-full max-w-md modal">
-      <h3 class="text-2xl font-bold mb-4">Settings</h3>
-      <p>Profile: <span id="userProfile"></span></p>
-      <button onclick="logout()" class="w-full mt-4 py-3 bg-red-600 text-white rounded-xl">Logout</button>
+    <div class="glass p-8 rounded-3xl w-full max-w-md">
+      <input id="setName" placeholder="Name" class="p-3 rounded w-full mb-3 glass" />
+      <textarea id="setBio" placeholder="Bio" class="p-3 rounded w-full mb-3 glass h-24"></textarea>
+      <input type="file" id="setAvatar" class="mb-3" />
+      <button onclick="saveProfile()" class="w-full py-3 bg-red-600 text-white rounded">Save</button>
+    </div>
+  </div>
+
+  <!-- VIDEO CALL MODAL -->
+  <div id="callModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+    <div class="glass p-6 rounded-3xl w-full max-w-4xl">
+      <div class="flex gap-4">
+        <video id="localVideo" autoplay muted class="w-1/2 rounded-2xl"></video>
+        <video id="remoteVideo" autoplay class="w-1/2 rounded-2xl"></video>
+      </div>
+      <button onclick="endCall()" class="mt-4 w-full py-3 bg-red-600 text-white rounded">End Call</button>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
   <script>
-    const API = '/api';
-    let token = localStorage.getItem('token') || '';
-    let user = '';
-    const db = { scripts: [], videos: [], games: [] };  // In-memory DB
+    let me = { name: '', bio: '', avatar: '', likes: 0, content: 0 };
+    let users = JSON.parse(localStorage.getItem('users') || '{}');
+    let content = JSON.parse(localStorage.getItem('content') || '[]');
+    let messages = JSON.parse(localStorage.getItem('messages') || '[]');
+    let online = new Set();
+    let currentCall = null;
+    let peerConnection = null;
 
-    function showPage(page) {
-      ['home','dashboard','scripts','videos','games'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    function login() {
+      const name = document.getElementById('username').value.trim() || 'Player' + Date.now().toString(36);
+      me.name = name;
+      if (!users[name]) users[name] = { bio: '', avatar: 'https://via.placeholder.com/120', likes: 0, content: 0 };
+      me = { ...me, ...users[name] };
+      localStorage.setItem('me', name);
+      document.getElementById('profileBtn').classList.remove('hidden');
+      show('hub');
+      init();
+    }
+
+    function init() {
+      online.add(me.name);
+      setInterval(() => online = new Set(Object.keys(users).filter(u => Date.now() - (users[u].lastSeen || 0) < 30000)), 5000);
+      renderContent();
+      renderOnline();
+      loadProfile();
+    }
+
+    function show(page) {
+      ['home','hub','chat','profile'].forEach(id => document.getElementById(id).classList.add('hidden'));
       document.getElementById(page).classList.remove('hidden');
-      if (page === 'scripts') loadScripts();
-      if (page === 'videos') loadVideos();
-      if (page === 'games') loadGames();
+      if (page === 'chat') renderGlobalChat();
+      if (page === 'hub') renderContent();
     }
 
-    async function login() {
-      const email = document.getElementById('email').value;
-      const pass = document.getElementById('pass').value;
-      const res = await fetch(API + '/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, pass }) });
-      const data = await res.json();
-      if (data.token) {
-        token = data.token; user = email.split('@')[0];
-        localStorage.setItem('token', token);
-        document.getElementById('auth').innerHTML = `<p class="text-red-400 text-xl">Welcome, <strong>${user}</strong>!</p>`;
-        document.getElementById('dashBtn').classList.remove('hidden');
-        showPage('dashboard');
-        loadDashboard();
-      }
-    }
-
-    function showUpload() {
-      document.getElementById('uploadModal').classList.remove('hidden');
-      setTimeout(() => document.querySelector('#uploadModal .modal').classList.add('show'), 10);
-    }
-
-    function closeUpload() { 
-      document.getElementById('uploadModal').classList.add('hidden');
-      document.querySelector('#uploadModal .modal').classList.remove('show');
-    }
-
-    async function uploadContent() {
+    function upload() {
       const type = document.getElementById('uploadType').value;
       const title = document.getElementById('uploadTitle').value;
       const file = document.getElementById('uploadFile').files[0];
-      if (!title || !file) return alert('Title & file required');
-
       const reader = new FileReader();
       reader.onload = (e) => {
-        const content = type === 'video' ? URL.createObjectURL(file) : e.target.result;  // Video URL, script text
-        const item = { title, content, user, date: new Date().toLocaleString(), type };
-        if (type === 'script') db.scripts.push(item);
-        if (type === 'video') db.videos.push(item);
-        closeUpload();
-        loadDashboard();
-        if (type === 'scripts') loadScripts();
-        if (type === 'videos') loadVideos();
+        const item = { id: Date.now(), type, title, content: type === 'video' ? URL.createObjectURL(file) : e.target.result, user: me.name, likes: 0, comments: [] };
+        content.push(item);
+        me.content++;
+        users[me.name].content++;
+        localStorage.setItem('content', JSON.stringify(content));
+        localStorage.setItem('users', JSON.stringify(users));
+        document.getElementById('uploadModal').classList.add('hidden');
+        renderContent();
       };
-      reader.readAsText(file);  // For scripts; videos use blob URL
+      reader.readAsText(file);
     }
 
-    function loadDashboard() {
-      document.getElementById('scriptCount').innerText = db.scripts.filter(s => s.user === user).length;
-      document.getElementById('videoCount').innerText = db.videos.filter(v => v.user === user).length;
-      document.getElementById('gameCount').innerText = db.games.length;
-    }
-
-    function loadScripts() {
-      const grid = document.getElementById('scriptGrid'); grid.innerHTML = '';
-      db.scripts.forEach(s => {
+    function renderContent() {
+      const grid = document.getElementById('contentGrid');
+      grid.innerHTML = '';
+      content.forEach(item => {
         const card = document.createElement('div');
         card.className = 'glass p-6 rounded-3xl card';
         card.innerHTML = `
-          <h3 class="text-2xl font-bold mb-2">${s.title}</h3>
-          <p class="text-sm opacity-70 mb-4">by <strong>${s.user}</strong> • ${s.date}</p>
-          <pre><code class="language-js">${Prism.highlight(s.content, Prism.languages.js || Prism.languages.txt, 'js')}</code></pre>
-          <button onclick="download('${s.title}.js', \`${s.content}\`)" class="mt-4 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl text-sm font-bold">Download</button>
+          <h3 class="text-2xl font-bold mb-2">${item.title}</h3>
+          <p class="text-sm opacity-70 mb-4">by <a href="#" onclick="viewProfile('${item.user}'); return false;" class="text-red-400 underline">${item.user}</a></p>
+          ${item.type === 'video' ? `<video controls src="${item.content}" class="mb-4"></video>` : ''}
+          ${item.type === 'game' ? `<iframe srcdoc="${item.content}" class="mb-4"></iframe>` : ''}
+          ${item.type === 'script' ? `<pre><code class="language-js">${Prism.highlight(item.content, Prism.languages.js, 'js')}</code></pre>` : ''}
+          <div class="flex justify-between mt-4">
+            <button onclick="like(${item.id})" class="text-red-400">Heart ${item.likes}</button>
+            <button onclick="comment(${item.id})" class="text-red-400">Comment</button>
+          </div>
+          <div id="comments-${item.id}" class="mt-4"></div>
         `;
         grid.appendChild(card);
+        renderComments(item.id);
       });
     }
 
-    function loadVideos() {
-      const grid = document.getElementById('videoGrid'); grid.innerHTML = '';
-      db.videos.forEach(v => {
-        const card = document.createElement('div');
-        card.className = 'glass p-6 rounded-3xl card';
-        card.innerHTML = `
-          <h3 class="text-2xl font-bold mb-2">${v.title}</h3>
-          <p class="text-sm opacity-70 mb-4">by <strong>${v.user}</strong> • ${v.date}</p>
-          <video controls src="${v.content}" class="w-full rounded-2xl"></video>
-          <p class="mt-2 text-red-400">Likes: 0 • Comments: 0</p>
-        `;
-        grid.appendChild(card);
+    function like(id) {
+      const item = content.find(c => c.id === id);
+      if (item) { item.likes++; renderContent(); notify(`${me.name} liked ${item.title}`); }
+    }
+
+    function comment(id) {
+      currentItem = id;
+      document.getElementById('commentModal').classList.remove('hidden');
+    }
+
+    function postComment() {
+      const text = document.getElementById('commentText').value;
+      if (text && currentItem) {
+        const item = content.find(c => c.id === currentItem);
+        item.comments.push({ user: me.name, text });
+        document.getElementById('commentText').value = '';
+        document.getElementById('commentModal').classList.add('hidden');
+        renderComments(currentItem);
+      }
+    }
+
+    function renderComments(id) {
+      const div = document.getElementById(`comments-${id}`);
+      if (!div) return;
+      const item = content.find(c => c.id === id);
+      div.innerHTML = item.comments.map(c => `<div class="comment glass p-3 mb-2 text-sm"><strong>${c.user}</strong>: ${c.text}</div>`).join('');
+    }
+
+    function sendGlobal() {
+      const msg = document.getElementById('globalMsg').value;
+      if (msg) {
+        messages.push({ type: 'global', user: me.name, msg, time: new Date().toLocaleTimeString() });
+        document.getElementById('globalMsg').value = '';
+        renderGlobalChat();
+        localStorage.setItem('messages', JSON.stringify(messages));
+      }
+    }
+
+    function renderGlobalChat() {
+      const chat = document.getElementById('globalChat');
+      chat.innerHTML = messages.filter(m => m.type === 'global').map(m => `<div class="mb-2"><strong>${m.user}</strong>: ${m.msg} <span class="text-xs opacity-50">${m.time}</span></div>`).join('');
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function renderOnline() {
+      const list = document.getElementById('onlineUsers');
+      list.innerHTML = '';
+      online.forEach(u => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center justify-between glass p-3 rounded mb-2';
+        div.innerHTML = `<span><span class="online inline-block mr-2"></span><a href="#" onclick="startCall('${u}'); return false;" class="text-red-400">${u}</a></span>`;
+        if (u !== me.name) div.innerHTML += `<button onclick="dm('${u}')" class="text-xs text-red-400">DM</button>`;
+        list.appendChild(div);
       });
     }
 
-    function loadGames() {
-      // Games are embedded, no load needed
-      startSnake();  // Init Snake
+    function dm(user) {
+      const msg = prompt(`Message to ${user}:`);
+      if (msg) {
+        messages.push({ type: 'dm', from: me.name, to: user, msg });
+        localStorage.setItem('messages', JSON.stringify(messages));
+        notify(`DM sent to ${user}`);
+      }
     }
 
-    function filterScripts() {
-      const term = document.getElementById('scriptSearch').value.toLowerCase();
-      document.querySelectorAll('#scriptGrid .card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(term) ? 'block' : 'none');
+    function startCall(user) {
+      alert(`Video call to ${user} (WebRTC not implemented in demo)`);
     }
 
-    function filterVideos() {
-      const term = document.getElementById('videoSearch').value.toLowerCase();
-      document.querySelectorAll('#videoGrid .card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(term) ? 'block' : 'none');
-    }
-
-    function download(name, content) {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([content], { type: 'text/plain' }));
-      a.download = name; a.click();
+    function viewProfile(user) {
+      const u = users[user];
+      if (u) {
+        document.getElementById('profileName').innerText = user;
+        document.getElementById('profileBio').innerText = u.bio;
+        document.getElementById('avatar').src = u.avatar;
+        document.getElementById('pLikes').innerText = u.likes;
+        document.getElementById('pContent').innerText = u.content;
+        show('profile');
+      }
     }
 
     function showSettings() {
+      document.getElementById('setName').value = me.name;
+      document.getElementById('setBio').value = me.bio;
       document.getElementById('settingsModal').classList.remove('hidden');
-      document.getElementById('userProfile').innerText = user;
-      setTimeout(() => document.querySelector('#settingsModal .modal').classList.add('show'), 10);
     }
 
-    function logout() {
-      localStorage.removeItem('token');
-      location.reload();
+    function saveProfile() {
+      me.name = document.getElementById('setName').value;
+      me.bio = document.getElementById('setBio').value;
+      const file = document.getElementById('setAvatar').files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => { me.avatar = e.target.result; saveUser(); };
+        reader.readAsDataURL(file);
+      } else saveUser();
     }
 
-    // TIC-TAC-TOE
-    let ticTacBoard = Array(9).fill(null);
-    let ticTacCurrentPlayer = 'X';
-    let ticTacCanvas, ticTacCtx;
-    function startTicTacToe() {
-      ticTacCanvas = document.getElementById('ticTacCanvas');
-      ticTacCtx = ticTacCanvas.getContext('2d');
-      ticTacCanvas.addEventListener('click', ticTacHandleClick);
-      ticTacDrawBoard();
-      document.getElementById('ticTacStatus').innerText = "Player X's Turn";
-    }
-    function ticTacDrawBoard() {
-      ticTacCtx.clearRect(0, 0, 300, 300);
-      ticTacCtx.strokeStyle = '#ff0000';
-      ticTacCtx.lineWidth = 3;
-      ticTacCtx.beginPath();
-      ticTacCtx.moveTo(100, 0); ticTacCtx.lineTo(100, 300);
-      ticTacCtx.moveTo(200, 0); ticTacCtx.lineTo(200, 300);
-      ticTacCtx.moveTo(0, 100); ticTacCtx.lineTo(300, 100);
-      ticTacCtx.moveTo(0, 200); ticTacCtx.lineTo(300, 200);
-      ticTacCtx.stroke();
-      for (let i = 0; i < 9; i++) {
-        if (ticTacBoard[i]) {
-          ticTacCtx.fillText(ticTacBoard[i], (i % 3) * 100 + 40, Math.floor(i / 3) * 100 + 60);
-        }
-      }
-    }
-    function ticTacHandleClick(e) {
-      const rect = ticTacCanvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const col = Math.floor(x / 100);
-      const row = Math.floor(y / 100);
-      const index = row * 3 + col;
-      if (ticTacBoard[index] || ticTacWinner()) return;
-      ticTacBoard[index] = ticTacCurrentPlayer;
-      ticTacDrawBoard();
-      if (ticTacWinner()) {
-        document.getElementById('ticTacStatus').innerText = `Winner: ${ticTacWinner()}`;
-        return;
-      }
-      ticTacCurrentPlayer = ticTacCurrentPlayer === 'X' ? 'O' : 'X';  // Simple AI: O is player
-      setTimeout(() => {  // AI move
-        for (let i = 0; i < 9; i++) {
-          if (!ticTacBoard[i]) {
-            ticTacBoard[i] = 'O';
-            if (ticTacWinner() === 'O') break;
-            ticTacBoard[i] = null;
-          }
-        }
-        ticTacDrawBoard();
-        if (ticTacWinner()) document.getElementById('ticTacStatus').innerText = `AI Wins!`;
-      }, 500);
-    }
-    function ticTacWinner() {
-      const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-      for (let win of wins) {
-        if (ticTacBoard[win[0]] && ticTacBoard[win[0]] === ticTacBoard[win[1]] && ticTacBoard[win[0]] === ticTacBoard[win[2]]) return ticTacBoard[win[0]];
-      }
-      return null;
+    function saveUser() {
+      users[me.name] = { ...me, lastSeen: Date.now() };
+      localStorage.setItem('users', JSON.stringify(users));
+      document.getElementById('settingsModal').classList.add('hidden');
+      loadProfile();
     }
 
-    // SNAKE
-    let snakeCanvas, snakeCtx, snake = [{x: 200, y: 200}], snakeDx = 20, snakeDy = 0, snakeFood = {x: Math.floor(Math.random()*20)*20, y: Math.floor(Math.random()*20)*20}, snakeScore = 0;
-    function startSnake() {
-      snakeCanvas = document.getElementById('snakeCanvas');
-      snakeCtx = snakeCanvas.getContext('2d');
-      document.addEventListener('keydown', snakeChangeDirection);
-      setInterval(snakeDraw, 150);
+    function loadProfile() {
+      document.getElementById('profileName').innerText = me.name;
+      document.getElementById('profileBio').innerText = me.bio;
+      document.getElementById('avatar').src = me.avatar;
+      document.getElementById('pLikes').innerText = me.likes;
+      document.getElementById('pContent').innerText = me.content;
     }
-    function snakeDraw() {
-      snakeCtx.clearRect(0, 0, 400, 400);
-      // Food
-      snakeCtx.fillStyle = '#ff0000';
-      snakeCtx.fillRect(snakeFood.x, snakeFood.y, 20, 20);
-      // Snake
-      snakeCtx.fillStyle = '#fff';
-      for (let part of snake) snakeCtx.fillRect(part.x, part.y, 20, 20);
-      // Move
-      let head = {x: snake[0].x + snakeDx, y: snake[0].y + snakeDy};
-      if (head.x < 0 || head.x >= 400 || head.y < 0 || head.y >= 400 || snake.some(p => p.x === head.x && p.y === head.y)) {
-        snake = [{x: 200, y: 200}]; snakeScore = 0;
-      } else {
-        snake.unshift(head);
-        if (head.x === snakeFood.x && head.y === snakeFood.y) {
-          snakeScore++;
-          document.getElementById('snakeScore').innerText = snakeScore;
-          snakeFood = {x: Math.floor(Math.random()*20)*20, y: Math.floor(Math.random()*20)*20};
-        } else {
-          snake.pop();
-        }
-      }
+
+    function notify(msg) {
+      const n = document.createElement('div');
+      n.className = 'notification';
+      n.innerText = msg;
+      document.body.appendChild(n);
+      setTimeout(() => n.remove(), 3000);
     }
-    function snakeChangeDirection(e) {
-      if (e.key === 'ArrowUp' && snakeDy === 0) { snakeDx = 0; snakeDy = -20; }
-      if (e.key === 'ArrowDown' && snakeDy === 0) { snakeDx = 0; snakeDy = 20; }
-      if (e.key === 'ArrowLeft' && snakeDx === 0) { snakeDx = -20; snakeDy = 0; }
-      if (e.key === 'ArrowRight' && snakeDx === 0) { snakeDx = 20; snakeDy = 0; }
+
+    function toggleDark() {
+      document.body.classList.toggle('dark');
     }
 
     // INIT
-    if (token) { user = token.split('-')[2]; document.getElementById('dashBtn').classList.remove('hidden'); showPage('dashboard'); }
+    const saved = localStorage.getItem('me');
+    if (saved && users[saved]) {
+      me.name = saved;
+      me = { ...me, ...users[saved] };
+      document.getElementById('profileBtn').classList.remove('hidden');
+      show('hub');
+      init();
+    }
   </script>
 </body>
 </html>
