@@ -1,32 +1,48 @@
 const App = {
+  currentUser: null,
+  currentDM: null,
+
   init() {
-    const current = localStorage.getItem('currentUser');
-    if (current) {
-      const user = JSON.parse(current);
-      $('#app').classList.remove('hidden');
-      $('#loginModal').classList.add('hidden');
-      $('#registerModal').classList.add('hidden');
-      Users.init(user);
-      App.setTab('servers');
-      Message.render();
+    const saved = localStorage.getItem('currentUser');
+    if (saved) {
+      this.currentUser = JSON.parse(saved);
+      this.enterApp();
     }
   },
+
+  setView(view) {
+    // Future: Home, Hub, Chat pages
+    alert(`Coming soon: ${view}`);
+  },
+
+  toggleTheme() {
+    document.body.classList.toggle('bg-gradient-to-b');
+  },
+
   setTab(tab) {
     document.querySelectorAll('.tab, .tab-icon').forEach(el => el.classList.remove('active'));
     document.querySelectorAll(`[data-tab="${tab}"]`).forEach(el => el.classList.add('active'));
-    ['servers', 'dms', 'content'].forEach(t => {
-      $(`#${t}List`)?.classList.toggle('hidden', t !== tab);
-      const view = t === 'servers' ? 'chatView' : t === 'dms' ? 'dmView' : 'contentFeed';
-      $(`#${view}`).classList.toggle('hidden', t !== tab);
+    ['players', 'dms', 'profile', 'settings'].forEach(t => {
+      $(`#${t}View`).classList.toggle('hidden', t !== tab);
     });
-    $('#mainTitle').textContent = tab === 'servers' ? 'General' : tab.toUpperCase();
-    if (tab === 'servers') Message.render();
+    $('#mainTitle').textContent = {
+      players: 'Find Players',
+      dms: 'Direct Messages',
+      profile: 'My Profile',
+      settings: 'Settings'
+    }[tab];
+
+    if (tab === 'players') Users.renderPlayers();
     if (tab === 'dms') Users.renderDMs();
-    if (tab === 'content') Video.render();
+    if (tab === 'profile') Users.renderProfile();
   },
-  showSettings() { $('#settingsPanel').classList.remove('hidden', 'translate-x-full'); },
-  closeSettings() { $('#settingsPanel').classList.add('translate-x-full'); setTimeout(() => $('#settingsPanel').classList.add('hidden'), 300); },
-  closeModal(id) { $(`#${id}`).classList.add('hidden'); }
+
+  enterApp() {
+    $('#loginScreen').classList.add('hidden');
+    $('#app').classList.remove('hidden');
+    Users.init(this.currentUser);
+    App.setTab('players');
+  }
 };
 
 const $ = (s) => document.querySelector(s);
