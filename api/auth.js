@@ -1,30 +1,46 @@
 const Auth = {
-  quickJoin() {
-    const username = $('#usernameInput').value.trim();
-    if (!username) return alert('Enter a username');
+  async register() {
+    const email = $('#emailInput').value;
+    const username = $('#usernameInput').value;
+    const password = $('#passwordInput').value;
+    const displayName = $('#displayNameInput').value;
+    if (!email || !username || !password) return alert('Fill all fields');
+    try {
+      const { token: newToken, user } = await api('/register', {
+        method: 'POST',
+        body: JSON.stringify({ email, username, password, displayName })
+      });
+      localStorage.setItem('token', newToken);
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      currentUser = user;
+      token = newToken;
+      App.init();
+    } catch (e) {
+      alert(e.error);
+    }
+  },
 
-    const isOwner = username.toLowerCase() === 'pdigger48' || 
-                    (username.includes('@') && username.toLowerCase() === 'pdigger48@gmail.com');
-
-    const user = {
-      id: Date.now().toString(),
-      username,
-      email: isOwner ? 'pdigger48@gmail.com' : `${username}@socialhub.gg`,
-      displayName: username,
-      avatar: `https://api.dicebear.com/9.x/avataaars/svg?seed=${username}`,
-      role: isOwner ? 'OWNER' : 'PLAYER',
-      posts: 0,
-      friends: [],
-      messages: 0
-    };
-
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    App.currentUser = user;
-    App.enterApp();
+  async login() {
+    const email = $('#emailInput').value;
+    const password = $('#passwordInput').value;
+    if (!email || !password) return alert('Fill all fields');
+    try {
+      const { token: newToken, user } = await api('/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password })
+      });
+      localStorage.setItem('token', newToken);
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      currentUser = user;
+      token = newToken;
+      App.init();
+    } catch (e) {
+      alert(e.error);
+    }
   },
 
   logout() {
-    localStorage.removeItem('currentUser');
+    localStorage.clear();
     location.reload();
   }
 };
