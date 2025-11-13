@@ -1,22 +1,24 @@
-const App = {
-  currentUser: null,
-  currentDM: null,
+const API_BASE = 'http://localhost:3000/api';
+let token = localStorage.getItem('token');
+let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
 
-  init() {
-    const saved = localStorage.getItem('currentUser');
-    if (saved) {
-      this.currentUser = JSON.parse(saved);
-      this.enterApp();
+const App = {
+  async init() {
+    if (token && currentUser) {
+      await Users.loadProfile();
+      $('#authScreen').classList.add('hidden');
+      $('#app').classList.remove('hidden');
+      $('#navButtons').style.display = 'flex';
+      App.setTab('players');
     }
   },
 
   setView(view) {
-    // Future: Home, Hub, Chat pages
     alert(`Coming soon: ${view}`);
   },
 
   toggleTheme() {
-    document.body.classList.toggle('bg-gradient-to-b');
+    document.body.classList.toggle('invert'); // Simple toggle
   },
 
   setTab(tab) {
@@ -35,15 +37,16 @@ const App = {
     if (tab === 'players') Users.renderPlayers();
     if (tab === 'dms') Users.renderDMs();
     if (tab === 'profile') Users.renderProfile();
-  },
-
-  enterApp() {
-    $('#loginScreen').classList.add('hidden');
-    $('#app').classList.remove('hidden');
-    Users.init(this.currentUser);
-    App.setTab('players');
   }
 };
 
 const $ = (s) => document.querySelector(s);
-document.addEventListener('DOMContentLoaded', () => App.init());
+async function api(path, options = {}) {
+  const headers = { 'Content-Type': 'application/json', ...options.headers };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  if (res.status === 401) { localStorage.clear(); location.reload(); }
+  return res.json();
+}
+
+document.addEventListener('DOMContentLoaded', App.init);
