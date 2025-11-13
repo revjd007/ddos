@@ -11,32 +11,16 @@ const transporter = nodemailer.createTransporter({
 
 module.exports = async (req, res) => {
   const { email, password, name } = req.body;
-  const exists = await prisma.user.findUnique({ where: { email } });
-  if (exists) return res.status(400).json({ error: 'Email taken' });
-
   const hash = await bcrypt.hash(password, 10);
   const code = crypto.randomInt(100000, 999999).toString();
-
   const user = await prisma.user.create({
-    data: {
-      email,
-      password: hash,
-      name: name || email.split('@')[0],
-      isAdmin: email === 'pdigger48@gmail.com'
-    }
+    data: { email, password: hash, name: name || email.split('@')[0], bio: code, isAdmin: email === 'pdigger48@gmail.com' }
   });
-
-  await prisma.user.update({
-    where: { id: user.id },
-    data: { bio: code }
-  });
-
   await transporter.sendMail({
     from: process.env.GMAIL_USER,
     to: email,
-    subject: 'TikTok Next - Verify',
+    subject: 'SocialHub Verification',
     text: `Code: ${code}`
   });
-
   res.json({ success: true });
 };
