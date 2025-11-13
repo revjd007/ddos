@@ -1,289 +1,488 @@
-<script>
-  // ==================== STATE ====================
-  let currentServer = 'general';
-  let users = {};
-  let messages = {};
-  let me = null;
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Social Chat</title>
 
-  // Safely load from localStorage
-  try {
-    users = JSON.parse(localStorage.getItem('users') || '{}');
-  } catch (e) {
-    console.error('Failed to parse users:', e);
-    localStorage.removeItem('users');
-    users = {};
-  }
+  <!-- Tailwind CSS (via CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui'] },
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
-  try {
-    messages = JSON.parse(localStorage.getItem('messages') || '{}');
-  } catch (e) {
-    console.error('Failed to parse messages:', e);
-    localStorage.removeItem('messages');
-    messages = {};
-  }
+  <style>
+    .glass {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .online {
+      width: 10px;
+      height: 10px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .msg-bubble {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 10px 14px;
+      max-width: 100%;
+    }
+    .dark .msg-bubble {
+      background: rgba(0, 0, 0, 0.3);
+    }
+    .server {
+      transition: all 0.2s;
+    }
+    .server.active {
+      background: rgba(239, 68, 68, 0.2);
+      border-left: 4px solid #ef4444;
+    }
+    .dark .server.active {
+      background: rgba(239, 68, 68, 0.3);
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 text-white min-h-screen flex items-center justify-center p-4">
 
-  try {
-    const storedMe = localStorage.getItem('me');
-    me = storedMe && storedMe !== 'null' ? JSON.parse(storedMe) : null;
-  } catch (e) {
-    console.error('Failed to parse me:', e);
-    localStorage.removeItem('me');
-    me = null;
-  }
+  <!-- ==================== LOGIN MODAL ==================== -->
+  <div id="loginModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="glass p-8 rounded-2xl w-full max-w-md shadow-2xl">
+      <h2 class="text-3xl font-bold text-center mb-6">Welcome Back</h2>
+      <input id="loginEmail" type="email" placeholder="Email" class="w-full p-3 rounded-xl bg-white/20 placeholder-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400 mb-3"/>
+      <input id="loginPass" type="password" placeholder="Password" class="w-full p-3 rounded-xl bg-white/20 placeholder-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400 mb-4"/>
+      <button onclick="login()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition">Login</button>
+      <p class="text-center mt-4">No account? <span onclick="showRegister()" class="text-red-300 hover:text-red-200 cursor-pointer underline">Register</span></p>
+    </div>
+  </div>
 
-  // ==================== AUTH MODALS ====================
-  function showRegister() {
-    document.getElementById('loginModal').classList.add('hidden');
-    document.getElementById('registerModal').classList.remove('hidden');
-  }
+  <!-- ==================== REGISTER MODAL ==================== -->
+  <div id="registerModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+    <div class="glass p-8 rounded-2xl w-full max-w-md shadow-2xl">
+      <h2 class="text-3xl font-bold text-center mb-6">Join Us</h2>
+      <input id="regEmail" type="email" placeholder="Email" class="w-full p-3 rounded-xl bg-white/20 placeholder-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400 mb-3"/>
+      <input id="regPass" type="password" placeholder="Password" class="w-full p-3 rounded-xl bg-white/20 placeholder-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400 mb-4"/>
+      <button onclick="register()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition">Register</button>
+      <p class="text-center mt-4">Have an account? <span onclick="showLogin()" class="text-red-300 hover:text-red-200 cursor-pointer underline">Login</span></p>
+    </div>
+  </div>
 
-  function showLogin() {
-    document.getElementById('registerModal').classList.add('hidden');
-    document.getElementById('loginModal').classList.remove('hidden');
-  }
+  <!-- ==================== MAIN APP ==================== -->
+  <div id="app" class="hidden w-full max-w-7xl mx-auto bg-black/30 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-screen max-h-screen">
 
-  function register() {
-    const email = document.getElementById('regEmail').value.trim();
-    const pass = document.getElementById('regPass').value;
-    if (!email || !pass) return alert('Fill all fields');
-    if (users[email]) return alert('Email already exists');
+    <!-- ==================== SIDEBAR ==================== -->
+    <div class="w-full md:w-64 glass p-4 flex flex-col">
+      <div class="flex items-center gap-3 p-3 glass rounded-xl mb-4">
+        <img id="navAvatar" src="" class="w-12 h-12 rounded-full"/>
+        <div>
+          <div class="font-bold" id="navName">User</div>
+          <div class="text-xs opacity-70">Online</div>
+        </div>
+        <button onclick="toggleDark()" class="ml-auto p-2 rounded-lg hover:bg-white/20 transition">
+          <i class="fas fa-moon"></i>
+        </button>
+      </div>
 
-    const name = email.split('@')[0];
-    users[email] = {
-      email,
-      pass,
-      name,
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ff0000&color=fff&size=128`,
-      bio: 'Hey, I am new here!',
-      likes: 0,
-      content: 0,
-      messages: 0
-    };
+      <!-- Servers -->
+      <div class="space-y-2 mb-6">
+        <div class="server active p-3 rounded-xl cursor-pointer flex items-center gap-3" data-server="general" onclick="switchServer('general')">
+          <i class="fas fa-hashtag"></i>
+          <span>General</span>
+        </div>
+        <div class="server p-3 rounded-xl cursor-pointer flex items-center gap-3" data-server="gaming" onclick="switchServer('gaming')">
+          <i class="fas fa-gamepad"></i>
+          <span>Gaming</span>
+        </div>
+        <div class="server p-3 rounded-xl cursor-pointer flex items-center gap-3" data-server="music" onclick="switchServer('music')">
+          <i class="fas fa-music"></i>
+          <span>Music</span>
+        </div>
+      </div>
 
-    localStorage.setItem('users', JSON.stringify(users));
-    alert('Registered! Now login.');
-    showLogin();
-  }
+      <!-- Online Users -->
+      <div class="flex-1 overflow-y-auto">
+        <input id="searchPlayers" oninput="searchPlayers()" placeholder="Search users..." class="w-full p-2 rounded-lg bg-white/10 text-sm mb-3"/>
+        <div id="userList" class="space-y-2"></div>
+      </div>
 
-  function login() {
-    const email = document.getElementById('loginEmail').value.trim();
-    const pass = document.getElementById('loginPass').value;
-    const user = users[email];
+      <button onclick="showProfile()" class="mt-4 p-3 glass rounded-xl text-center hover:bg-white/10 transition">
+        <i class="fas fa-user mr-2"></i> My Profile
+      </button>
+      <button onclick="showUpload()" class="mt-2 p-3 bg-red-500/80 hover:bg-red-500 rounded-xl text-center transition">
+        <i class="fas fa-upload mr-2"></i> Upload Content
+      </button>
+    </div>
 
-    if (user && user.pass === pass) {
-      me = user;
-      localStorage.setItem('me', JSON.stringify(me));
+    <!-- ==================== CHAT AREA ==================== -->
+    <div class="flex-1 flex flex-col">
+      <div class="p-4 glass border-b border-white/20 flex items-center justify-between">
+        <h1 id="serverName" class="text-xl font-bold">General</h1>
+        <button onclick="showProfile()" class="p-2 rounded-lg hover:bg-white/20 transition">
+          <i class="fas fa-cog"></i>
+        </button>
+      </div>
+
+      <div id="messages" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
+
+      <div class="p-4 glass border-t border-white/20">
+        <div class="flex gap-2">
+          <input id="msgInput" onkeypress="handleEnter(event)" placeholder="Type a message..." class="flex-1 p-3 rounded-xl bg-white/20 placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-red-400"/>
+          <button onclick="sendMessage()" class="p-3 bg-red-500 hover:bg-red-600 rounded-xl transition">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PROFILE MODAL ==================== -->
+  <div id="profileModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+    <div class="glass p-8 rounded-2xl w-full max-w-md shadow-2xl">
+      <div class="flex justify-between items-center mb-4">
+        <h2 id="profileNameModal" class="text-2xl font-bold">User</h2>
+        <button onclick="closeProfile()" class="p-2 rounded-lg hover:bg-white/20 transition">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <img id="profileAvatar" src="" class="w-24 h-24 rounded-full mx-auto mb-4"/>
+      <p id="profileBioModal" class="text-center italic mb-6 opacity-80">No bio yet</p>
+      <div class="grid grid-cols-3 gap-4 text-center mb-6">
+        <div>
+          <div class="text-2xl font-bold" id="profileLikes">0</div>
+          <div class="text-xs opacity-70">Likes</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold" id="profileContent">0</div>
+          <div class="text-xs opacity-70">Posts</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold" id="profileMessages">0</div>
+          <div class="text-xs opacity-70">Messages</div>
+        </div>
+      </div>
+      <button onclick="startDM()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition mb-2">
+        <i class="fas fa-comment mr-2"></i> Start DM
+      </button>
+      <button onclick="closeProfile()" class="w-full bg-white/20 hover:bg-white/30 py-3 rounded-xl transition">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== UPLOAD MODAL ==================== -->
+  <div id="uploadModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+    <div class="glass p-8 rounded-2xl w-full max-w-md shadow-2xl">
+      <h2 class="text-2xl font-bold mb-4">Upload Content</h2>
+      <input id="uploadTitle" placeholder="Title" class="w-full p-3 rounded-xl bg-white/20 placeholder-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400 mb-3"/>
+      <input id="uploadFile" type="file" accept="image/*,video/*" class="w-full p-3 rounded-xl bg-white/20 text-sm mb-4"/>
+      <div class="flex gap-2">
+        <button onclick="uploadContent()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition">
+          Upload
+        </button>
+        <button onclick="document.getElementById('uploadModal').classList.add('hidden')" class="flex-1 bg-white/20 hover:bg-white/30 py-3 rounded-xl transition">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FULL JS SCRIPT ==================== -->
+  <script>
+    // ==================== STATE ====================
+    let currentServer = 'general';
+    let users = {};
+    let messages = {};
+    let me = null;
+
+    // Safely load from localStorage
+    try {
+      users = JSON.parse(localStorage.getItem('users') || '{}');
+    } catch (e) {
+      console.error('Failed to parse users:', e);
+      localStorage.removeItem('users');
+      users = {};
+    }
+
+    try {
+      messages = JSON.parse(localStorage.getItem('messages') || '{}');
+    } catch (e) {
+      console.error('Failed to parse messages:', e);
+      localStorage.removeItem('messages');
+      messages = {};
+    }
+
+    try {
+      const storedMe = localStorage.getItem('me');
+      me = storedMe && storedMe !== 'null' ? JSON.parse(storedMe) : null;
+    } catch (e) {
+      console.error('Failed to parse me:', e);
+      localStorage.removeItem('me');
+      me = null;
+    }
+
+    // ==================== AUTH MODALS ====================
+    function showRegister() {
+      document.getElementById('loginModal').classList.add('hidden');
+      document.getElementById('registerModal').classList.remove('hidden');
+    }
+
+    function showLogin() {
+      document.getElementById('registerModal').classList.add('hidden');
+      document.getElementById('loginModal').classList.remove('hidden');
+    }
+
+    function register() {
+      const email = document.getElementById('regEmail').value.trim();
+      const pass = document.getElementById('regPass').value;
+      if (!email || !pass) return alert('Fill all fields');
+      if (users[email]) return alert('Email already exists');
+
+      const name = email.split('@')[0];
+      users[email] = {
+        email,
+        pass,
+        name,
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ff0000&color=fff&size=128`,
+        bio: 'Hey, I am new here!',
+        likes: 0,
+        content: 0,
+        messages: 0
+      };
+
+      localStorage.setItem('users', JSON.stringify(users));
+      alert('Registered! Now login.');
+      showLogin();
+    }
+
+    function login() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPass').value;
+      const user = users[email];
+
+      if (user && user.pass === pass) {
+        me = user;
+        localStorage.setItem('me', JSON.stringify(me));
+        document.getElementById('loginModal').classList.add('hidden');
+        document.getElementById('app').classList.remove('hidden');
+        initApp();
+      } else {
+        alert('Wrong email or password');
+      }
+    }
+
+    // ==================== APP INIT ====================
+    function initApp() {
+      if (!me) return;
+
+      document.getElementById('navAvatar').src = me.avatar || '';
+      document.getElementById('navName').innerText = me.name;
+
+      const activeServerEl = document.querySelector('.server.active');
+      const serverName = activeServerEl?.dataset.server || 'general';
+      switchServer(serverName);
+
+      renderMessages();
+      renderOnline();
+    }
+
+    if (me) {
       document.getElementById('loginModal').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
       initApp();
-    } else {
-      alert('Wrong email or password');
-    }
-  }
-
-  // ==================== APP INIT ====================
-  function initApp() {
-    if (!me) return;
-
-    document.getElementById('navAvatar').src = me.avatar || '';
-
-    // Get active server from DOM
-    const activeServerEl = document.querySelector('.server.active');
-    const serverName = activeServerEl?.dataset.server || 'general';
-    switchServer(serverName);
-
-    renderMessages();
-    renderOnline();
-  }
-
-  // Auto-login
-  if (me) {
-    document.getElementById('loginModal').classList.add('hidden');
-    document.getElementById('app').classList.remove('hidden');
-    initApp();
-  }
-
-  // ==================== SERVER SWITCH ====================
-  function switchServer(serverName) {
-    if (typeof serverName !== 'string' || !serverName) {
-      console.warn('Invalid server name, falling back to "general"');
-      serverName = 'general';
     }
 
-    currentServer = serverName;
+    // ==================== SERVER SWITCH ====================
+    function switchServer(serverName) {
+      if (typeof serverName !== 'string' || !serverName) {
+        console.warn('Invalid server name, falling back to "general"');
+        serverName = 'general';
+      }
 
-    // Update header
-    const header = document.getElementById('serverName');
-    if (header) {
-      header.innerText = serverName.charAt(0).toUpperCase() + serverName.slice(1);
+      currentServer = serverName;
+      const header = document.getElementById('serverName');
+      if (header) {
+        header.innerText = serverName.charAt(0).toUpperCase() + serverName.slice(1);
+      }
+
+      document.querySelectorAll('.server').forEach(s => s.classList.remove('active'));
+      const target = document.querySelector(`.server[data-server="${serverName}"]`);
+      if (target) {
+        target.classList.add('active');
+      }
+
+      renderMessages();
     }
 
-    // Update active class
-    document.querySelectorAll('.server').forEach(s => s.classList.remove('active'));
-    const target = document.querySelector(`.server[data-server="${serverName}"]`);
-    if (target) {
-      target.classList.add('active');
-    } else {
-      console.warn(`Server element not found: ${serverName}`);
+    // ==================== MESSAGES ====================
+    function sendMessage() {
+      const input = document.getElementById('msgInput');
+      const msg = input.value.trim();
+      if (!msg || !me) return;
+
+      if (!messages[currentServer]) messages[currentServer] = [];
+
+      messages[currentServer].push({
+        user: me.name,
+        email: me.email,
+        msg: msg,
+        avatar: me.avatar,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+
+      localStorage.setItem('messages', JSON.stringify(messages));
+      input.value = '';
+      renderMessages();
+
+      me.messages = (me.messages || 0) + 1;
+      saveMe();
     }
 
-    renderMessages();
-  }
-
-  // ==================== MESSAGES ====================
-  function sendMessage() {
-    const input = document.getElementById('msgInput');
-    const msg = input.value.trim();
-    if (!msg || !me) return;
-
-    if (!messages[currentServer]) messages[currentServer] = [];
-
-    messages[currentServer].push({
-      user: me.name,
-      email: me.email,
-      msg: msg,
-      avatar: me.avatar,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    });
-
-    localStorage.setItem('messages', JSON.stringify(messages));
-    input.value = '';
-    renderMessages();
-
-    // Update stats
-    me.messages = (me.messages || 0) + 1;
-    saveMe();
-  }
-
-  function handleEnter(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
+    function handleEnter(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
     }
-  }
 
-  function renderMessages() {
-    const container = document.getElementById('messages');
-    if (!container) return;
+    function renderMessages() {
+      const container = document.getElementById('messages');
+      if (!container) return;
 
-    const msgs = messages[currentServer] || [];
-    container.innerHTML = msgs.map(m => `
-      <div class="msg">
-        <img src="${m.avatar}" alt="${escapeHtml(m.user)}" class="w-10 h-10 rounded-full" />
-        <div class="msg-bubble">
-          <div class="flex items-center gap-2">
-            <strong class="cursor-pointer hover:text-red-400"
-                    onclick="viewProfile('${m.email}')">${escapeHtml(m.user)}</strong>
-            <span class="text-xs opacity-50">${m.time}</span>
+      const msgs = messages[currentServer] || [];
+      container.innerHTML = msgs.map(m => `
+        <div class="msg flex gap-3">
+          <img src="${m.avatar}" alt="${escapeHtml(m.user)}" class="w-10 h-10 rounded-full flex-shrink-0"/>
+          <div class="msg-bubble flex-1">
+            <div class="flex items-center gap-2 text-sm">
+              <strong class="cursor-pointer hover:text-red-400" onclick="viewProfile('${m.email}')">${escapeHtml(m.user)}</strong>
+              <span class="opacity-50">${m.time}</span>
+            </div>
+            <p class="break-words mt-1">${escapeHtml(m.msg)}</p>
           </div>
-          <p class="break-words">${escapeHtml(m.msg)}</p>
         </div>
-      </div>
-    `).join('');
+      `).join('');
 
-    container.scrollTop = container.scrollHeight;
-  }
+      container.scrollTop = container.scrollHeight;
+    }
 
-  // ==================== ONLINE USERS ====================
-  function searchPlayers() {
-    const query = (document.getElementById('searchPlayers').value || '').toLowerCase();
-    renderOnline(query);
-  }
+    // ==================== ONLINE USERS ====================
+    function searchPlayers() {
+      const query = (document.getElementById('searchPlayers').value || '').toLowerCase();
+      renderOnline(query);
+    }
 
-  function renderOnline(filter = '') {
-    const list = document.getElementById('userList');
-    if (!list) return;
+    function renderOnline(filter = '') {
+      const list = document.getElementById('userList');
+      if (!list) return;
 
-    list.innerHTML = '';
-    const filtered = Object.values(users).filter(u =>
-      u.name.toLowerCase().includes(filter) ||
-      u.email.toLowerCase().includes(filter)
-    );
+      list.innerHTML = '';
+      const filtered = Object.values(users).filter(u =>
+        u.name.toLowerCase().includes(filter) ||
+        u.email.toLowerCase().includes(filter)
+      );
 
-    filtered.forEach(u => {
+      filtered.forEach(u => {
+        const div = document.createElement('div');
+        div.className = 'glass p-3 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-white/10 transition';
+        div.onclick = () => viewProfile(u.email);
+        div.innerHTML = `
+          <img src="${u.avatar}" class="w-10 h-10 rounded-full" alt="${escapeHtml(u.name)}" />
+          <span class="font-semibold">${escapeHtml(u.name)}</span>
+          <span class="online ml-auto"></span>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    // ==================== PROFILE MODAL ====================
+    function viewProfile(email) {
+      const u = users[email];
+      if (!u) return;
+
+      document.getElementById('profileNameModal').innerText = u.name;
+      document.getElementById('profileBioModal').innerText = u.bio || 'No bio yet';
+      document.getElementById('profileAvatar').src = u.avatar;
+      document.getElementById('profileLikes').innerText = u.likes || 0;
+      document.getElementById('profileContent').innerText = u.content || 0;
+      document.getElementById('profileMessages').innerText = u.messages || 0;
+      document.getElementById('profileModal').classList.remove('hidden');
+    }
+
+    function closeProfile() {
+      document.getElementById('profileModal').classList.add('hidden');
+    }
+
+    function showProfile() {
+      if (me) viewProfile(me.email);
+    }
+
+    function startDM() {
+      const name = document.getElementById('profileNameModal').innerText;
+      alert(`DM with ${name} started!`);
+      closeProfile();
+    }
+
+    // ==================== UPLOAD ====================
+    function showUpload() {
+      document.getElementById('uploadModal').classList.remove('hidden');
+    }
+
+    function uploadContent() {
+      const title = document.getElementById('uploadTitle').value.trim();
+      const file = document.getElementById('uploadFile').files[0];
+      if (!title || !file) return alert('Title and file required');
+
+      me.content = (me.content || 0) + 1;
+      saveMe();
+      alert(`"${title}" uploaded!`);
+
+      document.getElementById('uploadModal').classList.add('hidden');
+      document.getElementById('uploadTitle').value = '';
+      document.getElementById('uploadFile').value = '';
+    }
+
+    // ==================== THEME ====================
+    function toggleDark() {
+      document.body.classList.toggle('dark');
+      document.documentElement.classList.toggle('dark');
+    }
+
+    // ==================== UTILS ====================
+    function saveMe() {
+      if (!me) return;
+      localStorage.setItem('me', JSON.stringify(me));
+      users[me.email] = me;
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    function escapeHtml(text) {
       const div = document.createElement('div');
-      div.className = 'glass p-3 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-white/10 transition';
-      div.onclick = () => viewProfile(u.email);
-      div.innerHTML = `
-        <img src="${u.avatar}" class="w-10 h-10 rounded-full" alt="${escapeHtml(u.name)}" />
-        <span class="font-semibold">${escapeHtml(u.name)}</span>
-        <span class="online ml-auto"></span>
-      `;
-      list.appendChild(div);
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Global error handler
+    window.addEventListener('error', (e) => {
+      console.error('JS Error:', e.error);
     });
-  }
-
-  // ==================== PROFILE MODAL ====================
-  function viewProfile(email) {
-    const u = users[email];
-    if (!u) return;
-
-    document.getElementById('profileNameModal').innerText = u.name;
-    document.getElementById('profileBioModal').innerText = u.bio || 'No bio yet';
-    document.getElementById('profileAvatar').src = u.avatar;
-    document.getElementById('profileLikes').innerText = u.likes || 0;
-    document.getElementById('profileContent').innerText = u.content || 0;
-    document.getElementById('profileMessages').innerText = u.messages || 0;
-    document.getElementById('profileModal').classList.remove('hidden');
-  }
-
-  function closeProfile() {
-    document.getElementById('profileModal').classList.add('hidden');
-  }
-
-  function showProfile() {
-    if (me) viewProfile(me.email);
-  }
-
-  function startDM() {
-    const name = document.getElementById('profileNameModal').innerText;
-    alert(`DM with ${name} started!`);
-    closeProfile();
-  }
-
-  // ==================== UPLOAD ====================
-  function showUpload() {
-    document.getElementById('uploadModal').classList.remove('hidden');
-  }
-
-  function uploadContent() {
-    const title = document.getElementById('uploadTitle').value.trim();
-    const file = document.getElementById('uploadFile').files[0];
-    if (!title || !file) return alert('Title and file required');
-
-    me.content = (me.content || 0) + 1;
-    saveMe();
-    alert(`"${title}" uploaded!`);
-
-    // Reset form
-    document.getElementById('uploadModal').classList.add('hidden');
-    document.getElementById('uploadTitle').value = '';
-    document.getElementById('uploadFile').value = '';
-  }
-
-  // ==================== THEME ====================
-  function toggleDark() {
-    document.body.classList.toggle('dark');
-  }
-
-  // ==================== UTILS ====================
-  function saveMe() {
-    if (!me) return;
-    localStorage.setItem('me', JSON.stringify(me));
-    users[me.email] = me;
-    localStorage.setItem('users', JSON.stringify(users));
-  }
-
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  // Global error handler (for debugging)
-  window.addEventListener('error', (e) => {
-    console.error('Global JS Error:', e.error);
-    // Optional: Show error on screen in dev
-    // document.body.innerHTML = `<pre style="color:red">${e.error}</pre>`;
-  });
-</script>
+  </script>
+</body>
+</html>
