@@ -3,486 +3,200 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Social Chat</title>
-
-  <!-- Tailwind CSS (via CDN) -->
+  <title>Social Hub - Blackout Edition</title>
+  <!-- Tailwind (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'system-ui'] },
-        }
-      }
+      theme: { extend: { fontFamily: { sans: ['Inter', 'system-ui'] } } }
     }
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-
-  <style>
-    .glass {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    .online {
-      width: 10px;
-      height: 10px;
-      background: #10b981;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #10b981;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    .msg-bubble {
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 12px;
-      padding: 10px 14px;
-      max-width: 100%;
-    }
-    .dark .msg-bubble {
-      background: rgba(0, 0, 0, 0.3);
-    }
-    .server {
-      transition: all 0.2s;
-    }
-    .server.active {
-      background: rgba(239, 68, 68, 0.2);
-      border-left: 4px solid #ef4444;
-    }
-    .dark .server.active {
-      background: rgba(239, 68, 68, 0.3);
-    }
-    .hidden { display: none !important; }
-  </style>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 text-white min-h-screen flex items-center justify-center p-4">
-
+<body class="bg-black text-white min-h-screen flex items-center justify-center p-4">
   <!-- ==================== LOGIN MODAL ==================== -->
-  <div id="loginModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-    <div class="glass p-8 rounded-2xl w-full max-w-md shadow-2xl">
-      <h2 class="text-3xl font-bold text-center mb-6">Welcome Back</h2>
-      <input id="loginEmail" type="email" placeholder="Email" class="w-full p-3 rounded-xl bg-white/20 placeholder-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400 mb-3"/>
-      <input id="loginPass" type="password" placeholder="Password" class="w-full p-3 rounded-xl bg-white/20 placeholder-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400 mb-4"/>
-      <button onclick="login()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition">Login</button>
-      <p class="text-center mt-4">No account? <span onclick="showRegister()" class="text-red-300 hover:text-red-200 cursor-pointer underline">Register</span></p>
+  <div id="loginModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+    <div class="black-panel p-8 rounded-2xl w-full max-w-md shadow-2xl">
+      <h2 class="text-3xl font-bold text-center mb-6 text-red-500">Blackout Login</h2>
+      <input id="loginEmail" type="email" placeholder="Email" class="input-field mb-3"/>
+      <input id="loginPass" type="password" placeholder="Password" class="input-field mb-4"/>
+      <button onclick="login()" class="btn-red">Enter Hub</button>
+      <p class="text-center mt-4">New? <span onclick="showRegister()" class="link-red">Join Blackout</span></p>
     </div>
   </div>
-
   <!-- ==================== REGISTER MODAL ==================== -->
-  <div id="registerModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-    <div class="glass p-8 rounded-2xl w-full max-w-md shadow-2xl">
-      <h2 class="text-3xl font-bold text-center mb-6">Join Us</h2>
-      <input id="regEmail" type="email" placeholder="Email" class="w-full p-3 rounded-xl bg-white/20 placeholder-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400 mb-3"/>
-      <input id="regPass" type="password" placeholder="Password" class="w-full p-3 rounded-xl bg-white/20 placeholder-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400 mb-4"/>
-      <button onclick="register()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition">Register</button>
-      <p class="text-center mt-4">Have an account? <span onclick="showLogin()" class="text-red-300 hover:text-red-200 cursor-pointer underline">Login</span></p>
+  <div id="registerModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden">
+    <div class="black-panel p-8 rounded-2xl w-full max-w-md shadow-2xl">
+      <h2 class="text-3xl font-bold text-center mb-6 text-red-500">Join Blackout</h2>
+      <input id="regEmail" type="email" placeholder="Email" class="input-field mb-3"/>
+      <input id="regPass" type="password" placeholder="Password" class="input-field mb-4"/>
+      <button onclick="register()" class="btn-red">Join Hub</button>
+      <p class="text-center mt-4">Already in? <span onclick="showLogin()" class="link-red">Login</span></p>
     </div>
   </div>
-
   <!-- ==================== MAIN APP ==================== -->
-  <div id="app" class="hidden w-full max-w-7xl mx-auto bg-black/30 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-screen max-h-screen">
-
-    <!-- ==================== SIDEBAR ==================== -->
-    <div class="w-full md:w-64 glass p-4 flex flex-col">
-      <div class="flex items-center gap-3 p-3 glass rounded-xl mb-4">
-        <img id="navAvatar" src="" class="w-12 h-12 rounded-full"/>
+  <div id="app" class="hidden w-full max-w-7xl mx-auto bg-black rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-screen max-h-screen">
+    <!-- SIDEBAR -->
+    <div class="w-full md:w-64 black-panel p-4 flex flex-col">
+      <div class="flex items-center gap-3 p-3 black-panel rounded-xl mb-4">
+        <img id="navAvatar" src="" class="w-12 h-12 rounded-full border-2 border-red-500"/>
         <div>
           <div class="font-bold" id="navName">User</div>
           <div class="text-xs opacity-70">Online</div>
         </div>
-        <button onclick="toggleDark()" class="ml-auto p-2 rounded-lg hover:bg-white/20 transition">
-          <i class="fas fa-moon"></i>
+        <button onclick="toggleRedIntensity()" class="ml-auto p-2 rounded-lg hover:bg-red-500/20 transition">
+          <i class="fas fa-adjust"></i>
         </button>
       </div>
-
-      <!-- Servers -->
+      <!-- Tabs: Servers, DMs, Content -->
       <div class="space-y-2 mb-6">
-        <div class="server active p-3 rounded-xl cursor-pointer flex items-center gap-3" data-server="general" onclick="switchServer('general')">
-          <i class="fas fa-hashtag"></i>
-          <span>General</span>
+        <div class="tab active p-3 rounded-xl cursor-pointer flex items-center gap-3" data-tab="servers" onclick="switchTab('servers')">
+          <i class="fas fa-hashtag text-red-500"></i><span>Servers</span>
         </div>
-        <div class="server p-3 rounded-xl cursor-pointer flex items-center gap-3" data-server="gaming" onclick="switchServer('gaming')">
-          <i class="fas fa-gamepad"></i>
-          <span>Gaming</span>
+        <div class="tab p-3 rounded-xl cursor-pointer flex items-center gap-3" data-tab="dms" onclick="switchTab('dms')">
+          <i class="fas fa-envelope text-red-500"></i><span>DMs</span>
         </div>
-        <div class="server p-3 rounded-xl cursor-pointer flex items-center gap-3" data-server="music" onclick="switchServer('music')">
-          <i class="fas fa-music"></i>
-          <span>Music</span>
+        <div class="tab p-3 rounded-xl cursor-pointer flex items-center gap-3" data-tab="content" onclick="switchTab('content')">
+          <i class="fas fa-video text-red-500"></i><span>Content Hub</span>
         </div>
       </div>
-
-      <!-- Online Users -->
-      <div class="flex-1 overflow-y-auto">
-        <input id="searchPlayers" oninput="searchPlayers()" placeholder="Search users..." class="w-full p-2 rounded-lg bg-white/10 text-sm mb-3"/>
-        <div id="userList" class="space-y-2"></div>
-      </div>
-
-      <button onclick="showProfile()" class="mt-4 p-3 glass rounded-xl text-center hover:bg-white/10 transition">
-        <i class="fas fa-user mr-2"></i> My Profile
-      </button>
-      <button onclick="showUpload()" class="mt-2 p-3 bg-red-500/80 hover:bg-red-500 rounded-xl text-center transition">
-        <i class="fas fa-upload mr-2"></i> Upload Content
-      </button>
-    </div>
-
-    <!-- ==================== CHAT AREA ==================== -->
-    <div class="flex-1 flex flex-col">
-      <div class="p-4 glass border-b border-white/20 flex items-center justify-between">
-        <h1 id="serverName" class="text-xl font-bold">General</h1>
-        <button onclick="showProfile()" class="p-2 rounded-lg hover:bg-white/20 transition">
-          <i class="fas fa-cog"></i>
-        </button>
-      </div>
-
-      <div id="messages" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
-
-      <div class="p-4 glass border-t border-white/20">
-        <div class="flex gap-2">
-          <input id="msgInput" onkeypress="handleEnter(event)" placeholder="Type a message..." class="flex-1 p-3 rounded-xl bg-white/20 placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-red-400"/>
-          <button onclick="sendMessage()" class="p-3 bg-red-500 hover:bg-red-600 rounded-xl transition">
-            <i class="fas fa-paper-plane"></i>
+      <!-- Dynamic Tab Content -->
+      <div id="tabContent" class="flex-1 overflow-y-auto">
+        <!-- Servers -->
+        <div id="serversList" class="space-y-2">
+          <div class="server active p-3 rounded-xl cursor-pointer flex items-center gap-3" data-server="general" onclick="switchServer('general')">
+            <i class="fas fa-hashtag"></i><span>General</span>
+          </div>
+          <div class="server p-3 rounded-xl cursor-pointer flex items-center gap-3" data-server="gaming" onclick="switchServer('gaming')">
+            <i class="fas fa-gamepad"></i><span>Gaming</span>
+          </div>
+          <div class="server p-3 rounded-xl cursor-pointer flex items-center gap-3" data-server="music" onclick="switchServer('music')">
+            <i class="fas fa-music"></i><span>Music</span>
+          </div>
+        </div>
+        <!-- DMs List -->
+        <div id="dmsList" class="space-y-2 hidden">
+          <input id="searchDMs" oninput="searchDMs()" placeholder="Search DMs..." class="input-field text-sm mb-3"/>
+          <div id="dmUserList"></div>
+        </div>
+        <!-- Content Hub (no list, just upload button here) -->
+        <div id="contentList" class="hidden">
+          <button onclick="showUpload()" class="w-full p-3 bg-red-500 hover:bg-red-600 rounded-xl text-center transition">
+            <i class="fas fa-upload mr-2"></i> Upload Video/Script
           </button>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- ==================== PROFILE MODAL ==================== -->
-  <div id="profileModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-    <div class="glass p-8 rounded-2xl w-full max-w-md shadow-2xl">
+    <!-- MAIN AREA -->
+    <div class="flex-1 flex flex-col">
+      <!-- TOP BAR -->
+      <div class="p-4 black-panel border-b border-red-500/20 flex items-center justify-between">
+        <h1 id="mainTitle" class="text-xl font-bold">General Server</h1>
+        <div class="flex items-center gap-4">
+          <button onclick="showSettings()" class="p-2 rounded-lg hover:bg-red-500/20 transition">
+            <i class="fas fa-cog text-red-500"></i>
+          </button>
+        </div>
+      </div>
+      <!-- Dynamic Main Content -->
+      <div id="mainContent" class="flex-1 overflow-y-auto p-4 space-y-4">
+        <!-- Default: Messages -->
+        <div id="messagesArea">
+          <div id="messages" class="space-y-4"></div>
+          <div class="p-4 black-panel border-t border-red-500/20 mt-4">
+            <div class="flex gap-2">
+              <input id="msgInput" onkeypress="handleEnter(event)" placeholder="Type a message..." class="flex-1 input-field"/>
+              <button onclick="sendMessage()" class="p-3 bg-red-500 hover:bg-red-600 rounded-xl transition">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- DM Area -->
+        <div id="dmArea" class="hidden">
+          <div id="dmMessages" class="space-y-4"></div>
+          <div class="p-4 black-panel border-t border-red-500/20 mt-4">
+            <div class="flex gap-2">
+              <input id="dmInput" onkeypress="handleDMEnter(event)" placeholder="DM message..." class="flex-1 input-field"/>
+              <button onclick="sendDM()" class="p-3 bg-red-500 hover:bg-red-600 rounded-xl transition">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Content Feed -->
+        <div id="contentFeed" class="hidden space-y-6">
+          <!-- Content items will render here -->
+        </div>
+      </div>
+    </div>
+    <!-- SETTINGS PANEL -->
+    <div id="settingsPanel" class="fixed right-0 top-0 h-full w-80 black-panel p-4 z-40 hidden transform translate-x-full transition-transform">
       <div class="flex justify-between items-center mb-4">
-        <h2 id="profileNameModal" class="text-2xl font-bold">User</h2>
-        <button onclick="closeProfile()" class="p-2 rounded-lg hover:bg-white/20 transition">
+        <h2 class="text-2xl font-bold text-red-500">Settings</h2>
+        <button onclick="closeSettings()" class="p-2 rounded-lg hover:bg-red-500/20">
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <img id="profileAvatar" src="" class="w-24 h-24 rounded-full mx-auto mb-4"/>
-      <p id="profileBioModal" class="text-center italic mb-6 opacity-80">No bio yet</p>
-      <div class="grid grid-cols-3 gap-4 text-center mb-6">
+      <div class="space-y-4">
         <div>
-          <div class="text-2xl font-bold" id="profileLikes">0</div>
-          <div class="text-xs opacity-70">Likes</div>
+          <label class="block text-sm font-bold mb-2">Red Intensity</label>
+          <input type="range" id="redIntensity" min="0.5" max="1" step="0.1" value="0.8" class="w-full" onchange="updateRedIntensity(this.value)">
         </div>
         <div>
-          <div class="text-2xl font-bold" id="profileContent">0</div>
-          <div class="text-xs opacity-70">Posts</div>
+          <label class="block text-sm font-bold mb-2"><input type="checkbox" id="notifications"> Enable Notifications</label>
         </div>
         <div>
-          <div class="text-2xl font-bold" id="profileMessages">0</div>
-          <div class="text-xs opacity-70">Messages</div>
+          <label class="block text-sm font-bold mb-2"><input type="checkbox" id="privacy"> Private Profile</label>
         </div>
+        <button onclick="exportData()" class="w-full p-3 bg-red-500 hover:bg-red-600 rounded-xl">Export Data</button>
+        <button onclick="logout()" class="w-full p-3 bg-gray-700 hover:bg-gray-600 rounded-xl">Logout</button>
       </div>
-      <button onclick="startDM()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition mb-2">
-        <i class="fas fa-comment mr-2"></i> Start DM
-      </button>
-      <button onclick="closeProfile()" class="w-full bg-white/20 hover:bg-white/30 py-3 rounded-xl transition">
-        Close
-      </button>
     </div>
   </div>
-
-  <!-- ==================== UPLOAD MODAL ==================== -->
-  <div id="uploadModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 hidden">
-    <div class="glass p-8 rounded-2xl w-full max-w-md shadow-2xl">
-      <h2 class="text-2xl font-bold mb-4">Upload Content</h2>
-      <input id="uploadTitle" placeholder="Title" class="w-full p-3 rounded-xl bg-white/20 placeholder-white/70 border border-white/30 focus:outline-none focus:ring-2 focus:ring-red-400 mb-3"/>
-      <input id="uploadFile" type="file" accept="image/*,video/*" class="w-full p-3 rounded-xl bg-white/20 text-sm mb-4"/>
+  <!-- UPLOAD MODAL -->
+  <div id="uploadModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden">
+    <div class="black-panel p-8 rounded-2xl w-full max-w-md shadow-2xl">
+      <h2 class="text-2xl font-bold mb-4 text-red-500">Upload Content</h2>
+      <select id="contentType" class="input-field mb-3">
+        <option value="video">Video (.mp4/.webm)</option>
+        <option value="script">Script (.lua/.js/.txt)</option>
+      </select>
+      <input id="uploadTitle" placeholder="Title" class="input-field mb-3"/>
+      <input id="uploadFile" type="file" class="w-full p-3 rounded-xl bg-gray-800 text-sm mb-4"/>
       <div class="flex gap-2">
-        <button onclick="uploadContent()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition">
-          Upload
-        </button>
-        <button onclick="document.getElementById('uploadModal').classList.add('hidden')" class="flex-1 bg-white/20 hover:bg-white/30 py-3 rounded-xl transition">
-          Cancel
-        </button>
+        <button onclick="uploadContent()" class="flex-1 btn-red">Upload</button>
+        <button onclick="closeUpload()" class="flex-1 btn-gray">Cancel</button>
       </div>
     </div>
   </div>
-
-  <!-- ==================== FULL JS SCRIPT ==================== -->
-  <script>
-    // ==================== STATE ====================
-    let currentServer = 'general';
-    let users = {};
-    let messages = {};
-    let me = null;
-
-    // Safely load from localStorage
-    try {
-      users = JSON.parse(localStorage.getItem('users') || '{}');
-    } catch (e) {
-      console.error('Failed to parse users:', e);
-      localStorage.removeItem('users');
-      users = {};
-    }
-
-    try {
-      messages = JSON.parse(localStorage.getItem('messages') || '{}');
-    } catch (e) {
-      console.error('Failed to parse messages:', e);
-      localStorage.removeItem('messages');
-      messages = {};
-    }
-
-    try {
-      const storedMe = localStorage.getItem('me');
-      me = storedMe && storedMe !== 'null' ? JSON.parse(storedMe) : null;
-    } catch (e) {
-      console.error('Failed to parse me:', e);
-      localStorage.removeItem('me');
-      me = null;
-    }
-
-    // ==================== AUTH MODALS ====================
-    function showRegister() {
-      document.getElementById('loginModal').classList.add('hidden');
-      document.getElementById('registerModal').classList.remove('hidden');
-    }
-
-    function showLogin() {
-      document.getElementById('registerModal').classList.add('hidden');
-      document.getElementById('loginModal').classList.remove('hidden');
-    }
-
-    function register() {
-      const email = document.getElementById('regEmail').value.trim();
-      const pass = document.getElementById('regPass').value;
-      if (!email || !pass) return alert('Fill all fields');
-      if (users[email]) return alert('Email already exists');
-
-      const name = email.split('@')[0];
-      users[email] = {
-        email,
-        pass,
-        name,
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ff0000&color=fff&size=128`,
-        bio: 'Hey, I am new here!',
-        likes: 0,
-        content: 0,
-        messages: 0
-      };
-
-      localStorage.setItem('users', JSON.stringify(users));
-      alert('Registered! Now login.');
-      showLogin();
-    }
-
-    function login() {
-      const email = document.getElementById('loginEmail').value.trim();
-      const pass = document.getElementById('loginPass').value;
-      const user = users[email];
-
-      if (user && user.pass === pass) {
-        me = user;
-        localStorage.setItem('me', JSON.stringify(me));
-        document.getElementById('loginModal').classList.add('hidden');
-        document.getElementById('app').classList.remove('hidden');
-        initApp();
-      } else {
-        alert('Wrong email or password');
-      }
-    }
-
-    // ==================== APP INIT ====================
-    function initApp() {
-      if (!me) return;
-
-      document.getElementById('navAvatar').src = me.avatar || '';
-      document.getElementById('navName').innerText = me.name;
-
-      const activeServerEl = document.querySelector('.server.active');
-      const serverName = activeServerEl?.dataset.server || 'general';
-      switchServer(serverName);
-
-      renderMessages();
-      renderOnline();
-    }
-
-    if (me) {
-      document.getElementById('loginModal').classList.add('hidden');
-      document.getElementById('app').classList.remove('hidden');
-      initApp();
-    }
-
-    // ==================== SERVER SWITCH ====================
-    function switchServer(serverName) {
-      if (typeof serverName !== 'string' || !serverName) {
-        console.warn('Invalid server name, falling back to "general"');
-        serverName = 'general';
-      }
-
-      currentServer = serverName;
-      const header = document.getElementById('serverName');
-      if (header) {
-        header.innerText = serverName.charAt(0).toUpperCase() + serverName.slice(1);
-      }
-
-      document.querySelectorAll('.server').forEach(s => s.classList.remove('active'));
-      const target = document.querySelector(`.server[data-server="${serverName}"]`);
-      if (target) {
-        target.classList.add('active');
-      }
-
-      renderMessages();
-    }
-
-    // ==================== MESSAGES ====================
-    function sendMessage() {
-      const input = document.getElementById('msgInput');
-      const msg = input.value.trim();
-      if (!msg || !me) return;
-
-      if (!messages[currentServer]) messages[currentServer] = [];
-
-      messages[currentServer].push({
-        user: me.name,
-        email: me.email,
-        msg: msg,
-        avatar: me.avatar,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      });
-
-      localStorage.setItem('messages', JSON.stringify(messages));
-      input.value = '';
-      renderMessages();
-
-      me.messages = (me.messages || 0) + 1;
-      saveMe();
-    }
-
-    function handleEnter(e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    }
-
-    function renderMessages() {
-      const container = document.getElementById('messages');
-      if (!container) return;
-
-      const msgs = messages[currentServer] || [];
-      container.innerHTML = msgs.map(m => `
-        <div class="msg flex gap-3">
-          <img src="${m.avatar}" alt="${escapeHtml(m.user)}" class="w-10 h-10 rounded-full flex-shrink-0"/>
-          <div class="msg-bubble flex-1">
-            <div class="flex items-center gap-2 text-sm">
-              <strong class="cursor-pointer hover:text-red-400" onclick="viewProfile('${m.email}')">${escapeHtml(m.user)}</strong>
-              <span class="opacity-50">${m.time}</span>
-            </div>
-            <p class="break-words mt-1">${escapeHtml(m.msg)}</p>
-          </div>
-        </div>
-      `).join('');
-
-      container.scrollTop = container.scrollHeight;
-    }
-
-    // ==================== ONLINE USERS ====================
-    function searchPlayers() {
-      const query = (document.getElementById('searchPlayers').value || '').toLowerCase();
-      renderOnline(query);
-    }
-
-    function renderOnline(filter = '') {
-      const list = document.getElementById('userList');
-      if (!list) return;
-
-      list.innerHTML = '';
-      const filtered = Object.values(users).filter(u =>
-        u.name.toLowerCase().includes(filter) ||
-        u.email.toLowerCase().includes(filter)
-      );
-
-      filtered.forEach(u => {
-        const div = document.createElement('div');
-        div.className = 'glass p-3 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-white/10 transition';
-        div.onclick = () => viewProfile(u.email);
-        div.innerHTML = `
-          <img src="${u.avatar}" class="w-10 h-10 rounded-full" alt="${escapeHtml(u.name)}" />
-          <span class="font-semibold">${escapeHtml(u.name)}</span>
-          <span class="online ml-auto"></span>
-        `;
-        list.appendChild(div);
-      });
-    }
-
-    // ==================== PROFILE MODAL ====================
-    function viewProfile(email) {
-      const u = users[email];
-      if (!u) return;
-
-      document.getElementById('profileNameModal').innerText = u.name;
-      document.getElementById('profileBioModal').innerText = u.bio || 'No bio yet';
-      document.getElementById('profileAvatar').src = u.avatar;
-      document.getElementById('profileLikes').innerText = u.likes || 0;
-      document.getElementById('profileContent').innerText = u.content || 0;
-      document.getElementById('profileMessages').innerText = u.messages || 0;
-      document.getElementById('profileModal').classList.remove('hidden');
-    }
-
-    function closeProfile() {
-      document.getElementById('profileModal').classList.add('hidden');
-    }
-
-    function showProfile() {
-      if (me) viewProfile(me.email);
-    }
-
-    function startDM() {
-      const name = document.getElementById('profileNameModal').innerText;
-      alert(`DM with ${name} started!`);
-      closeProfile();
-    }
-
-    // ==================== UPLOAD ====================
-    function showUpload() {
-      document.getElementById('uploadModal').classList.remove('hidden');
-    }
-
-    function uploadContent() {
-      const title = document.getElementById('uploadTitle').value.trim();
-      const file = document.getElementById('uploadFile').files[0];
-      if (!title || !file) return alert('Title and file required');
-
-      me.content = (me.content || 0) + 1;
-      saveMe();
-      alert(`"${title}" uploaded!`);
-
-      document.getElementById('uploadModal').classList.add('hidden');
-      document.getElementById('uploadTitle').value = '';
-      document.getElementById('uploadFile').value = '';
-    }
-
-    // ==================== THEME ====================
-    function toggleDark() {
-      document.body.classList.toggle('dark');
-      document.documentElement.classList.toggle('dark');
-    }
-
-    // ==================== UTILS ====================
-    function saveMe() {
-      if (!me) return;
-      localStorage.setItem('me', JSON.stringify(me));
-      users[me.email] = me;
-      localStorage.setItem('users', JSON.stringify(users));
-    }
-
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    // Global error handler
-    window.addEventListener('error', (e) => {
-      console.error('JS Error:', e.error);
-    });
-  </script>
+  <!-- PROFILE MODAL -->
+  <div id="profileModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden">
+    <div class="black-panel p-8 rounded-2xl w-full max-w-md shadow-2xl">
+      <div class="flex justify-between items-center mb-4">
+        <h2 id="profileNameModal" class="text-2xl font-bold text-red-500">User</h2>
+        <button onclick="closeProfile()" class="p-2 rounded-lg hover:bg-red-500/20">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <img id="profileAvatar" src="" class="w-24 h-24 rounded-full mx-auto mb-4 border-2 border-red-500"/>
+      <p id="profileBioModal" class="text-center italic mb-6 opacity-70">No bio yet</p>
+      <div class="grid grid-cols-3 gap-4 text-center mb-6">
+        <div><div class="text-2xl font-bold text-red-500" id="profileLikes">0</div><div class="text-xs opacity-70">Likes</div></div>
+        <div><div class="text-2xl font-bold text-red-500" id="profileContent">0</div><div class="text-xs opacity-70">Posts</div></div>
+        <div><div class="text-2xl font-bold text-red-500" id="profileMessages">0</div><div class="text-xs opacity-70">Messages</div></div>
+      </div>
+      <button onclick="startDM()" class="w-full btn-red mb-2">
+        <i class="fas fa-envelope mr-2"></i> Start DM
+      </button>
+      <button onclick="closeProfile()" class="w-full btn-gray">Close</button>
+    </div>
+  </div>
+  <!-- JavaScript -->
+  <script src="js/app.js"></script>
 </body>
 </html>
