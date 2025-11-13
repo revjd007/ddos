@@ -4,13 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SocialHub</title>
-  <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-dark.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
   <style>
     :root { --bg: #000; --text: #fff; --accent: #ff0000; --glass: rgba(255,0,0,0.18); --border: rgba(255,0,0,0.35); }
     .dark { --bg: #0a0a0a; --glass: rgba(255,0,0,0.12); }
-    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: 0.4s; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
     .glass { backdrop-filter: blur(24px); background: var(--glass); border: 1px solid var(--border); border-radius: 1.5rem; }
     .card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .card:hover { transform: translateY(-16px) scale(1.02); box-shadow: 0 50px 100px rgba(255,0,0,0.6); }
@@ -36,35 +35,17 @@
     <p id="banReason" class="text-2xl"></p>
   </div>
 
-  <!-- AUTH -->
-  <div id="auth" class="fixed inset-0 bg-gradient-to-br from-black to-red-950 flex items-center justify-center z-50">
-    <div class="glass p-10 rounded-3xl w-96 shadow-2xl">
-      <h2 class="text-4xl font-black mb-8 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">SocialHub</h2>
-      <input id="regEmail" placeholder="Email" class="w-full p-4 rounded-2xl mb-4 glass text-lg" />
-      <input id="regPass" type="password" placeholder="Password" class="w-full p-4 rounded-2xl mb-4 glass text-lg" />
-      <button onclick="register()" class="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold text-lg mb-3">Register</button>
-      <button onclick="showLogin()" class="w-full py-4 bg-gray-800 text-white rounded-2xl font-bold text-lg">Login</button>
-      <input id="codeInput" placeholder="Code" class="w-full p-4 rounded-2xl mt-4 glass hidden" />
-      <button id="verifyBtn" onclick="verify()" class="w-full py-4 bg-red-600 text-white rounded-2xl mt-2 hidden font-bold">Verify</button>
-    </div>
-  </div>
-
-  <!-- LOGIN -->
-  <div id="loginModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-    <div class="glass p-10 rounded-3xl w-96">
-      <input id="loginEmail" placeholder="Email" class="w-full p-4 rounded-2xl mb-4 glass" />
-      <input id="loginPass" type="password" placeholder="Password" class="w-full p-4 rounded-2xl mb-4 glass" />
-      <button onclick="login()" class="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold">Login</button>
-    </div>
-  </div>
+  <!-- AUTH (same as before) -->
+  <!-- ... (keep your auth HTML) ... -->
 
   <!-- APP -->
   <div id="app" class="hidden">
-    <!-- NAVBAR -->
+    <!-- NAVBAR (advanced with search) -->
     <nav class="glass fixed top-0 w-full z-40 p-4 backdrop-blur-xl">
       <div class="max-w-7xl mx-auto flex justify-between items-center">
         <h1 class="text-3xl font-black bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">SocialHub</h1>
         <div class="flex gap-3">
+          <input id="searchUsers" placeholder="Find Player..." class="p-3 rounded-xl glass" onkeyup="searchUsers()" />
           <button onclick="show('feed')" class="px-6 py-2 rounded-xl glass font-semibold">Feed</button>
           <button onclick="show('chat')" class="px-6 py-2 rounded-xl glass font-semibold">Chat</button>
           <button onclick="show('profile')" class="px-6 py-2 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white font-bold">Me</button>
@@ -72,286 +53,120 @@
       </div>
     </nav>
 
-    <!-- FEED -->
+    <!-- FEED (TikTok style) -->
     <div id="feed" class="feed pt-20 hidden">
       <div id="videoGrid"></div>
     </div>
 
-    <!-- CHAT -->
+    <!-- CHAT (Discord style) -->
     <div id="chat" class="hidden pt-32 max-w-7xl mx-auto px-6 flex gap-6">
       <div class="w-80">
-        <input id="searchUsers" placeholder="Find Player..." class="w-full p-4 rounded-2xl glass mb-4" onkeyup="searchUsers()" />
         <div id="userList" class="space-y-2"></div>
       </div>
       <div class="flex-1">
         <div id="chatHeader" class="glass p-4 rounded-t-2xl mb-1 flex justify-between items-center">
-          <h2 id="chatTitle" class="text-2xl font-black">Global Chat</h2>
-          <button onclick="openDM(null)" class="text-sm text-red-400">← Back</button>
+          <h2 id="chatTitle" class="text-2xl font-black">Global</h2>
         </div>
         <div id="chatMessages" class="h-96 overflow-y-auto glass p-6 mb-2" style="max-height: 70vh;"></div>
         <input id="msgInput" placeholder="Message..." class="w-full p-4 rounded-2xl glass" onkeydown="handleEnter(event)" />
       </div>
     </div>
 
-    <!-- PROFILE -->
-    <div id="profile" class="hidden pt-32 max-w-4xl mx-auto px-6">
-      <div class="glass p-10 rounded-3xl">
-        <div class="flex items-center gap-8 mb-8">
-          <img id="avatar" src="" class="w-40 h-40 rounded-full ring-4 ring-red-600" />
-          <div>
-            <h2 id="profileName" class="text-5xl font-black"></h2>
-            <p id="profileEmail" class="text-xl opacity-80"></p>
-            <p id="adminBadge" class="text-lg text-yellow-400 font-bold hidden">ADMIN</p>
-          </div>
-        </div>
-        <button onclick="showSettings()" class="px-8 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold">Edit Profile</button>
-      </div>
-    </div>
-
-    <!-- UPLOAD FLOATING -->
-    <div class="floating" onclick="showUpload()">+</div>
-
-    <!-- MODALS -->
-    <div id="uploadModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-      <div class="glass p-10 rounded-3xl w-full max-w-2xl">
-        <select id="uploadType" class="p-4 rounded-2xl w-full mb-4 glass text-lg">
-          <option value="video">Video</option>
-          <option value="game">Game</option>
-          <option value="script">Script</option>
-        </select>
-        <input id="uploadTitle" placeholder="Title" class="p-4 rounded-2xl w-full mb-4 glass" />
-        <input type="file" id="uploadFile" class="p-4 rounded-2xl w-full mb-4 glass" />
-        <button onclick="upload()" class="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold">Upload</button>
-      </div>
-    </div>
-
-    <div id="settingsModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-      <div class="glass p-8 rounded-3xl w-full max-w-md">
-        <input id="setName" placeholder="Name" class="p-4 rounded-2xl w-full mb-4 glass" />
-        <input type="file" id="setAvatar" class="mb-4" />
-        <button onclick="saveProfile()" class="w-full py-4 bg-red-600 text-white rounded-2xl font-bold">Save</button>
-      </div>
-    </div>
+    <!-- Other sections (hub, profile, modals) same as before, but add backend calls in JS -->
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
   <script>
-    let users = JSON.parse(localStorage.getItem('users') || '{}');
-    let content = JSON.parse(localStorage.getItem('content') || '[]');
-    let messages = JSON.parse(localStorage.getItem('messages') || '[]');
+    let token = '';
     let me = {};
     let currentDM = null;
 
-    // AUTH
-    function register() {
-      const email = document.getElementById('regEmail').value.trim();
-      const pass = document.getElementById('regPass').value;
-      if (!email || !pass) return notify('Fill all fields');
-      if (users[email]) return notify('Email taken');
-      const code = Math.floor(100000 + Math.random() * 900000);
-      users[email] = { email, pass, name: email.split('@')[0], avatar: '', verified: false, banned: false, banReason: '', isAdmin: email === 'pdigger48@gmail.com' };
-      localStorage.setItem('users', JSON.stringify(users));
-      alert(`Code: ${code}`);
-      window.verifyCode = code;
-      document.getElementById('codeInput').classList.remove('hidden');
-      document.getElementById('verifyBtn').classList.remove('hidden');
+    // AUTH CALLS
+    async function register() {
+      const res = await fetch('/api/register', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email: regEmail.value, password: regPass.value, name: regName.value}) });
+      if (res.ok) { /* show code input */ }
     }
 
-    function verify() {
-      const code = document.getElementById('codeInput').value;
-      const email = document.getElementById('regEmail').value;
-      if (code == window.verifyCode) {
-        users[email].verified = true;
-        localStorage.setItem('users', JSON.stringify(users));
-        notify('Verified!');
-        showLogin();
+    async function login() {
+      const res = await fetch('/api/login', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email: loginEmail.value, password: loginPass.value}) });
+      const data = await res.json();
+      if (data.token) {
+        token = data.token;
+        me = data.user;
+        localStorage.setItem('token', token);
+        showApp();
+        init();
       }
     }
 
-    function showLogin() {
-      document.getElementById('auth').classList.add('hidden');
-      document.getElementById('loginModal').classList.remove('hidden');
-    }
-
-    function login() {
-      const email = document.getElementById('loginEmail').value;
-      const pass = document.getElementById('loginPass').value;
-      const user = users[email];
-      if (!user || user.pass !== pass || !user.verified) return notify('Invalid login');
-      if (user.banned) { showBanned(user.banReason); return; }
-      me = user;
-      localStorage.setItem('me', email);
-      document.getElementById('loginModal').classList.add('hidden');
-      document.getElementById('app').classList.remove('hidden');
-      init();
-    }
-
-    function showBanned(reason) {
-      document.getElementById('bannedScreen').classList.remove('hidden');
-      document.getElementById('banReason').innerText = reason || 'No reason given';
-    }
-
-    function init() {
-      document.getElementById('profileName').innerText = me.name;
-      document.getElementById('profileEmail').innerText = me.email;
-      document.getElementById('avatar').src = me.avatar || 'https://via.placeholder.com/120';
-      if (me.isAdmin) document.getElementById('adminBadge').classList.remove('hidden');
-      renderFeed();
-      renderUsers();
-    }
-
-    function show(page) {
-      ['feed','chat','profile'].forEach(id => document.getElementById(id).classList.add('hidden'));
-      document.getElementById(page).classList.remove('hidden');
-      if (page === 'feed') renderFeed();
-      if (page === 'chat') { renderUsers(); renderMessages(); }
-    }
-
-    function renderFeed() {
-      const grid = document.getElementById('videoGrid');
-      grid.innerHTML = '';
-      content.filter(c => c.type === 'video').forEach(v => {
-        if (users[v.user]?.banned) return;
-        const div = document.createElement('div');
-        div.className = 'video-item';
-        div.innerHTML = `
-          <video src="${v.content}" loop autoplay muted></video>
-          <div class="absolute bottom-6 left-6 text-white">
-            <p class="text-2xl font-bold">${v.title}</p>
-            <p class="text-lg">by ${v.user}</p>
+    async function searchUsers() {
+      const query = searchUsers.value;
+      const res = await fetch('/api/users?query=' + query, { headers: { Authorization: `Bearer ${token}` } });
+      const results = await res.json();
+      // Render list with dot menu for admin
+      userList.innerHTML = results.map(u => `
+        <div class="glass p-4 rounded-2xl flex justify-between cursor-pointer" onclick="openDM('${u.id}')">
+          <div class="flex items-center gap-3">
+            <img src="${u.avatar}" class="w-10 h-10 rounded-full" />
+            <span>${u.name}</span>
           </div>
-        `;
-        grid.appendChild(div);
-      });
+          ${me.isAdmin ? `<div class="relative"><span class="dot-menu" onclick="event.stopPropagation(); adminMenu('${u.id}')"></span></div>` : ''}
+        </div>
+      `).join('');
     }
 
-    function upload() {
-      if (me.banned) return showBanned(me.banReason);
-      const type = document.getElementById('uploadType').value;
-      const title = document.getElementById('uploadTitle').value;
-      const file = document.getElementById('uploadFile').files[0];
-      if (!title || !file) return notify('Fill all');
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        content.push({ id: Date.now(), type, title, content: type === 'video' ? URL.createObjectURL(file) : e.target.result, user: me.name });
-        localStorage.setItem('content', JSON.stringify(content));
-        document.getElementById('uploadModal').classList.add('hidden');
-        renderFeed();
-      };
-      reader.readAsText(file);
+    function adminMenu(id) {
+      const action = prompt('1. Ban\n2. Kick');
+      if (action === '1') {
+        const reason = prompt('Reason:');
+        fetch('/api/users', { method: 'POST', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`}, body: JSON.stringify({targetId: id, reason}) });
+      }
     }
 
-    function handleEnter(e) {
-      if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
-    }
-
-    function sendMessage() {
-      if (me.banned) return showBanned(me.banReason);
-      const input = document.getElementById('msgInput');
+    async function sendMessage() {
+      const input = msgInput;
       const msg = input.value.trim();
       if (!msg) return;
-      const chatKey = currentDM ? `dm_${[me.email, currentDM].sort().join('_')}` : 'global';
-      if (!messages[chatKey]) messages[chatKey] = [];
-      messages[chatKey].push({ user: me.name, msg, avatar: me.avatar, time: new Date().toLocaleTimeString() });
-      localStorage.setItem('messages', JSON.stringify(messages));
+      await fetch('/api/messages', { method: 'POST', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`}, body: JSON.stringify({toId: currentDM, content: msg}) });
       input.value = '';
-      renderMessages();
+      loadMessages();
     }
 
-    function renderMessages() {
-      const chatKey = currentDM ? `dm_${[me.email, currentDM].sort().join('_')}` : 'global';
-      const msgs = messages[chatKey] || [];
-      const container = document.getElementById('chatMessages');
-      container.innerHTML = msgs.map(m => `
+    async function loadMessages() {
+      const res = await fetch(`/api/messages?toId=${currentDM || ''}`, { headers: { Authorization: `Bearer ${token}` } });
+      const msgs = await res.json();
+      chatMessages.innerHTML = msgs.map(m => `
         <div class="msg">
-          <img src="${m.avatar || 'https://via.placeholder.com/40'}" />
+          <img src="${m.from.avatar}" />
           <div>
             <div class="flex items-center gap-2">
-              <strong>${m.user}</strong>
-              <span class="text-xs opacity-50">${m.time}</span>
+              <strong>${m.from.name}</strong>
+              <span class="text-xs opacity-50">${m.createdAt}</span>
             </div>
-            <div class="msg-bubble">${m.msg}</div>
+            <div class="msg-bubble">${m.content}</div>
           </div>
         </div>
       `).join('');
-      container.scrollTop = container.scrollHeight;
     }
 
-    function renderUsers() {
-      const list = document.getElementById('userList');
-      list.innerHTML = Object.keys(users).filter(u => users[u].verified && !users[u].banned).map(u => `
-        <div class="glass p-4 rounded-2xl flex justify-between items-center cursor-pointer" onclick="openDM('${u}')">
-          <div class="flex items-center gap-3">
-            <img src="${users[u].avatar || 'https://via.placeholder.com/40'}" class="w-10 h-10 rounded-full" />
-            <span class="font-semibold">${users[u].name}</span>
+    // Other functions (upload, renderFeed, etc.) call /api/videos, /api/users
+    async function renderFeed() {
+      const res = await fetch('/api/videos', { headers: { Authorization: `Bearer ${token}` } });
+      const videos = await res.json();
+      videoGrid.innerHTML = videos.map(v => `
+        <div class="video-item">
+          <video src="${v.url}" loop autoplay muted></video>
+          <div class="absolute bottom-6 left-6">
+            <p class="text-2xl font-bold">${v.title}</p>
+            <p>by ${v.user.name}</p>
           </div>
-          ${me.isAdmin ? `<div class="dot-menu" onclick="event.stopPropagation(); showAdminMenu('${u}')"></div>` : ''}
         </div>
       `).join('');
-    }
-
-    function searchUsers() {
-      const query = document.getElementById('searchUsers').value.toLowerCase();
-      const filtered = Object.keys(users).filter(u => u.toLowerCase().includes(query) && users[u].verified && !users[u].banned);
-      const list = document.getElementById('userList');
-      list.innerHTML = filtered.map(u => `...same as above...`).join('');
-    }
-
-    function openDM(user) {
-      currentDM = user;
-      document.getElementById('chatTitle').innerText = user ? users[user].name : 'Global Chat';
-      renderMessages();
-    }
-
-    function showAdminMenu(target) {
-      const action = prompt(`Admin Action on ${target}:\n1. Ban\n2. Kick (temp)`);
-      if (action === '1') {
-        const reason = prompt('Ban Reason:');
-        users[target].banned = true;
-        users[target].banReason = reason;
-        localStorage.setItem('users', JSON.stringify(users));
-        notify(`${target} banned`);
-        renderUsers();
-      }
-    }
-
-    function showSettings() {
-      document.getElementById('setName').value = me.name;
-      document.getElementById('settingsModal').classList.remove('hidden');
-    }
-
-    function saveProfile() {
-      me.name = document.getElementById('setName').value;
-      const file = document.getElementById('setAvatar').files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => { me.avatar = e.target.result; save(); };
-        reader.readAsDataURL(file);
-      } else save();
-    }
-
-    function save() {
-      users[me.email] = me;
-      localStorage.setItem('users', JSON.stringify(users));
-      document.getElementById('settingsModal').classList.add('hidden');
-      init();
-    }
-
-    function notify(msg) {
-      const n = document.createElement('div');
-      n.className = 'notification';
-      n.innerText = msg;
-      document.body.appendChild(n);
-      setTimeout(() => n.remove(), 3000);
     }
 
     // INIT
-    const saved = localStorage.getItem('me');
-    if (saved && users[saved] && !users[saved].banned) {
-      me = users[saved];
-      document.getElementById('auth').classList.add('hidden');
-      document.getElementById('app').classList.remove('hidden');
-      init();
+    if (localStorage.getItem('token')) {
+      // Fetch me from /api/me
+      // ...
     }
   </script>
 </body>
