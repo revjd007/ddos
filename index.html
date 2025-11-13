@@ -454,8 +454,12 @@ function loadMessages() {
 
 // === TYPING ===
 function handleKeyDown(e) {
-  if (e.key === 'Enter') sendMessage();
+  if (e.key === 'Enter') {
+    e.preventDefault(); // stops the input from resetting or refreshing
+    sendMessage();
+  }
 }
+
 function handleTyping(e) {
   if (!currentUser || !activeChat) return;
   const typing = e.target.value.trim().length > 0;
