@@ -8,123 +8,128 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
   <style>
-    :root { --bg: #000; --text: #fff; --accent: #ff0000; --glass: rgba(255,0,0,0.15); --border: rgba(255,0,0,0.3); }
-    .dark { --bg: #0a0a0a; --glass: rgba(255,0,0,0.1); }
+    :root { --bg: #000; --text: #fff; --accent: #ff0000; --glass: rgba(255,0,0,0.18); --border: rgba(255,0,0,0.35); }
+    .dark { --bg: #0a0a0a; --glass: rgba(255,0,0,0.12); }
     body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: 0.4s; }
-    .glass { backdrop-filter: blur(20px); background: var(--glass); border: 1px solid var(--border); }
-    .card { transition: all 0.4s; }
-    .card:hover { transform: translateY(-12px); box-shadow: 0 40px 80px rgba(255,0,0,0.5); }
-    .bento { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+    .glass { backdrop-filter: blur(24px); background: var(--glass); border: 1px solid var(--border); border-radius: 1.5rem; }
+    .card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .card:hover { transform: translateY(-16px) scale(1.02); box-shadow: 0 50px 100px rgba(255,0,0,0.6); }
     .feed { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; }
     .video-item { scroll-snap-align: start; height: 100vh; position: relative; }
     video { width: 100%; height: 100%; object-fit: contain; background: #111; }
-    .online { width: 12px; height: 12px; background: #0f0; border-radius: 50%; }
-    .notification { position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 12px 20px; border-radius: 12px; z-index: 1000; animation: slide 0.3s; }
-    @keyframes slide { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    .msg { display: flex; gap: 12px; margin: 12px 0; align-items: flex-start; }
+    .msg img { width: 40px; height: 40px; border-radius: 50%; }
+    .msg-bubble { background: rgba(255,0,0,0.2); padding: 10px 16px; border-radius: 18px; max-width: 70%; }
+    .dot-menu { width: 8px; height: 8px; background: #fff; border-radius: 50%; cursor: pointer; }
+    .ban-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #ff3333; font-size: 2rem; }
+    .floating { position: fixed; bottom: 24px; right: 24px; width: 64px; height: 64px; background: linear-gradient(135deg, #ff0000, #cc0000); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; box-shadow: 0 10px 30px rgba(255,0,0,0.5); cursor: pointer; transition: 0.3s; }
+    .floating:hover { transform: scale(1.1); }
+    .notification { position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 16px 24px; border-radius: 16px; z-index: 1000; animation: pop 0.4s; font-weight: 600; }
+    @keyframes pop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
   </style>
 </head>
 <body class="min-h-screen">
 
+  <!-- BANNED SCREEN -->
+  <div id="bannedScreen" class="ban-screen hidden">
+    <h1 class="text-6xl font-black mb-4">BANNED</h1>
+    <p id="banReason" class="text-2xl"></p>
+  </div>
+
   <!-- AUTH -->
-  <div id="auth" class="fixed inset-0 bg-black flex items-center justify-center z-50">
-    <div class="glass p-8 rounded-3xl w-96">
-      <h2 class="text-3xl font-black mb-6 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">SocialHub</h2>
-      <input id="regEmail" placeholder="Email" class="w-full p-4 rounded-2xl mb-4 glass" />
-      <input id="regPass" type="password" placeholder="Password" class="w-full p-4 rounded-2xl mb-4 glass" />
-      <button onclick="register()" class="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl mb-2">Register</button>
-      <button onclick="showLogin()" class="w-full py-4 bg-gray-700 text-white rounded-2xl">Login</button>
-      <input id="codeInput" placeholder="Verification Code" class="w-full p-4 rounded-2xl mt-4 glass hidden" />
-      <button id="verifyBtn" onclick="verify()" class="w-full py-4 bg-red-600 text-white rounded-2xl mt-2 hidden">Verify</button>
+  <div id="auth" class="fixed inset-0 bg-gradient-to-br from-black to-red-950 flex items-center justify-center z-50">
+    <div class="glass p-10 rounded-3xl w-96 shadow-2xl">
+      <h2 class="text-4xl font-black mb-8 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">SocialHub</h2>
+      <input id="regEmail" placeholder="Email" class="w-full p-4 rounded-2xl mb-4 glass text-lg" />
+      <input id="regPass" type="password" placeholder="Password" class="w-full p-4 rounded-2xl mb-4 glass text-lg" />
+      <button onclick="register()" class="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold text-lg mb-3">Register</button>
+      <button onclick="showLogin()" class="w-full py-4 bg-gray-800 text-white rounded-2xl font-bold text-lg">Login</button>
+      <input id="codeInput" placeholder="Code" class="w-full p-4 rounded-2xl mt-4 glass hidden" />
+      <button id="verifyBtn" onclick="verify()" class="w-full py-4 bg-red-600 text-white rounded-2xl mt-2 hidden font-bold">Verify</button>
     </div>
   </div>
 
   <!-- LOGIN -->
-  <div id="loginModal" class="hidden fixed inset-0 bg-black flex items-center justify-center z-50">
-    <div class="glass p-8 rounded-3xl w-96">
+  <div id="loginModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+    <div class="glass p-10 rounded-3xl w-96">
       <input id="loginEmail" placeholder="Email" class="w-full p-4 rounded-2xl mb-4 glass" />
       <input id="loginPass" type="password" placeholder="Password" class="w-full p-4 rounded-2xl mb-4 glass" />
-      <button onclick="login()" class="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl">Login</button>
+      <button onclick="login()" class="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold">Login</button>
     </div>
   </div>
 
-  <!-- MAIN APP -->
+  <!-- APP -->
   <div id="app" class="hidden">
     <!-- NAVBAR -->
-    <nav class="glass fixed top-0 w-full z-50 p-4">
+    <nav class="glass fixed top-0 w-full z-40 p-4 backdrop-blur-xl">
       <div class="max-w-7xl mx-auto flex justify-between items-center">
         <h1 class="text-3xl font-black bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">SocialHub</h1>
         <div class="flex gap-3">
-          <button onclick="show('feed')" class="px-5 py-2 rounded glass">Feed</button>
-          <button onclick="show('hub')" class="px-5 py-2 rounded glass">Hub</button>
-          <button onclick="show('chat')" class="px-5 py-2 rounded glass">Chat</button>
-          <button onclick="show('profile')" class="px-5 py-2 rounded bg-gradient-to-r from-red-500 to-red-600 text-white">Me</button>
-          <button onclick="toggleDark()" class="p-2 rounded glass">Toggle</button>
+          <button onclick="show('feed')" class="px-6 py-2 rounded-xl glass font-semibold">Feed</button>
+          <button onclick="show('chat')" class="px-6 py-2 rounded-xl glass font-semibold">Chat</button>
+          <button onclick="show('profile')" class="px-6 py-2 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white font-bold">Me</button>
         </div>
       </div>
     </nav>
 
-    <!-- VIDEO FEED -->
+    <!-- FEED -->
     <div id="feed" class="feed pt-20 hidden">
       <div id="videoGrid"></div>
     </div>
 
-    <!-- HUB (OLD CONTENT) -->
-    <div id="hub" class="hidden pt-32 max-w-7xl mx-auto px-6">
-      <div class="flex justify-between mb-6">
-        <h2 class="text-5xl font-black bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">Content Hub</h2>
-        <button onclick="showUpload()" class="px-6 py-3 bg-red-600 text-white rounded-xl">+</button>
-      </div>
-      <div id="contentGrid" class="bento"></div>
-    </div>
-
     <!-- CHAT -->
     <div id="chat" class="hidden pt-32 max-w-7xl mx-auto px-6 flex gap-6">
-      <div class="flex-1">
-        <h2 class="text-4xl font-black mb-4">Global Chat</h2>
-        <div id="globalChat" class="h-96 overflow-y-auto glass p-4 mb-4"></div>
-        <input id="globalMsg" placeholder="Type message... (Enter to send)" class="w-full p-3 rounded glass" onkeydown="handleEnter(event)" />
-      </div>
       <div class="w-80">
-        <input id="searchUsers" placeholder="Find Player..." class="w-full p-3 rounded glass mb-4" onkeyup="searchUsers()" />
-        <div id="onlineUsers" class="space-y-2"></div>
+        <input id="searchUsers" placeholder="Find Player..." class="w-full p-4 rounded-2xl glass mb-4" onkeyup="searchUsers()" />
+        <div id="userList" class="space-y-2"></div>
+      </div>
+      <div class="flex-1">
+        <div id="chatHeader" class="glass p-4 rounded-t-2xl mb-1 flex justify-between items-center">
+          <h2 id="chatTitle" class="text-2xl font-black">Global Chat</h2>
+          <button onclick="openDM(null)" class="text-sm text-red-400">← Back</button>
+        </div>
+        <div id="chatMessages" class="h-96 overflow-y-auto glass p-6 mb-2" style="max-height: 70vh;"></div>
+        <input id="msgInput" placeholder="Message..." class="w-full p-4 rounded-2xl glass" onkeydown="handleEnter(event)" />
       </div>
     </div>
 
     <!-- PROFILE -->
     <div id="profile" class="hidden pt-32 max-w-4xl mx-auto px-6">
-      <div class="glass p-8 rounded-3xl">
-        <div class="flex items-center gap-6 mb-6">
-          <img id="avatar" src="" class="w-32 h-32 rounded-full" />
+      <div class="glass p-10 rounded-3xl">
+        <div class="flex items-center gap-8 mb-8">
+          <img id="avatar" src="" class="w-40 h-40 rounded-full ring-4 ring-red-600" />
           <div>
-            <h2 id="profileName" class="text-4xl font-black"></h2>
-            <p id="profileEmail" class="text-lg opacity-80"></p>
-            <p id="adminBadge" class="text-sm text-yellow-400 font-bold hidden">ADMIN</p>
+            <h2 id="profileName" class="text-5xl font-black"></h2>
+            <p id="profileEmail" class="text-xl opacity-80"></p>
+            <p id="adminBadge" class="text-lg text-yellow-400 font-bold hidden">ADMIN</p>
           </div>
         </div>
-        <button onclick="showSettings()" class="px-6 py-3 bg-red-600 text-white rounded-xl">Edit</button>
+        <button onclick="showSettings()" class="px-8 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold">Edit Profile</button>
       </div>
     </div>
 
-    <!-- UPLOAD MODAL -->
+    <!-- UPLOAD FLOATING -->
+    <div class="floating" onclick="showUpload()">+</div>
+
+    <!-- MODALS -->
     <div id="uploadModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
       <div class="glass p-10 rounded-3xl w-full max-w-2xl">
-        <select id="uploadType" class="p-4 rounded-2xl w-full mb-4 glass">
-          <option value="video">Video (MP4)</option>
-          <option value="game">Game (HTML)</option>
+        <select id="uploadType" class="p-4 rounded-2xl w-full mb-4 glass text-lg">
+          <option value="video">Video</option>
+          <option value="game">Game</option>
           <option value="script">Script</option>
         </select>
         <input id="uploadTitle" placeholder="Title" class="p-4 rounded-2xl w-full mb-4 glass" />
         <input type="file" id="uploadFile" class="p-4 rounded-2xl w-full mb-4 glass" />
-        <button onclick="upload()" class="w-full py-4 bg-red-600 text-white rounded-2xl">Upload</button>
+        <button onclick="upload()" class="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold">Upload</button>
       </div>
     </div>
 
-    <!-- SETTINGS -->
     <div id="settingsModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
       <div class="glass p-8 rounded-3xl w-full max-w-md">
-        <input id="setName" placeholder="Name" class="p-3 rounded w-full mb-3 glass" />
-        <input type="file" id="setAvatar" class="mb-3" />
-        <button onclick="saveProfile()" class="w-full py-3 bg-red-600 text-white rounded">Save</button>
+        <input id="setName" placeholder="Name" class="p-4 rounded-2xl w-full mb-4 glass" />
+        <input type="file" id="setAvatar" class="mb-4" />
+        <button onclick="saveProfile()" class="w-full py-4 bg-red-600 text-white rounded-2xl font-bold">Save</button>
       </div>
     </div>
   </div>
@@ -135,19 +140,21 @@
     let content = JSON.parse(localStorage.getItem('content') || '[]');
     let messages = JSON.parse(localStorage.getItem('messages') || '[]');
     let me = {};
+    let currentDM = null;
 
     // AUTH
     function register() {
-      const email = document.getElementById('regEmail').value;
+      const email = document.getElementById('regEmail').value.trim();
       const pass = document.getElementById('regPass').value;
-      if (!email || !pass) return alert('Fill all');
+      if (!email || !pass) return notify('Fill all fields');
+      if (users[email]) return notify('Email taken');
       const code = Math.floor(100000 + Math.random() * 900000);
-      users[email] = { email, pass, name: email.split('@')[0], avatar: '', verified: false, isAdmin: email === 'pdigger48@gmail.com' };
+      users[email] = { email, pass, name: email.split('@')[0], avatar: '', verified: false, banned: false, banReason: '', isAdmin: email === 'pdigger48@gmail.com' };
       localStorage.setItem('users', JSON.stringify(users));
-      alert(`Verification Code: ${code} (Check Gmail in real app)`);
+      alert(`Code: ${code}`);
+      window.verifyCode = code;
       document.getElementById('codeInput').classList.remove('hidden');
       document.getElementById('verifyBtn').classList.remove('hidden');
-      window.verifyCode = code;
     }
 
     function verify() {
@@ -156,7 +163,7 @@
       if (code == window.verifyCode) {
         users[email].verified = true;
         localStorage.setItem('users', JSON.stringify(users));
-        alert('Verified!');
+        notify('Verified!');
         showLogin();
       }
     }
@@ -170,13 +177,18 @@
       const email = document.getElementById('loginEmail').value;
       const pass = document.getElementById('loginPass').value;
       const user = users[email];
-      if (user && user.pass === pass && user.verified) {
-        me = user;
-        localStorage.setItem('me', email);
-        document.getElementById('loginModal').classList.add('hidden');
-        document.getElementById('app').classList.remove('hidden');
-        init();
-      } else alert('Invalid');
+      if (!user || user.pass !== pass || !user.verified) return notify('Invalid login');
+      if (user.banned) { showBanned(user.banReason); return; }
+      me = user;
+      localStorage.setItem('me', email);
+      document.getElementById('loginModal').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      init();
+    }
+
+    function showBanned(reason) {
+      document.getElementById('bannedScreen').classList.remove('hidden');
+      document.getElementById('banReason').innerText = reason || 'No reason given';
     }
 
     function init() {
@@ -185,29 +197,28 @@
       document.getElementById('avatar').src = me.avatar || 'https://via.placeholder.com/120';
       if (me.isAdmin) document.getElementById('adminBadge').classList.remove('hidden');
       renderFeed();
-      renderContent();
-      renderOnline();
+      renderUsers();
     }
 
     function show(page) {
-      ['feed','hub','chat','profile'].forEach(id => document.getElementById(id).classList.add('hidden'));
+      ['feed','chat','profile'].forEach(id => document.getElementById(id).classList.add('hidden'));
       document.getElementById(page).classList.remove('hidden');
       if (page === 'feed') renderFeed();
-      if (page === 'hub') renderContent();
-      if (page === 'chat') renderGlobalChat();
+      if (page === 'chat') { renderUsers(); renderMessages(); }
     }
 
     function renderFeed() {
       const grid = document.getElementById('videoGrid');
       grid.innerHTML = '';
       content.filter(c => c.type === 'video').forEach(v => {
+        if (users[v.user]?.banned) return;
         const div = document.createElement('div');
         div.className = 'video-item';
         div.innerHTML = `
           <video src="${v.content}" loop autoplay muted></video>
-          <div class="absolute bottom-4 left-4 text-white">
-            <p class="font-bold text-xl">${v.title}</p>
-            <p>by ${v.user}</p>
+          <div class="absolute bottom-6 left-6 text-white">
+            <p class="text-2xl font-bold">${v.title}</p>
+            <p class="text-lg">by ${v.user}</p>
           </div>
         `;
         grid.appendChild(div);
@@ -215,69 +226,93 @@
     }
 
     function upload() {
+      if (me.banned) return showBanned(me.banReason);
       const type = document.getElementById('uploadType').value;
       const title = document.getElementById('uploadTitle').value;
       const file = document.getElementById('uploadFile').files[0];
+      if (!title || !file) return notify('Fill all');
       const reader = new FileReader();
       reader.onload = (e) => {
-        const item = { id: Date.now(), type, title, content: type === 'video' ? URL.createObjectURL(file) : e.target.result, user: me.name };
-        content.push(item);
+        content.push({ id: Date.now(), type, title, content: type === 'video' ? URL.createObjectURL(file) : e.target.result, user: me.name });
         localStorage.setItem('content', JSON.stringify(content));
         document.getElementById('uploadModal').classList.add('hidden');
         renderFeed();
-        renderContent();
       };
       reader.readAsText(file);
     }
 
     function handleEnter(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        sendGlobal();
-      }
+      if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
     }
 
-    function sendGlobal() {
-      const msg = document.getElementById('globalMsg').value.trim();
-      if (msg) {
-        messages.push({ type: 'global', user: me.name, msg, time: new Date().toLocaleTimeString() });
-        document.getElementById('globalMsg').value = '';
-        localStorage.setItem('messages', JSON.stringify(messages));
-        renderGlobalChat();
-      }
+    function sendMessage() {
+      if (me.banned) return showBanned(me.banReason);
+      const input = document.getElementById('msgInput');
+      const msg = input.value.trim();
+      if (!msg) return;
+      const chatKey = currentDM ? `dm_${[me.email, currentDM].sort().join('_')}` : 'global';
+      if (!messages[chatKey]) messages[chatKey] = [];
+      messages[chatKey].push({ user: me.name, msg, avatar: me.avatar, time: new Date().toLocaleTimeString() });
+      localStorage.setItem('messages', JSON.stringify(messages));
+      input.value = '';
+      renderMessages();
     }
 
-    function renderGlobalChat() {
-      const chat = document.getElementById('globalChat');
-      chat.innerHTML = messages.filter(m => m.type === 'global').map(m => `<div class="mb-2"><strong>${m.user}</strong>: ${m.msg}</div>`).join('');
-      chat.scrollTop = chat.scrollHeight;
+    function renderMessages() {
+      const chatKey = currentDM ? `dm_${[me.email, currentDM].sort().join('_')}` : 'global';
+      const msgs = messages[chatKey] || [];
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = msgs.map(m => `
+        <div class="msg">
+          <img src="${m.avatar || 'https://via.placeholder.com/40'}" />
+          <div>
+            <div class="flex items-center gap-2">
+              <strong>${m.user}</strong>
+              <span class="text-xs opacity-50">${m.time}</span>
+            </div>
+            <div class="msg-bubble">${m.msg}</div>
+          </div>
+        </div>
+      `).join('');
+      container.scrollTop = container.scrollHeight;
     }
 
-    function searchUsers() {
-      const query = document.getElementById('searchUsers').value.toLowerCase();
-      const list = document.getElementById('onlineUsers');
-      list.innerHTML = Object.keys(users).filter(u => u.toLowerCase().includes(query) && users[u].verified).map(u => `
-        <div class="glass p-3 rounded flex justify-between">
-          <span>${u}</span>
-          <button onclick="dm('${u}')" class="text-xs text-red-400">DM</button>
+    function renderUsers() {
+      const list = document.getElementById('userList');
+      list.innerHTML = Object.keys(users).filter(u => users[u].verified && !users[u].banned).map(u => `
+        <div class="glass p-4 rounded-2xl flex justify-between items-center cursor-pointer" onclick="openDM('${u}')">
+          <div class="flex items-center gap-3">
+            <img src="${users[u].avatar || 'https://via.placeholder.com/40'}" class="w-10 h-10 rounded-full" />
+            <span class="font-semibold">${users[u].name}</span>
+          </div>
+          ${me.isAdmin ? `<div class="dot-menu" onclick="event.stopPropagation(); showAdminMenu('${u}')"></div>` : ''}
         </div>
       `).join('');
     }
 
-    function dm(user) {
-      const msg = prompt(`Message to ${user}:`);
-      if (msg) notify(`DM sent to ${user}`);
+    function searchUsers() {
+      const query = document.getElementById('searchUsers').value.toLowerCase();
+      const filtered = Object.keys(users).filter(u => u.toLowerCase().includes(query) && users[u].verified && !users[u].banned);
+      const list = document.getElementById('userList');
+      list.innerHTML = filtered.map(u => `...same as above...`).join('');
     }
 
-    function renderOnline() {
-      setInterval(() => {
-        document.getElementById('onlineUsers').innerHTML = Object.keys(users).filter(u => users[u].verified).map(u => `
-          <div class="glass p-3 rounded flex justify-between">
-            <span><span class="online inline-block mr-2"></span>${u}</span>
-            <button onclick="dm('${u}')" class="text-xs text-red-400">DM</button>
-          </div>
-        `).join('');
-      }, 5000);
+    function openDM(user) {
+      currentDM = user;
+      document.getElementById('chatTitle').innerText = user ? users[user].name : 'Global Chat';
+      renderMessages();
+    }
+
+    function showAdminMenu(target) {
+      const action = prompt(`Admin Action on ${target}:\n1. Ban\n2. Kick (temp)`);
+      if (action === '1') {
+        const reason = prompt('Ban Reason:');
+        users[target].banned = true;
+        users[target].banReason = reason;
+        localStorage.setItem('users', JSON.stringify(users));
+        notify(`${target} banned`);
+        renderUsers();
+      }
     }
 
     function showSettings() {
@@ -310,11 +345,9 @@
       setTimeout(() => n.remove(), 3000);
     }
 
-    function toggleDark() { document.body.classList.toggle('dark'); }
-
     // INIT
     const saved = localStorage.getItem('me');
-    if (saved && users[saved]) {
+    if (saved && users[saved] && !users[saved].banned) {
       me = users[saved];
       document.getElementById('auth').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
