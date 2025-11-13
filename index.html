@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>John's Hangout | v12.0 FIXED</title>
+  <title>John's Hangout | v13.0 FINAL</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -13,97 +13,78 @@
     .orbitron { font-family: 'Orbitron', sans-serif; }
     .glow { text-shadow: 0 0 20px var(--red); }
     .tab-active { border-bottom: 4px solid var(--red); color: var(--red); }
-    
+
     /* MESSAGE BOX */
     .message-box {
-      height: calc(100vh - 380px) !important;
-      background: rgba(15,0,0,0.9) !important;
-      border: 2px solid #330011 !important;
-      border-radius: 12px !important;
-      padding: 20px !important;
-      overflow-y: auto !important;
-      margin-bottom: 16px !important;
-      backdrop-filter: blur(8px) !important;
+      height: calc(100vh - 380px);
+      background: rgba(15,0,0,0.9);
+      border: 2px solid #330011;
+      border-radius: 12px;
+      padding: 20px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+      backdrop-filter: blur(8px);
     }
     .message {
       margin-bottom: 16px;
-      padding: 12px;
+      padding: 12px 16px;
       border-radius: 12px;
       max-width: 80%;
       display: inline-block;
     }
-    .message.sent {
-      background: #330011;
-      margin-left: auto;
-      text-align: right;
-    }
-    .message.received {
-      background: #1a0000;
-    }
+    .message.sent { background: #330011; margin-left: auto; text-align: right; }
+    .message.received { background: #1a0000; }
 
     /* INPUT */
-    .input-box { 
-      background: rgba(15,0,0,0.9) !important; 
-      border: 2px solid #330011 !important; 
-      border-radius: 12px !important; 
-      padding: 16px 20px !important; 
-      font-size: 16px !important; 
-      color: white !important; 
-      outline: none !important; 
+    .input-box {
+      background: rgba(15,0,0,0.9) !important;
+      border: 2px solid #330011 !important;
+      border-radius: 12px !important;
+      padding: 16px 20px !important;
+      font-size: 16px !important;
+      color: white !important;
+      outline: none !important;
       transition: all 0.3s !important;
       width: 100% !important;
     }
-    .input-box:focus { 
-      border-color: var(--red) !important; 
-      box-shadow: 0 0 20px rgba(255,0,51,0.4) !important; 
-    }
+    .input-box:focus { border-color: var(--red) !important; box-shadow: 0 0 20px rgba(255,0,51,0.4) !important; }
 
     /* SEND BUTTON */
-    .send-btn { 
-      background: linear-gradient(45deg, #ff0033, #cc0022) !important; 
-      color: white !important; 
-      font-weight: bold !important; 
-      padding: 16px 32px !important; 
-      border-radius: 12px !important; 
+    .send-btn {
+      background: linear-gradient(45deg, #ff0033, #cc0022) !important;
+      color: white !important;
+      font-weight: bold !important;
+      padding: 16px 32px !important;
+      border-radius: 12px !important;
       cursor: pointer !important;
       transition: all 0.2s !important;
       border: none !important;
     }
-    .send-btn:hover { 
-      transform: scale(1.05) !important; 
-      box-shadow: 0 0 30px rgba(255,0,51,0.6) !important; 
-    }
+    .send-btn:hover { transform: scale(1.05) !important; box-shadow: 0 0 30px rgba(255,0,51,0.6) !important; }
 
     /* VOICE BAR */
-    .voice-bar { 
-      background: rgba(20,0,0,0.95) !important; 
-      border-top: 1px solid #330011 !important; 
-      padding: 12px 20px !important; 
-      display: flex !important; 
-      align-items: center !important; 
+    .voice-bar {
+      background: rgba(20,0,0,0.95) !important;
+      border-top: 1px solid #330011 !important;
+      padding: 12px 20px !important;
+      display: flex !important;
+      align-items: center !important;
       gap: 16px !important;
       font-size: 14px !important;
     }
-    .live-dot { 
-      width: 16px !important; height: 16px !important; 
-      background: radial-gradient(circle, #00ff00, #00cc00) !important; 
-      border-radius: 50% !important; 
-      box-shadow: 0 0 20px #00ff00 !important; 
+    .live-dot {
+      width: 16px !important; height: 16px !important;
+      background: radial-gradient(circle, #00ff00, #00cc00) !important;
+      border-radius: 50% !important;
+      box-shadow: 0 0 20px #00ff00 !important;
       animation: pulse-live 1.5s infinite !important;
     }
     @keyframes pulse-live { 0%,100% { opacity: 0.8; } 50% { opacity: 1; } }
 
-    /* CARD */
-    .card { 
-      background: rgba(15,0,0,0.7) !important; 
-      border: 1px solid #330011 !important; 
-      border-radius: 12px !important; 
-      padding: 16px !important; 
-      backdrop-filter: blur(8px) !important; 
-    }
-    .btn-red { 
-      @apply bg-gradient-to-r from-red-600 to-red-800 text-white font-bold py-2 px-6 rounded-lg transition transform hover:scale-105 !important; 
-    }
+    .card { background: rgba(15,0,0,0.7); border: 1px solid #330011; border-radius: 12px; padding: 16px; backdrop-filter: blur(8px); }
+    .btn-red { @apply bg-gradient-to-r from-red-600 to-red-800 text-white font-bold py-2 px-6 rounded-lg transition transform hover:scale-105; }
+
+    .typing { color: #00ff00; font-style: italic; font-size: 0.9em; }
   </style>
 </head>
 <body>
@@ -135,8 +116,34 @@
   <!-- HOME -->
   <div id="home" class="tab-content py-20 text-center">
     <h1 class="text-7xl orbitron glow mb-6">JOHN'S HANGOUT</h1>
-    <p class="text-2xl text-red-400 mb-8">v12.0 • MESSAGE BOX RESTORED</p>
+    <p class="text-2xl text-red-400 mb-8">v13.0 • FINAL • UNBREAKABLE</p>
     <button onclick="openTab('messages')" class="btn-red text-xl px-12 py-4 orbitron">ENTER</button>
+  </div>
+
+  <!-- VIDEOS -->
+  <div id="videos" class="tab-content hidden">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-3xl orbitron glow">VIDEO VAULT</h2>
+      <div id="owner-video-upload" class="hidden">
+        <input type="file" id="video-upload" accept="video/*" class="file:mr-4 file:py-2 file:px-4 file:rounded file:bg-red-600 file:text-white" />
+        <button onclick="uploadVideo()" class="btn-red">UPLOAD</button>
+      </div>
+    </div>
+    <div id="video-list" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <div id="scripts" class="tab-content hidden">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-3xl orbitron glow">SCRIPT FORGE</h2>
+      <button onclick="toggleScriptForm()" class="btn-red">+ FORGE</button>
+    </div>
+    <div id="script-upload-form" class="hidden card mb-6">
+      <input type="text" id="script-name" placeholder="Name" class="w-full mb-4 input-box" />
+      <textarea id="script-code" placeholder="Code..." class="w-full h-48 input-box font-mono text-sm text-green-400"></textarea>
+      <button onclick="saveScript()" class="mt-4 btn-red w-full">DEPLOY</button>
+    </div>
+    <div id="script-list" class="space-y-6"></div>
   </div>
 
   <!-- MESSAGES -->
@@ -175,6 +182,9 @@
           </div>
         </div>
 
+        <!-- TYPING INDICATOR -->
+        <div id="typing-indicator" class="px-6 pb-2 typing hidden">● <span id="typing-user"></span> is typing...</div>
+
         <!-- VOICE BAR -->
         <div class="voice-bar">
           <button onclick="toggleVoice()" class="flex items-center gap-3 text-white">
@@ -189,35 +199,41 @@
 
         <!-- INPUT -->
         <div class="p-4 bg-black border-t border-red-900 flex gap-4">
-          <input type="text" id="msg-input" placeholder="Type a message..." class="input-box flex-1" 
-                 onkeydown="if(event.key==='Enter') sendMessage()" />
+          <input type="text" id="msg-input" placeholder="Type a message..." class="input-box flex-1"
+                 onkeydown="handleKeyDown(event)" onkeyup="handleTyping(event)" />
           <button onclick="sendMessage()" class="send-btn orbitron">SEND</button>
         </div>
       </div>
     </div>
   </div>
-
 </div>
 
 <script>
 // === DB & STATE ===
-const DB = { get: k => JSON.parse(localStorage.getItem(k)) || null, set: (k,v) => localStorage.setItem(k, JSON.stringify(v)) };
+const DB = { 
+  get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }, 
+  set: (k,v) => localStorage.setItem(k, JSON.stringify(v)) 
+};
 const OWNER = { user: "John", pass: "boss123" };
 let currentUser = DB.get('currentUser');
 let activeChat = null;
 let voiceOn = false;
 let voiceChannelUsers = new Set(DB.get('voiceChannel') || []);
+let typingTimeout = null;
+let typingUsers = new Set();
 
 // === AUTH ===
 function renderAuth() {
   const el = document.getElementById('auth-section');
   if (currentUser) {
+    const isOwner = currentUser.username === OWNER.user;
     el.innerHTML = `<div class="flex items-center gap-3 text-sm">
       <span class="text-red-400 font-bold">${currentUser.username}</span>
       <input id="aura-input" value="${currentUser.aura}" class="bg-black border border-red-900 px-2 py-1 rounded text-xs w-16" onblur="saveAura(this.value)" />
-      ${currentUser.username === OWNER.user ? '<span class="text-yellow-500">[GOD]</span>' : ''}
+      ${isOwner ? '<span class="text-yellow-500">[GOD]</span>' : ''}
       <button onclick="logout()" class="text-gray-500"><i class="fas fa-sign-out-alt"></i></button>
     </div>`;
+    if (isOwner) document.getElementById('owner-video-upload')?.classList.remove('hidden');
   } else {
     el.innerHTML = `<div class="flex gap-2 text-xs">
       <input id="login-user" placeholder="user" class="bg-black border border-red-900 px-3 py-1 rounded" />
@@ -250,12 +266,12 @@ function register() {
   alert("REGISTERED");
 }
 
-function logout() { currentUser = null; DB.set('currentUser', null); activeChat = null; renderAuth(); }
+function logout() { currentUser = null; DB.set('currentUser', null); activeChat = null; leaveVoiceChannel(); renderAuth(); }
 function saveAura(aura) {
   if (!currentUser) return;
-  currentUser.aura = aura;
+  currentUser.aura = aura || 'NEW';
   const users = DB.get('users') || {};
-  users[currentUser.username].aura = aura;
+  users[currentUser.username].aura = aura || 'NEW';
   DB.set('users', users); DB.set('currentUser', currentUser);
 }
 
@@ -265,7 +281,86 @@ function openTab(tab) {
   document.getElementById(tab).classList.remove('hidden');
   document.querySelectorAll('[id^="tab-"]').forEach(t => t.classList.remove('tab-active', 'text-red-400'));
   document.getElementById('tab-' + tab)?.classList.add('tab-active', 'text-red-400');
+  if (tab === 'videos') loadVideos();
+  if (tab === 'scripts') loadScripts();
   if (tab === 'messages') { updateChats(); updateVoiceUsers(); }
+}
+
+// === VIDEOS ===
+function uploadVideo() {
+  const file = document.getElementById('video-upload').files[0];
+  if (!file) return alert("SELECT");
+  const reader = new FileReader();
+  reader.onload = e => {
+    const videos = DB.get('videos') || [];
+    videos.push({ name: file.name, data: e.target.result, time: Date.now(), owner: currentUser.username });
+    DB.set('videos', videos);
+    loadVideos();
+  };
+  reader.readAsDataURL(file);
+}
+
+function loadVideos() {
+  const list = document.getElementById('video-list');
+  const videos = DB.get('videos') || [];
+  list.innerHTML = videos.map(v => `
+    <div class="card cursor-pointer" onclick="playVideo('${v.data}')">
+      <div class="bg-gradient-to-br from-red-900 to-black h-48 rounded-t-xl flex items-center justify-center text-6xl text-red-500 glow-red">
+        <i class="fas fa-play-circle"></i>
+      </div>
+      <div class="p-4">
+        <div class="font-bold text-red-400 truncate">${v.name}</div>
+        <div class="text-xs text-gray-500">${v.owner}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function playVideo(url) {
+  const div = document.createElement('div');
+  div.className = 'fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center p-10';
+  div.onclick = () => div.remove();
+  div.innerHTML = `<video controls autoplay class="max-w-full max-h-full rounded-xl border-4 border-red-600">
+    <source src="${url}" type="video/mp4">
+  </video>`;
+  document.body.appendChild(div);
+}
+
+// === SCRIPTS ===
+function toggleScriptForm() { document.getElementById('script-upload-form').classList.toggle('hidden'); }
+function saveScript() {
+  const name = document.getElementById('script-name').value.trim();
+  const code = document.getElementById('script-code').value;
+  if (!name || !code) return alert("FILL");
+  const scripts = DB.get('scripts') || [];
+  scripts.push({ name, code, author: currentUser.username, time: Date.now() });
+  DB.set('scripts', scripts);
+  document.getElementById('script-name').value = '';
+  document.getElementById('script-code').value = '';
+  toggleScriptForm();
+  loadScripts();
+}
+function loadScripts() {
+  const list = document.getElementById('script-list');
+  const scripts = DB.get('scripts') || [];
+  list.innerHTML = scripts.map(s => `
+    <div class="card">
+      <div class="font-bold text-red-400">${s.name}</div>
+      <div class="text-xs text-gray-500">${s.author} • ${new Date(s.time).toLocaleString()}</div>
+      <pre class="mt-2 text-xs bg-black p-3 rounded overflow-x-auto border border-red-900">${s.code}</pre>
+      <div class="flex gap-2 mt-2">
+        <button onclick="copy('${btoa(s.code)}')" class="text-green-400 text-xs">COPY</button>
+        <button onclick="download('${s.name}', '${btoa(s.code)}')" class="text-yellow-400 text-xs">DL</button>
+      </div>
+    </div>
+  `).join('');
+}
+function copy(b64) { navigator.clipboard.writeText(atob(b64)); alert("COPIED"); }
+function download(name, b64) { 
+  const a = document.createElement('a'); 
+  a.href = URL.createObjectURL(new Blob([atob(b64)])); 
+  a.download = name.endsWith('.js') ? name : name + '.js'; 
+  a.click(); 
 }
 
 // === CHATS ===
@@ -290,7 +385,10 @@ function updateChats() {
 
   list.innerHTML = chats.map(c => `
     <div class="p-3 cursor-pointer hover:bg-gray-800 ${activeChat===c.id ? 'bg-red-900/30' : ''}" onclick="openChat('${c.id}', '${c.name}')">
-      <div>${c.type === 'public' ? 'Global' : c.type === 'dm' ? 'DM' : 'Group'} ${c.name}</div>
+      <div class="flex justify-between">
+        <span><i class="fas ${c.type==='public'?'fa-globe':c.type==='dm'?'fa-user-secret':'fa-users'}"></i> ${c.name}</span>
+        ${messages[c.id]?.length ? `<span class="text-xs text-gray-500">${new Date(messages[c.id].slice(-1)[0].time).toLocaleTimeString()}</span>` : ''}
+      </div>
     </div>
   `).join('');
 }
@@ -327,20 +425,12 @@ function sendMessage() {
   const input = document.getElementById('msg-input');
   const text = input.value.trim();
   if (!text || !activeChat) return;
-  
   const messages = DB.get('messages') || {};
   if (!messages[activeChat]) messages[activeChat] = [];
-  
-  messages[activeChat].push({ 
-    text, 
-    user: currentUser.username, 
-    aura: currentUser.aura, 
-    time: Date.now(),
-    sent: true 
-  });
-  
+  messages[activeChat].push({ text, user: currentUser.username, aura: currentUser.aura, time: Date.now(), sent: true });
   DB.set('messages', messages);
   input.value = '';
+  clearTyping();
   loadMessages();
   updateChats();
 }
@@ -351,7 +441,6 @@ function loadMessages() {
     box.innerHTML = '<div class="text-center text-gray-500 py-20"><i class="fas fa-comments text-6xl mb-4"></i><p>Select a chat</p></div>';
     return;
   }
-  
   const msgs = (DB.get('messages') || {})[activeChat] || [];
   box.innerHTML = msgs.map(m => `
     <div class="message ${m.sent ? 'sent' : 'received'}">
@@ -360,8 +449,38 @@ function loadMessages() {
       <div class="text-xs text-gray-400">${new Date(m.time).toLocaleTimeString()}</div>
     </div>
   `).join('');
-  
   box.scrollTop = box.scrollHeight;
+}
+
+// === TYPING ===
+function handleKeyDown(e) {
+  if (e.key === 'Enter') sendMessage();
+}
+function handleTyping(e) {
+  if (!currentUser || !activeChat) return;
+  const typing = e.target.value.trim().length > 0;
+  if (typing) {
+    typingUsers.add(currentUser.username);
+    showTyping();
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+      typingUsers.delete(currentUser.username);
+      if (typingUsers.size === 0) clearTyping();
+      else showTyping();
+    }, 2000);
+  } else {
+    typingUsers.delete(currentUser.username);
+    if (typingUsers.size === 0) clearTyping();
+  }
+}
+function showTyping() {
+  const indicator = document.getElementById('typing-indicator');
+  const user = Array.from(typingUsers).join(', ');
+  document.getElementById('typing-user').textContent = user;
+  indicator.classList.remove('hidden');
+}
+function clearTyping() {
+  document.getElementById('typing-indicator').classList.add('hidden');
 }
 
 // === VOICE ===
@@ -377,12 +496,10 @@ function toggleVoiceChannel() {
   DB.set('voiceChannel', Array.from(voiceChannelUsers));
   updateVoiceUsers();
 }
-
 function updateVoiceUsers() {
   const list = document.getElementById('voice-users');
   list.innerHTML = Array.from(voiceChannelUsers).map(u => `<div>${u}</div>`).join('') || '<div class="text-gray-500">Empty</div>';
 }
-
 function toggleVoice() {
   voiceOn = !voiceOn;
   document.getElementById('voice-icon').className = voiceOn ? 'fas fa-microphone text-xl' : 'fas fa-microphone-slash text-xl';
@@ -390,7 +507,7 @@ function toggleVoice() {
 }
 
 // === INIT ===
-function updateAll() { updateChats(); updateVoiceUsers(); }
+function updateAll() { loadVideos(); loadScripts(); updateChats(); updateVoiceUsers(); }
 renderAuth();
 openTab('home');
 setInterval(() => { if (activeChat) loadMessages(); updateChats(); updateVoiceUsers(); }, 1000);
