@@ -86,17 +86,30 @@
       if (res.ok) { /* show code input */ }
     }
 
-    async function login() {
-      const res = await fetch('/api/login', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email: loginEmail.value, password: loginPass.value}) });
-      const data = await res.json();
-      if (data.token) {
-        token = data.token;
-        me = data.user;
-        localStorage.setItem('token', token);
-        showApp();
-        init();
-      }
-    }
+async function login() {
+  const res = await fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: loginEmail.value, password: loginPass.value })
+  });
+  const data = await res.json();
+
+  if (data.error === 'BANNED') {
+    document.getElementById('bannedScreen').classList.remove('hidden');
+    document.getElementById('banReason').innerText = data.reason;
+    return;
+  }
+  if (data.token) {
+    token = data.token;
+    me = data.user;
+    localStorage.setItem('token', token);
+    document.getElementById('loginModal').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    init();
+  } else {
+    notify(data.error || 'Login failed');
+  }
+}
 
     async function searchUsers() {
       const query = searchUsers.value;
