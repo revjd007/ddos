@@ -209,6 +209,7 @@
 </div>
 
 <script>
+<script>
 // === DB & STATE ===
 const DB = { 
   get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }, 
@@ -299,7 +300,6 @@ function uploadVideo() {
   };
   reader.readAsDataURL(file);
 }
-
 function loadVideos() {
   const list = document.getElementById('video-list');
   const videos = DB.get('videos') || [];
@@ -315,7 +315,6 @@ function loadVideos() {
     </div>
   `).join('');
 }
-
 function playVideo(url) {
   const div = document.createElement('div');
   div.className = 'fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center p-10';
@@ -348,19 +347,8 @@ function loadScripts() {
       <div class="font-bold text-red-400">${s.name}</div>
       <div class="text-xs text-gray-500">${s.author} • ${new Date(s.time).toLocaleString()}</div>
       <pre class="mt-2 text-xs bg-black p-3 rounded overflow-x-auto border border-red-900">${s.code}</pre>
-      <div class="flex gap-2 mt-2">
-        <button onclick="copy('${btoa(s.code)}')" class="text-green-400 text-xs">COPY</button>
-        <button onclick="download('${s.name}', '${btoa(s.code)}')" class="text-yellow-400 text-xs">DL</button>
-      </div>
     </div>
   `).join('');
-}
-function copy(b64) { navigator.clipboard.writeText(atob(b64)); alert("COPIED"); }
-function download(name, b64) { 
-  const a = document.createElement('a'); 
-  a.href = URL.createObjectURL(new Blob([atob(b64)])); 
-  a.download = name.endsWith('.js') ? name : name + '.js'; 
-  a.click(); 
 }
 
 // === CHATS ===
@@ -411,23 +399,22 @@ function createGroup() {
   openChat(`group_${name}`, name);
 }
 
-function showFindPlayer() {
-  const q = prompt("Find Player:");
-  if (!q) return;
-  const users = Object.keys(DB.get('users') || {});
-  const found = users.find(u => u.toLowerCase().includes(q.toLowerCase()) && u !== currentUser.username);
-  if (!found) return alert("NOT FOUND");
-  openChat(`dm_${[currentUser.username, found].sort().join('_')}`, found);
-}
-
 // === MESSAGING ===
 function sendMessage() {
   const input = document.getElementById('msg-input');
   const text = input.value.trim();
-  if (!text || !activeChat) return;
+  if (!text || !activeChat || !currentUser) return;
+
   const messages = DB.get('messages') || {};
   if (!messages[activeChat]) messages[activeChat] = [];
-  messages[activeChat].push({ text, user: currentUser.username, aura: currentUser.aura, time: Date.now(), sent: true });
+  
+  messages[activeChat].push({
+    text,
+    user: currentUser.username,
+    aura: currentUser.aura,
+    time: Date.now()
+  });
+  
   DB.set('messages', messages);
   input.value = '';
   clearTyping();
@@ -443,7 +430,7 @@ function loadMessages() {
   }
   const msgs = (DB.get('messages') || {})[activeChat] || [];
   box.innerHTML = msgs.map(m => `
-    <div class="message ${m.sent ? 'sent' : 'received'}">
+    <div class="message ${m.user === currentUser.username ? 'sent' : 'received'}">
       <div class="text-red-400 font-bold text-sm">${m.aura}</div>
       <div class="text-white">${m.text}</div>
       <div class="text-xs text-gray-400">${new Date(m.time).toLocaleTimeString()}</div>
@@ -455,11 +442,10 @@ function loadMessages() {
 // === TYPING ===
 function handleKeyDown(e) {
   if (e.key === 'Enter') {
-    e.preventDefault(); // stops the input from resetting or refreshing
+    e.preventDefault();
     sendMessage();
   }
 }
-
 function handleTyping(e) {
   if (!currentUser || !activeChat) return;
   const typing = e.target.value.trim().length > 0;
@@ -514,6 +500,7 @@ function toggleVoice() {
 function updateAll() { loadVideos(); loadScripts(); updateChats(); updateVoiceUsers(); }
 renderAuth();
 openTab('home');
+openChat('public', 'PUBLIC'); // ✅ auto-open public chat
 setInterval(() => { if (activeChat) loadMessages(); updateChats(); updateVoiceUsers(); }, 1000);
 </script>
 </body>
