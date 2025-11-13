@@ -1,9 +1,35 @@
 <script>
   // ==================== STATE ====================
   let currentServer = 'general';
-  let users = JSON.parse(localStorage.getItem('users') || '{}');
-  let messages = JSON.parse(localStorage.getItem('messages') || '{}');
-  let me = JSON.parse(localStorage.getItem('me') || 'null');
+  let users = {};
+  let messages = {};
+  let me = null;
+
+  // Safely load from localStorage
+  try {
+    users = JSON.parse(localStorage.getItem('users') || '{}');
+  } catch (e) {
+    console.error('Failed to parse users:', e);
+    localStorage.removeItem('users');
+    users = {};
+  }
+
+  try {
+    messages = JSON.parse(localStorage.getItem('messages') || '{}');
+  } catch (e) {
+    console.error('Failed to parse messages:', e);
+    localStorage.removeItem('messages');
+    messages = {};
+  }
+
+  try {
+    const storedMe = localStorage.getItem('me');
+    me = storedMe && storedMe !== 'null' ? JSON.parse(storedMe) : null;
+  } catch (e) {
+    console.error('Failed to parse me:', e);
+    localStorage.removeItem('me');
+    me = null;
+  }
 
   // ==================== AUTH MODALS ====================
   function showRegister() {
@@ -24,11 +50,16 @@
 
     const name = email.split('@')[0];
     users[email] = {
-      email, pass, name,
-      avatar: `https://ui-avatars.com/api/?name=${name}&background=ff0000&color=fff&size=128`,
+      email,
+      pass,
+      name,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ff0000&color=fff&size=128`,
       bio: 'Hey, I am new here!',
-      likes: 0, content: 0, messages: 0
+      likes: 0,
+      content: 0,
+      messages: 0
     };
+
     localStorage.setItem('users', JSON.stringify(users));
     alert('Registered! Now login.');
     showLogin();
@@ -52,13 +83,20 @@
 
   // ==================== APP INIT ====================
   function initApp() {
-    document.getElementById('navAvatar').src = me.avatar;
-    switchServer(document.querySelector('.server.active'));
+    if (!me) return;
+
+    document.getElementById('navAvatar').src = me.avatar || '';
+
+    // Get active server from DOM
+    const activeServerEl = document.querySelector('.server.active');
+    const serverName = activeServerEl?.dataset.server || 'general';
+    switchServer(serverName);
+
     renderMessages();
     renderOnline();
   }
 
-  // Auto-login if already logged in
+  // Auto-login
   if (me) {
     document.getElementById('loginModal').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
@@ -67,12 +105,27 @@
 
   // ==================== SERVER SWITCH ====================
   function switchServer(serverName) {
-    currentServer = serverName;
-    document.getElementById('serverName').innerText =
-      serverName.charAt(0).toUpperCase() + serverName.slice(1);
+    if (typeof serverName !== 'string' || !serverName) {
+      console.warn('Invalid server name, falling back to "general"');
+      serverName = 'general';
+    }
 
+    currentServer = serverName;
+
+    // Update header
+    const header = document.getElementById('serverName');
+    if (header) {
+      header.innerText = serverName.charAt(0).toUpperCase() + serverName.slice(1);
+    }
+
+    // Update active class
     document.querySelectorAll('.server').forEach(s => s.classList.remove('active'));
-    document.querySelector(`.server[onclick="switchServer('${serverName}')"]`).classList.add('active');
+    const target = document.querySelector(`.server[data-server="${serverName}"]`);
+    if (target) {
+      target.classList.add('active');
+    } else {
+      console.warn(`Server element not found: ${serverName}`);
+    }
 
     renderMessages();
   }
@@ -81,16 +134,16 @@
   function sendMessage() {
     const input = document.getElementById('msgInput');
     const msg = input.value.trim();
-    if (!msg) return;
+    if (!msg || !me) return;
 
     if (!messages[currentServer]) messages[currentServer] = [];
 
     messages[currentServer].push({
       user: me.name,
-      email: me.email,           // Critical: link to profile
+      email: me.email,
       msg: msg,
       avatar: me.avatar,
-      time: new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     });
 
     localStorage.setItem('messages', JSON.stringify(messages));
@@ -103,51 +156,61 @@
   }
 
   function handleEnter(e) {
-    if (e.key === 'Enter') sendMessage();
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
   }
 
   function renderMessages() {
-    const msgs = messages[currentServer] || [];
     const container = document.getElementById('messages');
+    if (!container) return;
+
+    const msgs = messages[currentServer] || [];
     container.innerHTML = msgs.map(m => `
       <div class="msg">
-        <img src="${m.avatar}" alt="${m.user}" />
+        <img src="${m.avatar}" alt="${escapeHtml(m.user)}" class="w-10 h-10 rounded-full" />
         <div class="msg-bubble">
           <div class="flex items-center gap-2">
-            <strong class="cursor-pointer hover:text-red-400" 
-                    onclick="viewProfile('${m.email}')">${m.user}</strong>
+            <strong class="cursor-pointer hover:text-red-400"
+                    onclick="viewProfile('${m.email}')">${escapeHtml(m.user)}</strong>
             <span class="text-xs opacity-50">${m.time}</span>
           </div>
-          <p>${escapeHtml(m.msg)}</p>
+          <p class="break-words">${escapeHtml(m.msg)}</p>
         </div>
       </div>
     `).join('');
+
     container.scrollTop = container.scrollHeight;
   }
 
   // ==================== ONLINE USERS ====================
   function searchPlayers() {
-    const query = document.getElementById('searchPlayers').value.toLowerCase();
+    const query = (document.getElementById('searchPlayers').value || '').toLowerCase();
     renderOnline(query);
   }
 
   function renderOnline(filter = '') {
     const list = document.getElementById('userList');
-    list.innerHTML = '';
+    if (!list) return;
 
-    Object.values(users)
-      .filter(u => u.name.toLowerCase().includes(filter) || u.email.toLowerCase().includes(filter))
-      .forEach(u => {
-        const div = document.createElement('div');
-        div.className = 'glass p-3 rounded-xl flex items-center gap-3 cursor-pointer';
-        div.onclick = () => viewProfile(u.email);
-        div.innerHTML = `
-          <img src="${u.avatar}" class="w-10 h-10 rounded-full" />
-          <span class="font-semibold">${u.name}</span>
-          <span class="online ml-auto"></span>
-        `;
-        list.appendChild(div);
-      });
+    list.innerHTML = '';
+    const filtered = Object.values(users).filter(u =>
+      u.name.toLowerCase().includes(filter) ||
+      u.email.toLowerCase().includes(filter)
+    );
+
+    filtered.forEach(u => {
+      const div = document.createElement('div');
+      div.className = 'glass p-3 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-white/10 transition';
+      div.onclick = () => viewProfile(u.email);
+      div.innerHTML = `
+        <img src="${u.avatar}" class="w-10 h-10 rounded-full" alt="${escapeHtml(u.name)}" />
+        <span class="font-semibold">${escapeHtml(u.name)}</span>
+        <span class="online ml-auto"></span>
+      `;
+      list.appendChild(div);
+    });
   }
 
   // ==================== PROFILE MODAL ====================
@@ -161,7 +224,6 @@
     document.getElementById('profileLikes').innerText = u.likes || 0;
     document.getElementById('profileContent').innerText = u.content || 0;
     document.getElementById('profileMessages').innerText = u.messages || 0;
-
     document.getElementById('profileModal').classList.remove('hidden');
   }
 
@@ -170,11 +232,12 @@
   }
 
   function showProfile() {
-    viewProfile(me.email);
+    if (me) viewProfile(me.email);
   }
 
   function startDM() {
-    alert(`DM with ${document.getElementById('profileNameModal').innerText} started!`);
+    const name = document.getElementById('profileNameModal').innerText;
+    alert(`DM with ${name} started!`);
     closeProfile();
   }
 
@@ -191,6 +254,8 @@
     me.content = (me.content || 0) + 1;
     saveMe();
     alert(`"${title}" uploaded!`);
+
+    // Reset form
     document.getElementById('uploadModal').classList.add('hidden');
     document.getElementById('uploadTitle').value = '';
     document.getElementById('uploadFile').value = '';
@@ -203,6 +268,7 @@
 
   // ==================== UTILS ====================
   function saveMe() {
+    if (!me) return;
     localStorage.setItem('me', JSON.stringify(me));
     users[me.email] = me;
     localStorage.setItem('users', JSON.stringify(users));
@@ -213,4 +279,11 @@
     div.textContent = text;
     return div.innerHTML;
   }
+
+  // Global error handler (for debugging)
+  window.addEventListener('error', (e) => {
+    console.error('Global JS Error:', e.error);
+    // Optional: Show error on screen in dev
+    // document.body.innerHTML = `<pre style="color:red">${e.error}</pre>`;
+  });
 </script>
