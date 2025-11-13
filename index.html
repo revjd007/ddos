@@ -4,67 +4,80 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SocialHub</title>
+
+  <!-- Prism (code highlighting – optional) -->
   <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-dark.min.css" rel="stylesheet" />
+
+  <!-- Tailwind 2.2 (you can upgrade to v3 if you want) -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
+  <!-- Inter font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
   <style>
     :root { --bg: #000; --text: #fff; --accent: #ff0000; --glass: rgba(255,0,0,0.15); --border: rgba(255,0,0,0.3); }
     .dark { --bg: #0a0a0a; --glass: rgba(255,0,0,0.1); }
-    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: 0.4s; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: background .4s, color .4s; }
     .glass { backdrop-filter: blur(20px); background: var(--glass); border: 1px solid var(--border); }
-    .card { transition: all 0.4s; }
-    .card:hover { transform: translateY(-12px); box-shadow: 0 40px 80px rgba(255,0,0,0.5); }
-    .bento { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
-    video, iframe { width: 100%; height: 300px; border-radius: 12px; }
-    .online { width: 12px; height: 12px; background: #0f0; border-radius: 50%; }
-    .typing { font-style: italic; color: #ff5555; }
-    .notification { position: fixed; top: 20px; right: 20px; background: #ff0000; color: white; padding: 12px 20px; border-radius: 12px; z-index: 1000; animation: slide 0.3s; }
-    @keyframes slide { from { transform: translateX(100%); } to { transform: translateX(0); } }
-    .servers { width: 72px; background: #202225; height: 100vh; overflow-y: auto; }
-    .server { padding: 8px; cursor: pointer; border-radius: 8px; margin: 4px; transition: 0.2s; }
-    .server:hover { background: rgba(255,255,255,0.1); }
-    .server.active { background: #5865f2; }
-    .msg { display: flex; gap: 12px; margin: 12px 0; align-items: flex-start; }
-    .msg img { width: 40px; height: 40px; border-radius: 50%; }
-    .msg-bubble { background: rgba(255,0,0,0.2); padding: 10px 16px; border-radius: 18px; max-width: 70%; }
-    .profile-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 50; display: flex; align-items: center; justify-content: center; }
-    .profile-card { max-width: 400px; width: 90%; }
+    .card:hover { transform: translateY(-12px); box-shadow: 0 40px 80px rgba(255,0,0,.5); }
+    .online { width:12px; height:12px; background:#0f0; border-radius:50%; }
+    .typing { font-style:italic; color:#ff5555; }
+    .notification { position:fixed; top:20px; right:20px; background:#ff0000; color:#fff; padding:12px 20px; border-radius:12px; z-index:1000; animation:slide .3s; }
+    @keyframes slide { from{transform:translateX(100%)} to{transform:translateX(0)} }
+    .servers { width:72px; background:#202225; height:100vh; overflow-y:auto; }
+    .server { padding:8px; cursor:pointer; border-radius:8px; margin:4px; transition:.2s; }
+    .server:hover { background:rgba(255,255,255,.1); }
+    .server.active { background:#5865f2; }
+    .msg { display:flex; gap:12px; margin:12px 0; align-items:flex-start; }
+    .msg img { width:40px; height:40px; border-radius:50%; }
+    .msg-bubble { background:rgba(255,0,0,.2); padding:10px 16px; border-radius:18px; max-width:70%; }
+    .profile-modal { position:fixed; inset:0; background:rgba(0,0,0,.8); z-index:50; display:flex; align-items:center; justify-content:center; }
   </style>
 </head>
 <body class="min-h-screen">
-  <!-- LOGIN MODAL -->
+
+  <!-- ==================== LOGIN MODAL ==================== -->
   <div id="loginModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
     <div class="glass p-8 rounded-3xl w-96">
-      <h2 class="text-3xl font-black mb-6 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">Login to SocialHub</h2>
+      <h2 class="text-3xl font-black mb-6 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+        Login to SocialHub
+      </h2>
       <input id="loginEmail" placeholder="Email" class="w-full p-4 rounded-2xl mb-4 glass" />
       <input id="loginPass" type="password" placeholder="Password" class="w-full p-4 rounded-2xl mb-4 glass" />
-      <button onclick="login()" class="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold">Login</button>
+      <button onclick="login()" class="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold">
+        Login
+      </button>
       <p class="text-center mt-4">No account? <button onclick="showRegister()" class="text-red-400 underline">Register</button></p>
     </div>
   </div>
 
-  <!-- REGISTER MODAL -->
+  <!-- ==================== REGISTER MODAL ==================== -->
   <div id="registerModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
     <div class="glass p-8 rounded-3xl w-96">
-      <h2 class="text-3xl font-black mb-6 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">Register</h2>
+      <h2 class="text-3xl font-black mb-6 bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+        Register
+      </h2>
       <input id="regEmail" placeholder="Email" class="w-full p-4 rounded-2xl mb-4 glass" />
       <input id="regPass" type="password" placeholder="Password" class="w-full p-4 rounded-2xl mb-4 glass" />
-      <button onclick="register()" class="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold">Register</button>
+      <button onclick="register()" class="w-full py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-bold">
+        Register
+      </button>
       <p class="text-center mt-4">Have account? <button onclick="showLogin()" class="text-red-400 underline">Login</button></p>
     </div>
   </div>
 
-  <!-- MAIN APP (HIDDEN UNTIL LOGIN) -->
+  <!-- ==================== MAIN APP (hidden until login) ==================== -->
   <div id="app" class="hidden flex">
-    <!-- SERVERS SIDEBAR (DISCORD STYLE) -->
-    <div class="servers bg-gray-900 w-20 flex flex-col p-2">
-      <div class="server active" onclick="switchServer('general')">
+
+    <!-- SERVERS SIDEBAR -->
+    <div class="servers flex flex-col p-2">
+      <div class="server active" data-server="general" onclick="switchServer(this)">
         <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm">G</div>
       </div>
-      <div class="server" onclick="switchServer('gaming')">
-        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm">🎮</div>
+      <div class="server" data-server="gaming" onclick="switchServer(this)">
+        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm">G</div>
       </div>
-      <div class="server" onclick="switchServer('dev')">
+      <div class="server" data-server="dev" onclick="switchServer(this)">
         <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white text-sm">D</div>
       </div>
       <div class="server mt-auto" onclick="showProfile()">
@@ -74,34 +87,42 @@
 
     <!-- MAIN CONTENT -->
     <div class="flex-1 flex flex-col">
+
       <!-- NAVBAR -->
       <nav class="glass fixed top-0 w-full z-40 p-4 left-20">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-          <h1 class="text-3xl font-black bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent" id="serverName">General</h1>
+          <h1 id="serverName" class="text-3xl font-black bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">General</h1>
           <div class="flex gap-3">
             <input id="searchPlayers" placeholder="Find Player..." class="p-3 rounded-xl glass" onkeyup="searchPlayers()" />
             <button onclick="showUpload()" class="px-6 py-2 rounded-xl bg-red-600 text-white font-bold">+</button>
-            <button onclick="toggleDark()" class="p-2 rounded glass">🌙</button>
+            <button onclick="toggleDark()" class="p-2 rounded glass">Moon</button>
           </div>
         </div>
       </nav>
 
-      <!-- CHAT MESSAGES (DISCORD STYLE) -->
-      <div id="chatArea" class="flex-1 pt-20 p-6 overflow-y-auto bg-gray-900">
+      <!-- USER LIST (right sidebar) -->
+      <aside class="fixed right-0 top-20 bottom-0 w-64 p-4 overflow-y-auto bg-gray-900">
+        <h3 class="text-lg font-bold mb-2">Online Users</h3>
+        <div id="userList" class="space-y-2"></div>
+      </aside>
+
+      <!-- CHAT AREA -->
+      <div id="chatArea" class="flex-1 pt-20 p-6 pr-72 overflow-y-auto bg-gray-900">
         <div id="messages" class="space-y-4"></div>
       </div>
 
       <!-- MESSAGE INPUT -->
       <div class="glass p-4 border-t border-gray-700">
         <div class="flex gap-3">
-          <input id="msgInput" placeholder="Message... (Enter to send)" class="flex-1 p-3 rounded-xl bg-gray-800 border-none focus:outline-none" onkeydown="handleEnter(event)" />
+          <input id="msgInput" placeholder="Message... (Enter to send)" class="flex-1 p-3 rounded-xl bg-gray-800 border-none focus:outline-none"
+                 onkeydown="handleEnter(event)" />
           <button onclick="sendMessage()" class="px-6 py-3 bg-red-600 text-white rounded-xl font-bold">Send</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- UPLOAD MODAL -->
+  <!-- ==================== UPLOAD MODAL ==================== -->
   <div id="uploadModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
     <div class="glass p-8 rounded-3xl w-full max-w-md">
       <h3 class="text-2xl font-bold mb-4">Upload Content</h3>
@@ -113,11 +134,12 @@
       <input id="uploadTitle" placeholder="Title" class="w-full p-3 rounded-xl mb-4 bg-gray-800" />
       <input type="file" id="uploadFile" class="w-full p-3 rounded-xl mb-4" />
       <button onclick="uploadContent()" class="w-full py-3 bg-red-600 text-white rounded-xl">Upload</button>
+      <button onclick="closeUpload()" class="w-full mt-2 py-3 bg-gray-700 text-white rounded-xl">Cancel</button>
     </div>
   </div>
 
-  <!-- PROFILE MODAL -->
-  <div id="profileModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50" onclick="closeProfile()">
+  <!-- ==================== PROFILE MODAL ==================== -->
+  <div id="profileModal" class="hidden profile-modal" onclick="closeProfile()">
     <div class="glass p-8 rounded-3xl max-w-md w-11/12" onclick="event.stopPropagation()">
       <button onclick="closeProfile()" class="absolute top-4 right-4 text-white text-3xl font-bold hover:text-red-400">&times;</button>
       <div class="flex items-center gap-6 mb-6">
@@ -136,152 +158,210 @@
     </div>
   </div>
 
+  <!-- ==================== SCRIPTS ==================== -->
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
   <script>
+    /* ==== GLOBAL STATE ==== */
     let currentServer = 'general';
     let users = JSON.parse(localStorage.getItem('users') || '{}');
-    let messages = JSON.parse(localStorage.getItem('messages') || '{}');  // {server: [{user, msg, avatar, time}]}
-    let me = {};
+    let messages = JSON.parse(localStorage.getItem('messages') || '{}'); // {server: [{user,msg,avatar,time}]}
+    let me = JSON.parse(localStorage.getItem('me') || 'null');
 
-    // LOGIN/REGISTER
+    /* ==== MODAL HELPERS ==== */
     function showRegister() {
       document.getElementById('loginModal').classList.add('hidden');
-      // Show register modal (add HTML for register if needed)
-      const email = prompt('Email:');
-      const pass = prompt('Password:');
-      if (email && pass) {
-        users[email] = { email, pass, name: email.split('@')[0], avatar: 'https://via.placeholder.com/120', bio: '', likes: 0, content: 0, messages: 0 };
-        localStorage.setItem('users', JSON.stringify(users));
-        alert('Registered! Login now.');
-        showLogin();
-      }
+      document.getElementById('registerModal').classList.remove('hidden');
+    }
+    function showLogin() {
+      document.getElementById('registerModal').classList.add('hidden');
+      document.getElementById('loginModal').classList.remove('hidden');
     }
 
-    function showLogin() {
-      const email = prompt('Email:');
-      const pass = prompt('Password:');
+    /* ==== AUTH ==== */
+    function register() {
+      const email = document.getElementById('regEmail').value.trim();
+      const pass  = document.getElementById('regPass').value;
+      if (!email || !pass) return alert('Fill all fields');
+      if (users[email]) return alert('Email already taken');
+
+      const name = email.split('@')[0];
+      users[email] = {
+        email, pass, name,
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ff0000&color=fff`,
+        bio: '', likes:0, content:0, messages:0
+      };
+      localStorage.setItem('users', JSON.stringify(users));
+      alert('Registered! Please login.');
+      showLogin();
+    }
+
+    function login() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass  = document.getElementById('loginPass').value;
       const user = users[email];
       if (user && user.pass === pass) {
         me = user;
         localStorage.setItem('me', JSON.stringify(me));
         document.getElementById('loginModal').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
-        init();
-      } else alert('Invalid');
+        initApp();
+      } else {
+        alert('Invalid credentials');
+      }
     }
 
-    function init() {
+    /* ==== APP INITIALISATION ==== */
+    function initApp() {
       document.getElementById('navAvatar').src = me.avatar;
-      switchServer('general');
+      switchServer(document.querySelector('.server.active'));
       renderOnline();
-    }
-
-    function switchServer(server) {
-      currentServer = server;
-      document.getElementById('serverName').innerText = server.charAt(0).toUpperCase() + server.slice(1);
-      document.querySelectorAll('.server').forEach(s => s.classList.remove('active'));
-      event.target.closest('.server').classList.add('active');
       renderMessages();
     }
 
+    /* ==== SERVER SWITCH ==== */
+    function switchServer(el) {
+      currentServer = el.dataset.server;
+      document.getElementById('serverName').innerText = currentServer.charAt(0).toUpperCase() + currentServer.slice(1);
+      document.querySelectorAll('.server').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      renderMessages();
+    }
+
+    /* ==== MESSAGES ==== */
     function renderMessages() {
       const msgs = messages[currentServer] || [];
       const container = document.getElementById('messages');
       container.innerHTML = msgs.map(m => `
         <div class="msg">
-          <img src="${m.avatar}" />
+          <img src="${m.avatar}" alt="${m.user}" />
           <div class="msg-bubble">
             <div class="flex items-center gap-2">
-              <strong onclick="viewProfile('${m.user}')">${m.user}</strong>
+              <strong class="cursor-pointer hover:text-red-400" onclick="viewProfile('${m.email}')">${m.user}</strong>
               <span class="text-xs opacity-50">${m.time}</span>
             </div>
-            <p>${m.msg}</p>
+            <p>${escapeHtml(m.msg)}</p>
           </div>
         </div>
       `).join('');
       container.scrollTop = container.scrollHeight;
     }
 
-    function handleEnter(e) {
-      if (e.key === 'Enter') sendMessage();
-    }
+    function handleEnter(e) { if (e.key === 'Enter') sendMessage(); }
 
     function sendMessage() {
       const input = document.getElementById('msgInput');
-      const msg = input.value.trim();
-      if (!msg) return;
+      const txt = input.value.trim();
+      if (!txt) return;
       if (!messages[currentServer]) messages[currentServer] = [];
+
       messages[currentServer].push({
         user: me.name,
-        msg,
+        email: me.email,
+        msg: txt,
         avatar: me.avatar,
-        time: new Date().toLocaleTimeString()
+        time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
       });
       localStorage.setItem('messages', JSON.stringify(messages));
       input.value = '';
       renderMessages();
+      me.messages = (me.messages || 0) + 1;
+      localStorage.setItem('me', JSON.stringify(me));
+      users[me.email] = me;
+      localStorage.setItem('users', JSON.stringify(users));
     }
 
+    /* ==== ONLINE USERS ==== */
     function searchPlayers() {
-      const query = document.getElementById('searchPlayers').value.toLowerCase();
-      renderOnline(query);
+      const q = document.getElementById('searchPlayers').value.toLowerCase();
+      renderOnline(q);
     }
 
     function renderOnline(filter = '') {
       const list = document.getElementById('userList');
       list.innerHTML = '';
-      Object.keys(users).filter(u => u.toLowerCase().includes(filter)).forEach(u => {
-        const div = document.createElement('div');
-        div.className = 'glass p-3 rounded-xl flex items-center gap-3 cursor-pointer';
-        div.onclick = () => viewProfile(u);
-        div.innerHTML = `
-          <img src="${users[u].avatar}" class="w-10 h-10 rounded-full" />
-          <span class="font-semibold">${users[u].name}</span>
-          <span class="online ml-auto"></span>
-        `;
-        list.appendChild(div);
-      });
+      Object.values(users)
+        .filter(u => u.name.toLowerCase().includes(filter) || u.email.toLowerCase().includes(filter))
+        .forEach(u => {
+          const div = document.createElement('div');
+          div.className = 'glass p-3 rounded-xl flex items-center gap-3 cursor-pointer';
+          div.onclick = () => viewProfile(u.email);
+          div.innerHTML = `
+            <img src="${u.avatar}" class="w-10 h-10 rounded-full" />
+            <span class="font-semibold">${u.name}</span>
+            <span class="online ml-auto"></span>
+          `;
+          list.appendChild(div);
+        });
     }
 
-    function viewProfile(userEmail) {
-  const u = users[userEmail];
-  if (u) {
-    document.getElementById('profileNameModal').innerText = u.name;
-    document.getElementById('profileBioModal').innerText = u.bio || 'No bio';
-    document.getElementById('profileAvatar').src = u.avatar;
-    document.getElementById('profileLikes').innerText = u.likes || 0;
-    document.getElementById('profileContent').innerText = u.content || 0;
-    document.getElementById('profileMessages').innerText = u.messages || 0;
-    document.getElementById('profileModal').classList.remove('hidden');
-  }
-}
+    /* ==== PROFILE ==== */
+    function viewProfile(email) {
+      const u = users[email];
+      if (!u) return;
+      document.getElementById('profileNameModal').innerText = u.name;
+      document.getElementById('profileBioModal').innerText = u.bio || 'No bio yet';
+      document.getElementById('profileAvatar').src = u.avatar;
+      document.getElementById('profileLikes').innerText = u.likes || 0;
+      document.getElementById('profileContent').innerText = u.content || 0;
+      document.getElementById('profileMessages').innerText = u.messages || 0;
+      document.getElementById('profileModal').classList.remove('hidden');
+    }
 
-function closeProfile() {
-  document.getElementById('profileModal').classList.add('hidden');
-}
+    function closeProfile() {
+      document.getElementById('profileModal').classList.add('hidden');
+    }
 
     function startDM() {
-      // Open DM channel
-      alert('DM started!');
+      alert('Direct Message channel opened! (demo)');
       closeProfile();
     }
 
+    function showProfile() {
+      viewProfile(me.email);
+    }
+
+    /* ==== UPLOAD ==== */
     function showUpload() {
       document.getElementById('uploadModal').classList.remove('hidden');
     }
+    function closeUpload() {
+      document.getElementById('uploadModal').classList.add('hidden');
+    }
+    function uploadContent() {
+      const title = document.getElementById('uploadTitle').value.trim();
+      const file  = document.getElementById('uploadFile').files[0];
+      if (!title || !file) return alert('Title and file required');
 
-    // Other functions (upload, toggleDark, etc.) from your original
+      // In a real app you’d send the file to a server.
+      // Here we just increment the counter.
+      me.content = (me.content || 0) + 1;
+      localStorage.setItem('me', JSON.stringify(me));
+      users[me.email] = me;
+      localStorage.setItem('users', JSON.stringify(users));
+
+      alert(`"${title}" uploaded! (demo)`);
+      closeUpload();
+      document.getElementById('uploadTitle').value = '';
+      document.getElementById('uploadFile').value = '';
+    }
+
+    /* ==== THEME ==== */
     function toggleDark() {
       document.body.classList.toggle('dark');
     }
 
-    // INIT
-    const savedMe = localStorage.getItem('me');
-    if (savedMe) {
-      me = JSON.parse(savedMe);
+    /* ==== UTILS ==== */
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    /* ==== AUTO-LOGIN IF ALREADY LOGGED ==== */
+    if (me) {
       document.getElementById('loginModal').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
-      init();
+      initApp();
     }
   </script>
 </body>
