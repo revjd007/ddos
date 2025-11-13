@@ -1,138 +1,22 @@
-/* -------------------------------------------------
-   Black & Red Dark Theme - Cyberpunk Vibe
-   Uses CSS vars for dynamic red intensity (0.5-1.0)
-   ------------------------------------------------- */
-:root {
-  --bg-primary: #000000;
-  --bg-secondary: #0a0a0a;
-  --text-primary: #ffffff;
-  --text-secondary: #b3b3b3;
-  --border: #1f0000; /* Subtle red tint */
-  --red-primary: #ff0000;
-  --red-hover: #cc0000;
-  --red-intensity: 0.8; /* Default */
-}
-
-.black-panel {
-  background: var(--bg-secondary);
-  border: 1px solid rgba(255, 0, 0, calc(var(--red-intensity) * 0.2));
-  backdrop-filter: blur(10px);
-}
-
-.input-field {
-  background: rgba(10, 10, 10, 0.8);
-  border: 1px solid rgba(255, 0, 0, calc(var(--red-intensity) * 0.3));
-  color: var(--text-primary);
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
-  transition: border-color 0.2s;
-}
-.input-field:focus {
-  outline: none;
-  border-color: var(--red-primary);
-  box-shadow: 0 0 0 3px rgba(255, 0, 0, calc(var(--red-intensity) * 0.1));
-}
-.input-field::placeholder {
-  color: var(--text-secondary);
+.input {
+  @apply w-full p-4 bg-gray-900/80 border border-red-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/50 transition-all backdrop-blur;
 }
 
 .btn-red {
-  background: linear-gradient(135deg, var(--red-primary), var(--red-hover));
-  color: white;
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.btn-red:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+  @apply bg-gradient-to-r from-red-600 to-red-800 text-white font-bold py-3 px-6 rounded-xl hover:from-red-500 hover:to-red-700 transform hover:scale-105 transition-all shadow-lg;
 }
 
 .btn-gray {
-  background: rgba(75, 75, 75, 0.5);
-  color: var(--text-primary);
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  transition: background 0.2s;
-}
-.btn-gray:hover {
-  background: rgba(75, 75, 75, 0.7);
+  @apply bg-gray-700 text-white font-bold py-3 px-6 rounded-xl hover:bg-gray-600 transition-all;
 }
 
-.link-red {
-  color: var(--red-primary);
-  cursor: pointer;
-  transition: color 0.2s;
+.tab, .tab-icon {
+  @apply text-gray-400 hover:text-red-400 hover:bg-red-900/20 transition-all p-3 rounded-xl;
 }
-.link-red:hover {
-  color: var(--red-hover);
-  text-decoration: underline;
+.tab.active, .tab-icon.active {
+  @apply text-red-500 bg-red-900/30 border-l-4 border-red-500;
 }
 
-.tab {
-  background: rgba(10, 10, 10, 0.5);
-  transition: background 0.2s;
-}
-.tab.active,
-.tab:hover {
-  background: rgba(255, 0, 0, calc(var(--red-intensity) * 0.1));
-  border: 1px solid var(--red-primary);
-}
-
-.server {
-  background: rgba(10, 10, 10, 0.5);
-  transition: background 0.2s;
-}
-.server.active,
-.server:hover {
-  background: rgba(255, 0, 0, calc(var(--red-intensity) * 0.1));
-}
-
-/* Content Feed Styles */
-.content-item {
-  background: var(--bg-secondary);
-  border: 1px solid rgba(255, 0, 0, calc(var(--red-intensity) * 0.2));
-  border-radius: 0.75rem;
-  padding: 1rem;
-}
-.content-video {
-  width: 100%;
-  max-height: 300px;
-  border-radius: 0.5rem;
-  background: #000;
-}
-.content-script {
-  background: #0a0a0a;
-  border: 1px solid #333;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  font-family: 'Courier New', monospace;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  overflow-x: auto;
-}
-.like-btn {
-  background: rgba(255, 0, 0, 0.2);
-  color: var(--red-primary);
-  border: 1px solid var(--red-primary);
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  transition: all 0.2s;
-}
-.like-btn:hover {
-  background: var(--red-primary);
-  color: white;
-}
-
-/* Settings Panel */
-#settingsPanel {
-  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  #settingsPanel { width: 100%; }
-}
+.message { @apply max-w-md p-4 rounded-2xl; }
+.message.me { @apply bg-gradient-to-r from-red-600 to-red-800 text-white ml-auto; }
+.message.other { @apply bg-gray-800 text-white border border-red-900/50; }
