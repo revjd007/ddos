@@ -1,26 +1,61 @@
 const Users = {
   init(user) {
-    $('#navName').textContent = user.name;
-    $('#navAvatar').src = user.avatar;
-    $('#navAvatarSm').src = user.avatar;
+    $('#navName').textContent = user.displayName;
+    $('#navRole').textContent = user.role;
+    $('#navAvatar').src = $('#navAvatarSm').src = user.avatar;
   },
-  renderDMs() {
-    const list = $('#dmUserList');
-    if (!list) return;
+
+  renderPlayers() {
+    const list = $('#playerList');
     list.innerHTML = '';
-    const current = JSON.parse(localStorage.currentUser);
-    Object.keys(localStorage)
-      .filter(k => k.startsWith('user_') && k !== `user_${current.email}`)
-      .forEach(k => {
-        const u = JSON.parse(localStorage[k]);
-        const div = document.createElement('div');
-        div.className = 'flex items-center gap-3 p-3 rounded-xl hover:bg-red-900/20 cursor-pointer';
-        div.onclick = () => Message.openDM(u.id);
-        div.innerHTML = `
-          <img src="${u.avatar}" class="w-10 h-10 rounded-full border border-red-600">
-          <div class="font-semibold">${u.name}</div>
-        `;
-        list.appendChild(div);
-      });
+    const current = App.currentUser;
+
+    // Mock players + real registered
+    const mock = [
+      { id: '1', username: 'xXProGamerXx', displayName: 'ProGamer', avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=1' },
+      { id: '2', username: 'NinjaGirl', displayName: 'Ninja', avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=2' }
+    ];
+
+    [...mock, ...(current.email === 'pdigger48@gmail.com' ? [] : [current])].forEach(u => {
+      if (u.id === current.id) return;
+      const div = document.createElement('div');
+      div.className = 'player-card';
+      div.onclick = () => Message.openDM(u);
+      div(innerHTML = `
+        <div class="flex items-center gap-3">
+          <img src="${u.avatar}" class="w-12 h-12 rounded-full border-2 border-red-600">
+          <div>
+            <div class="font-bold">${u.displayName}</div>
+            <div class="text-xs opacity-70">@${u.username}</div>
+          </div>
+        </div>
+        <button class="bg-red-700 hover:bg-red-600 px-4 py-2 rounded-full text-sm font-bold">ADD</button>
+      `;
+      list.appendChild(div);
+    });
+  },
+
+  search() {
+    const term = $('#searchPlayers').value.toLowerCase();
+    $$('.player-card').forEach(card => {
+      const name = card.querySelector('div font-bold').textContent.toLowerCase();
+      card.style.display = name.includes(term) ? '' : 'none';
+    });
+  },
+
+  renderDMs() {
+    // Future: list DMs
+    $('#mainTitle').textContent = 'DMs (Coming Soon)';
+  },
+
+  renderProfile() {
+    const u = App.currentUser;
+    $('#profileName').textContent = u.displayName;
+    $('#profileEmail').textContent = u.email;
+    $('#profileRole').textContent = u.role;
+    $('#profileAvatar').src = u.avatar;
+    $('#profilePosts').textContent = u.posts;
+    $('#profileFriends').textContent = u.friends.length;
+    $('#profileMessages').textContent = u.messages;
   }
 };
