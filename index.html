@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>John's Hangout | FULLY FIXED + VOICE</title>
+  <title>John's Hangout | VOICE + TYPING</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -16,10 +16,12 @@
     .btn-red { @apply bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-5 rounded transition transform hover:scale-105; }
     .card { @apply bg-gray-900 border border-red-900 rounded-xl p-6 hover:border-red-600 transition; backdrop-filter: blur(10px); }
     .dm-active { background: #330011; border-left: 4px solid var(--red); }
-    .online { color: #00ff00; animation: blink 2s infinite; }
-    @keyframes pulse { 0%,100% { text-shadow: 0 0 15px var(--red); } 50% { text-shadow: 0 0 25px var(--red); } }
-    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .typing { color: #00ff00; font-style: italic; }
+    .voice-user { @apply flex items-center gap-2 p-2 hover:bg-gray-800 rounded; }
     .voice-wave { height: 30px; background: linear-gradient(to right, #ff0033, #00ff00); border-radius: 15px; }
+    @keyframes pulse { 0%,100% { text-shadow: 0 0 15px var(--red); } 50% { text-shadow: 0 0 25px var(--red); } }
+    .online { color: #00ff00; animation: blink 2s infinite; }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
   </style>
 </head>
 <body class="relative">
@@ -43,7 +45,7 @@
 <div id="home" class="tab-content min-h-screen flex items-center justify-center pt-20">
   <div class="text-center">
     <h1 class="text-7xl orbitron glow-red mb-4">JOHN'S HANGOUT</h1>
-    <p class="text-3xl text-red-400 mb-6">FIXED. VOICE. UNSTOPPABLE.</p>
+    <p class="text-3xl text-red-400 mb-6">LIVE VOICE • TYPING • DOMINATION</p>
     <button onclick="openTab('messages')" class="btn-red text-xl px-10 py-4 orbitron">ENTER</button>
   </div>
 </div>
@@ -61,60 +63,40 @@
 
   <div class="container mx-auto px-6 max-w-7xl">
 
-    <!-- VIDEOS -->
-    <div id="videos" class="tab-content hidden">
-      <div class="flex justify-between mb-8">
-        <h2 class="text-3xl orbitron glow-red">VIDEO VAULT</h2>
-        <div id="owner-video-upload" class="hidden">
-          <input type="file" id="video-upload" accept="video/*" class="file:mr-4 file:py-2 file:px-4 file:rounded file:bg-red-600 file:text-white" />
-          <button onclick="uploadVideo()" class="btn-red">UPLOAD</button>
-        </div>
-      </div>
-      <div id="video-list" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
-    </div>
-
-    <!-- SCRIPTS -->
-    <div id="scripts" class="tab-content hidden">
-      <div class="flex justify-between mb-8">
-        <h2 class="text-3xl orbitron glow-red">SCRIPT FORGE</h2>
-        <button onclick="toggleScriptForm()" class="btn-red">+ FORGE</button>
-      </div>
-      <div id="script-upload-form" class="hidden card mb-8">
-        <input type="text" id="script-name" placeholder="Name" class="w-full mb-4 bg-black border border-red-900 px-4 py-3 rounded-lg" />
-        <textarea id="script-code" placeholder="Code..." class="w-full h-48 bg-black border border-red-900 px-4 py-3 rounded-lg font-mono text-sm text-green-400"></textarea>
-        <button onclick="saveScript()" class="mt-4 btn-red w-full">DEPLOY</button>
-      </div>
-      <div id="script-list" class="space-y-6"></div>
-    </div>
-
-    <!-- MESSAGES + VOICE -->
+    <!-- MESSAGES + VOICE CHANNEL -->
     <div id="messages" class="tab-content hidden">
       <div class="flex gap-6">
+        <!-- CHAT SIDEBAR -->
         <div class="w-64 card p-0">
           <div class="p-4 border-b border-red-900 orbitron text-lg flex justify-between">
             <span>CHATS</span>
             <button onclick="showFindPlayer()" class="text-cyan-400"><i class="fas fa-search"></i></button>
           </div>
-          <div id="chat-list" class="overflow-y-auto h-96"></div>
+          <div id="chat-list" class="overflow-y-auto h-64"></div>
           <div class="p-3 border-t border-red-900">
             <button onclick="createGroup()" class="w-full btn-red text-xs py-2">NEW GROUP</button>
           </div>
+
+          <!-- VOICE CHANNEL -->
+          <div class="mt-4 p-4 border-t border-red-900">
+            <div class="flex justify-between items-center mb-2">
+              <span class="orbitron text-sm">VOICE CHANNEL</span>
+              <button id="voice-join-btn" onclick="toggleVoiceChannel()" class="text-xs btn-red px-3 py-1">JOIN</button>
+            </div>
+            <div id="voice-users" class="space-y-1 mt-2"></div>
+          </div>
         </div>
 
+        <!-- CHAT AREA -->
         <div class="flex-1">
           <h2 class="text-3xl orbitron glow-red mb-6"><span id="chat-title">Select Chat</span></h2>
           <div class="card p-0">
             <div id="message-list" class="h-80 overflow-y-auto p-6 space-y-4 bg-black bg-opacity-50"></div>
+            <div id="typing-indicator" class="px-6 pb-2 text-xs typing hidden"></div>
             
-            <!-- VOICE CHAT -->
-            <div class="p-4 border-t border-red-900 flex items-center gap-4">
-              <button id="voice-btn" onclick="toggleVoice()" class="btn-red px-6"><i class="fas fa-microphone"></i> VOICE</button>
-              <div id="voice-wave" class="hidden voice-wave w-32"></div>
-              <div id="voice-status" class="text-xs text-gray-400"></div>
-            </div>
-
             <div class="p-4 border-t border-red-900 flex gap-3">
-              <input type="text" id="msg-input" placeholder="Type..." class="flex-1 bg-black border border-red-900 px-5 py-3 rounded-lg text-sm" onkeydown="if(event.key==='Enter') sendMessage()" />
+              <input type="text" id="msg-input" placeholder="Type..." class="flex-1 bg-black border border-red-900 px-5 py-3 rounded-lg text-sm" 
+                     onkeydown="handleKeyDown(event)" onkeyup="handleKeyUp(event)" />
               <button onclick="sendMessage()" class="btn-red px-8 orbitron">SEND</button>
             </div>
           </div>
@@ -146,6 +128,8 @@ const DB = { get: k => JSON.parse(localStorage.getItem(k)) || null, set: (k,v) =
 const OWNER = { user: "John", pass: "boss123" };
 let currentUser = DB.get('currentUser');
 let activeChat = null;
+let typingTimeout = null;
+let voiceChannelUsers = new Set();
 let voiceStream = null;
 let audioContext = null;
 
@@ -158,10 +142,9 @@ function renderAuth() {
       <span class="text-red-400 font-bold">${currentUser.username}</span>
       <input id="aura-input" value="${currentUser.aura}" class="bg-black border border-red-900 px-2 py-1 rounded text-xs w-16" onblur="saveAura(this.value)" />
       ${isOwner ? '<span class="text-yellow-500">[GOD]</span>' : ''}
-      <span class="online">● ONLINE</span>
+      <span class="online">ONLINE</span>
       <button onclick="logout()" class="text-gray-500"><i class="fas fa-sign-out-alt"></i></button>
     </div>`;
-    if (isOwner) document.getElementById('owner-video-upload')?.classList.remove('hidden');
   } else {
     el.innerHTML = `<div class="flex gap-2 text-xs">
       <input id="login-user" placeholder="user" class="bg-black border border-red-900 px-3 py-1 rounded" />
@@ -172,10 +155,33 @@ function renderAuth() {
   }
   updateAll();
 }
-function login() { /* SAME AS BEFORE */ const u = document.getElementById('login-user').value.trim(); const p = document.getElementById('login-pass').value; const users = DB.get('users') || {}; if (users[u] && users[u].pass === p) { currentUser = { username: u, aura: users[u].aura || 'NEW' }; DB.set('currentUser', currentUser); renderAuth(); } else alert("DENIED"); }
-function register() { const u = prompt("Username:"); const p = prompt("Password:"); if (!u || !p) return; const users = DB.get('users') || {}; if (users[u]) return alert("TAKEN"); users[u] = { pass: p, aura: 'NEW' }; DB.set('users', users); alert("DONE"); }
-function logout() { currentUser = null; DB.set('currentUser', null); activeChat = null; renderAuth(); }
-function saveAura(aura) { if (!currentUser) return; currentUser.aura = aura; const users = DB.get('users') || {}; users[currentUser.username].aura = aura; DB.set('users', users); DB.set('currentUser', currentUser); }
+function login() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const users = DB.get('users') || {};
+  if (users[u] && users[u].pass === p) {
+    currentUser = { username: u, aura: users[u].aura || 'NEW' };
+    DB.set('currentUser', currentUser);
+    renderAuth();
+  } else alert("DENIED");
+}
+function register() {
+  const u = prompt("Username:"); const p = prompt("Password:");
+  if (!u || !p) return;
+  const users = DB.get('users') || {};
+  if (users[u]) return alert("TAKEN");
+  users[u] = { pass: p, aura: 'NEW' };
+  DB.set('users', users);
+  alert("REGISTERED");
+}
+function logout() { currentUser = null; DB.set('currentUser', null); activeChat = null; leaveVoiceChannel(); renderAuth(); }
+function saveAura(aura) {
+  if (!currentUser) return;
+  currentUser.aura = aura;
+  const users = DB.get('users') || {};
+  users[currentUser.username].aura = aura;
+  DB.set('users', users); DB.set('currentUser', currentUser);
+}
 
 // === TABS ===
 function openTab(tab) {
@@ -183,82 +189,10 @@ function openTab(tab) {
   document.getElementById(tab).classList.remove('hidden');
   document.querySelectorAll('[id^="tab-"]').forEach(t => t.classList.remove('tab-active', 'text-red-400'));
   document.getElementById('tab-' + tab)?.classList.add('tab-active', 'text-red-400');
-  if (tab === 'videos') loadVideos();
-  if (tab === 'scripts') loadScripts();
-  if (tab === 'messages') updateChats();
+  if (tab === 'messages') { updateChats(); updateVoiceUsers(); }
 }
 
-// === VIDEOS (FIXED) ===
-function uploadVideo() {
-  const file = document.getElementById('video-upload').files[0];
-  if (!file) return alert("SELECT");
-  const reader = new FileReader();
-  reader.onload = e => {
-    const videos = DB.get('videos') || [];
-    videos.push({ name: file.name, data: e.target.result, time: Date.now(), owner: currentUser.username });
-    DB.set('videos', videos);
-    loadVideos();
-  };
-  reader.readAsDataURL(file);
-}
-function loadVideos() {
-  const list = document.getElementById('video-list');
-  const videos = DB.get('videos') || [];
-  list.innerHTML = videos.map(v => `
-    <div class="card cursor-pointer" onclick="playVideo('${v.data}')">
-      <div class="bg-gradient-to-br from-red-900 to-black h-48 rounded-t-xl flex items-center justify-center text-6xl text-red-500 glow-red">
-        <i class="fas fa-play-circle"></i>
-      </div>
-      <div class="p-4">
-        <div class="font-bold text-red-400 truncate">${v.name}</div>
-        <div class="text-xs text-gray-500">${v.owner}</div>
-      </div>
-    </div>
-  `).join('');
-}
-function playVideo(url) {
-  const div = document.createElement('div');
-  div.className = 'fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center p-10';
-  div.onclick = () => div.remove();
-  div.innerHTML = `<video controls autoplay class="max-w-full max-h-full rounded-xl border-4 border-red-600">
-    <source src="${url}" type="video/mp4">
-  </video>`;
-  document.body.appendChild(div);
-}
-
-// === SCRIPTS (FIXED) ===
-function toggleScriptForm() { document.getElementById('script-upload-form').classList.toggle('hidden'); }
-function saveScript() {
-  const name = document.getElementById('script-name').value.trim();
-  const code = document.getElementById('script-code').value;
-  if (!name || !code) return alert("FILL");
-  const scripts = DB.get('scripts') || [];
-  scripts.push({ name, code, author: currentUser.username, time: Date.now() });
-  DB.set('scripts', scripts);
-  document.getElementById('script-name').value = '';
-  document.getElementById('script-code').value = '';
-  toggleScriptForm();
-  loadScripts();
-}
-function loadScripts() {
-  const list = document.getElementById('script-list');
-  const scripts = DB.get('scripts') || [];
-  list.innerHTML = scripts.map(s => `
-    <div class="card">
-      <div class="font-bold text-red-400">${s.name}</div>
-      <div class="text-xs text-gray-500">${s.author} • ${new Date(s.time).toLocaleString()}</div>
-      <pre class="mt-2 text-xs bg-black p-3 rounded overflow-x-auto border border-red-900">${s.code}</pre>
-      <div class="flex gap-2 mt-2">
-        <button onclick="copy('${btoa(s.code)}')" class="text-green-400 text-xs">COPY</button>
-        <button onclick="download('${s.name}', '${btoa(s.code)}')" class="text-yellow-400 text-xs">DL</button>
-      </div>
-    </div>
-  `).join('');
-}
-function copy(b64) { navigator.clipboard.writeText(atob(b64)); alert("COPIED"); }
-function download(name, b64) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([atob(b64)])); a.download = name.endsWith('.js') ? name : name + '.js'; a.click(); }
-
-// === MESSAGES + VOICE (FIXED) ===
+// === CHATS ===
 function updateChats() {
   const list = document.getElementById('chat-list');
   const users = Object.keys(DB.get('users') || {}).filter(u => u !== currentUser?.username);
@@ -314,6 +248,7 @@ function showFindPlayer() {
   openChat(`dm_${[currentUser.username, found].sort().join('_')}`, found);
 }
 
+// === MESSAGING (LIVE + TYPING) ===
 function sendMessage() {
   const input = document.getElementById('msg-input');
   const text = input.value.trim();
@@ -323,6 +258,7 @@ function sendMessage() {
   messages[activeChat].push({ text, user: currentUser.username, aura: currentUser.aura, time: Date.now() });
   DB.set('messages', messages);
   input.value = '';
+  clearTyping();
   loadMessages();
   updateChats();
 }
@@ -343,17 +279,62 @@ function loadMessages() {
   list.scrollTop = list.scrollHeight;
 }
 
-// === VOICE CHAT ===
-async function toggleVoice() {
-  if (voiceStream) {
-    voiceStream.getTracks().forEach(t => t.stop());
-    voiceStream = null;
-    document.getElementById('voice-btn').innerHTML = '<i class="fas fa-microphone"></i> VOICE';
-    document.getElementById('voice-wave').classList.add('hidden');
-    document.getElementById('voice-status').textContent = '';
-    return;
+// === TYPING INDICATOR ===
+function handleKeyDown(e) { if (e.key === 'Enter') sendMessage(); }
+function handleKeyUp(e) {
+  if (e.target.value.trim()) {
+    showTyping();
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(clearTyping, 2000);
+  } else {
+    clearTyping();
   }
+}
+function showTyping() {
+  const indicator = document.getElementById('typing-indicator');
+  indicator.textContent = `${currentUser.username} is typing...`;
+  indicator.classList.remove('hidden');
+}
+function clearTyping() {
+  document.getElementById('typing-indicator').classList.add('hidden');
+}
 
+// === VOICE CHANNEL ===
+function toggleVoiceChannel() {
+  const btn = document.getElementById('voice-join-btn');
+  if (voiceChannelUsers.has(currentUser.username)) {
+    leaveVoiceChannel();
+    btn.textContent = 'JOIN';
+  } else {
+    joinVoiceChannel();
+    btn.textContent = 'LEAVE';
+  }
+}
+function joinVoiceChannel() {
+  voiceChannelUsers.add(currentUser.username);
+  DB.set('voiceChannel', Array.from(voiceChannelUsers));
+  updateVoiceUsers();
+  startVoiceStream();
+}
+function leaveVoiceChannel() {
+  voiceChannelUsers.delete(currentUser.username);
+  DB.set('voiceChannel', Array.from(voiceChannelUsers));
+  updateVoiceUsers();
+  stopVoiceStream();
+}
+function updateVoiceUsers() {
+  const list = document.getElementById('voice-users');
+  const users = DB.get('voiceChannel') || [];
+  list.innerHTML = users.map(u => `
+    <div class="voice-user">
+      <i class="fas fa-microphone text-green-500"></i>
+      <span class="text-sm">${u}</span>
+    </div>
+  `).join('');
+}
+
+// === VOICE STREAM ===
+async function startVoiceStream() {
   try {
     voiceStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioContext = new AudioContext();
@@ -361,12 +342,9 @@ async function toggleVoice() {
     const analyser = audioContext.createAnalyser();
     source.connect(analyser);
     analyser.fftSize = 256;
-
-    document.getElementById('voice-btn').innerHTML = '<i class="fas fa-microphone-slash"></i> STOP';
-    document.getElementById('voice-wave').classList.remove('hidden');
-    document.getElementById('voice-status').textContent = 'LIVE';
-
-    const wave = document.getElementById('voice-wave');
+    const wave = document.createElement('div');
+    wave.className = 'voice-wave w-32';
+    document.getElementById('voice-users').appendChild(wave);
     const draw = () => {
       if (!voiceStream) return;
       const data = new Uint8Array(analyser.frequencyBinCount);
@@ -376,16 +354,22 @@ async function toggleVoice() {
       requestAnimationFrame(draw);
     };
     draw();
-  } catch (e) {
-    alert("MIC DENIED");
-  }
+  } catch (e) { alert("MIC DENIED"); }
+}
+function stopVoiceStream() {
+  if (voiceStream) voiceStream.getTracks().forEach(t => t.stop());
+  voiceStream = null;
 }
 
 // === INIT ===
-function updateAll() { loadVideos(); loadScripts(); updateChats(); }
+function updateAll() { updateChats(); updateVoiceUsers(); }
 renderAuth();
 openTab('home');
-setInterval(() => { if (activeChat) loadMessages(); updateChats(); }, 2000);
+setInterval(() => {
+  if (activeChat) loadMessages();
+  updateChats();
+  updateVoiceUsers();
+}, 1000);
 window.onresize = () => { canvas.width = innerWidth; canvas.height = innerHeight; };
 </script>
 </body>
