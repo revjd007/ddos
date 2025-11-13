@@ -1,12 +1,25 @@
 const App = {
+  init() {
+    const current = localStorage.getItem('currentUser');
+    if (current) {
+      const user = JSON.parse(current);
+      $('#app').classList.remove('hidden');
+      $('#loginModal').classList.add('hidden');
+      $('#registerModal').classList.add('hidden');
+      Users.init(user);
+      App.setTab('servers');
+      Message.render();
+    }
+  },
   setTab(tab) {
     document.querySelectorAll('.tab, .tab-icon').forEach(el => el.classList.remove('active'));
     document.querySelectorAll(`[data-tab="${tab}"]`).forEach(el => el.classList.add('active'));
     ['servers', 'dms', 'content'].forEach(t => {
-      $(`#${t}List`).classList.toggle('hidden', t !== tab);
-      $(`#${t === 'servers' ? 'chat' : t === 'dms' ? 'dm' : 'content'}View`).classList.toggle('hidden', t !== tab);
+      $(`#${t}List`)?.classList.toggle('hidden', t !== tab);
+      const view = t === 'servers' ? 'chatView' : t === 'dms' ? 'dmView' : 'contentFeed';
+      $(`#${view}`).classList.toggle('hidden', t !== tab);
     });
-    $('#mainTitle').textContent = tab.toUpperCase();
+    $('#mainTitle').textContent = tab === 'servers' ? 'General' : tab.toUpperCase();
     if (tab === 'servers') Message.render();
     if (tab === 'dms') Users.renderDMs();
     if (tab === 'content') Video.render();
@@ -15,4 +28,6 @@ const App = {
   closeSettings() { $('#settingsPanel').classList.add('translate-x-full'); setTimeout(() => $('#settingsPanel').classList.add('hidden'), 300); },
   closeModal(id) { $(`#${id}`).classList.add('hidden'); }
 };
+
 const $ = (s) => document.querySelector(s);
+document.addEventListener('DOMContentLoaded', () => App.init());
