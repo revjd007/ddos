@@ -3,46 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>John's Hangout | RED BLACK EMPIRE</title>
+  <title>John's Hangout | E2E SECURE</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Roboto+Mono:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    :root {
-      --red: #ff0033; --darkred: #cc0022; --black: #0a0a0a; --gray: #1a1a1a;
-      --glow: 0 0 15px rgba(255, 0, 51, 0.7), 0 0 30px rgba(255, 0, 51, 0.4);
-    }
-    body { 
-      font-family: 'Roboto Mono', monospace; 
-      background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
-      min-height: 100vh;
-      background-attachment: fixed;
-    }
+    :root { --red: #ff0033; --darkred: #cc0022; --black: #0a0a0a; --gray: #1a1a1a; }
+    body { font-family: 'Roboto Mono', monospace; background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%); min-height: 100vh; }
     .orbitron { font-family: 'Orbitron', sans-serif; }
-    .tech { font-family: 'Share Tech Mono', monospace; }
-    .glow-red { text-shadow: var(--glow); animation: pulse 2s infinite; }
-    .border-glow { box-shadow: var(--glow); }
+    .glow-red { text-shadow: 0 0 15px var(--red); animation: pulse 2s infinite; }
     .tab-active { border-bottom: 4px solid var(--red); color: var(--red); }
     .btn-red { @apply bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-5 rounded transition transform hover:scale-105; }
-    .card { 
-      @apply bg-gray-900 border border-red-900 rounded-xl p-6 hover:border-red-600 transition-all duration-300;
-      backdrop-filter: blur(10px);
-      background: rgba(26, 26, 26, 0.7);
-    }
-    .video-card:hover { transform: translateY(-8px); }
-    .scanline { 
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-      pointer-events: none; z-index: 9999; 
-      background: repeating-linear-gradient(0deg, rgba(255,0,51,0.03), rgba(255,0,51,0.03) 2px, transparent 2px, transparent 4px);
-      animation: scan 8s linear infinite;
-    }
-    @keyframes pulse { 0%,100% { text-shadow: var(--glow); } 50% { text-shadow: 0 0 25px rgba(255, 0, 51, 0.9); } }
-    @keyframes scan { from { transform: translateY(-100%); } to { transform: translateY(100%); } }
-    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-    .floating { animation: float 6s ease-in-out infinite; }
-    .neon-border { border: 1px solid; border-image: linear-gradient(45deg, #ff0033, #cc0022) 1; }
-    .matrix-rain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.05; pointer-events: none; }
+    .card { @apply bg-gray-900 border border-red-900 rounded-xl p-6 hover:border-red-600 transition; backdrop-filter: blur(10px); }
     .dm-active { background: #330011; border-left: 4px solid var(--red); }
+    .scanline { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; 
+      background: repeating-linear-gradient(0deg, rgba(255,0,51,0.03), rgba(255,0,51,0.03) 2px, transparent 2px, transparent 4px);
+      animation: scan 8s linear infinite; }
+    @keyframes pulse { 0%,100% { text-shadow: 0 0 15px var(--red); } 50% { text-shadow: 0 0 25px var(--red); } }
+    @keyframes scan { from { transform: translateY(-100%); } to { transform: translateY(100%); } }
+    .matrix-rain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.05; pointer-events: none; }
   </style>
 </head>
 <body class="relative">
@@ -58,88 +37,54 @@
       <i class="fas fa-crown text-yellow-500 text-2xl glow-red"></i>
       <h1 class="text-3xl orbitron glow-red">John's Hangout</h1>
     </div>
-    <div id="auth-section" class="flex items-center gap-4"></div>
+    <div id="auth-section"></div>
   </div>
 </nav>
 
 <!-- HERO -->
 <div id="home" class="tab-content min-h-screen flex items-center justify-center pt-20">
   <div class="text-center max-w-5xl px-6">
-    <h1 class="text-7xl orbitron glow-red mb-4 floating">JOHN'S HANGOUT</h1>
-    <p class="text-3xl tech text-red-400 mb-6 tracking-widest">PRIVATE. SECURE. UNGOVERNED.</p>
-    <p class="text-lg max-w-3xl mx-auto text-gray-300 mb-10">
-      No logs. No Gmail. <span class="text-red-500">Owner is John.</span><br>
-      Videos. Scripts. Private DMs. Total control.
-    </p>
-
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-      <div class="card text-center"><div class="text-5xl text-red-500 mb-2"><i class="fas fa-video"></i></div><div class="text-2xl orbitron" id="stat-videos">0</div><p class="text-xs text-gray-400">VIDEOS</p></div>
-      <div class="card text-center"><div class="text-5xl text-red-500 mb-2"><i class="fas fa-code"></i></div><div class="text-2xl orbitron" id="stat-scripts">0</div><p class="text-xs text-gray-400">SCRIPTS</p></div>
-      <div class="card text-center"><div class="text-5xl text-red-500 mb-2"><i class="fas fa-comments"></i></div><div class="text-2xl orbitron" id="stat-messages">0</div><p class="text-xs text-gray-400">MSGS</p></div>
-      <div class="card text-center"><div class="text-5xl text-red-500 mb-2"><i class="fas fa-users"></i></div><div class="text-2xl orbitron" id="stat-users">1</div><p class="text-xs text-gray-400">ONLINE</p></div>
-    </div>
-
-    <button onclick="openTab('videos')" class="btn-red text-xl px-10 py-4 orbitron tracking-wider">
-      ENTER JOHN'S DOMAIN
-    </button>
+    <h1 class="text-7xl orbitron glow-red mb-4">JOHN'S HANGOUT</h1>
+    <p class="text-3xl text-red-400 mb-6">E2E ENCRYPTED • GROUPS • DMs</p>
+    <button onclick="openTab('messages')" class="btn-red text-xl px-10 py-4 orbitron">ENTER SECURE ZONE</button>
   </div>
 </div>
 
 <!-- TABS -->
-<div class="pt-24 pb-20 md:pb-10">
+<div class="pt-24 pb-20">
   <div class="container mx-auto px-6 hidden md:block">
     <div class="flex gap-10 border-b border-red-900 text-lg font-bold pb-2">
-      <button onclick="openTab('home')"     id="tab-home"     class="text-gray-500">HOME</button>
-      <button onclick="openTab('videos')"   id="tab-videos"   class="text-gray-500">VIDEOS</button>
-      <button onclick="openTab('scripts')"  id="tab-scripts"  class="text-gray-500">SCRIPTS</button>
+      <button onclick="openTab('home')" id="tab-home" class="text-gray-500">HOME</button>
+      <button onclick="openTab('videos')" id="tab-videos" class="text-gray-500">VIDEOS</button>
+      <button onclick="openTab('scripts')" id="tab-scripts" class="text-gray-500">SCRIPTS</button>
       <button onclick="openTab('messages')" id="tab-messages" class="text-gray-500">MESSAGES</button>
     </div>
   </div>
 
   <div class="container mx-auto px-6 max-w-7xl">
 
-    <!-- VIDEOS -->
-    <div id="videos" class="tab-content hidden">
-      <div class="flex justify-between items-center mb-8">
-        <h2 class="text-3xl orbitron glow-red"><i class="fas fa-video mr-3"></i>VIDEO VAULT</h2>
-        <div id="owner-video-upload" class="hidden flex gap-3">
-          <input type="file" id="video-upload" accept="video/*" class="file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:bg-red-600 file:text-white" />
-          <button onclick="uploadVideo()" class="btn-red"><i class="fas fa-upload mr-2"></i>UPLOAD</button>
-        </div>
-      </div>
-      <div id="video-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
-    </div>
-
-    <!-- SCRIPTS -->
-    <div id="scripts" class="tab-content hidden">
-      <div class="flex justify-between items-center mb-8">
-        <h2 class="text-3xl orbitron glow-red"><i class="fas fa-code mr-3"></i>SCRIPT FORGE</h2>
-        <button onclick="toggleScriptForm()" class="btn-red"><i class="fas fa-plus mr-2"></i>FORGE</button>
-      </div>
-      <div id="script-upload-form" class="hidden card mb-8 neon-border">
-        <input type="text" id="script-name" placeholder="Script Name" class="w-full mb-4 bg-black border border-red-900 px-4 py-3 rounded-lg tech" />
-        <textarea id="script-code" placeholder="Drop code..." class="w-full h-48 bg-black border border-red-900 px-4 py-3 rounded-lg font-mono text-sm text-green-400"></textarea>
-        <button onclick="saveScript()" class="mt-4 btn-red w-full orbitron">DEPLOY</button>
-      </div>
-      <div id="script-list" class="space-y-6"></div>
-    </div>
-
-    <!-- MESSAGES + DMs -->
+    <!-- MESSAGES TAB -->
     <div id="messages" class="tab-content hidden">
-      <div class="flex gap-6 h-full">
-        <!-- USER LIST -->
-        <div class="w-64 card p-0 overflow-hidden hidden md:block">
-          <div class="p-4 border-b border-red-900 orbitron text-lg">USERS</div>
-          <div id="user-list" class="overflow-y-auto h-96"></div>
+      <div class="flex gap-6">
+        <!-- SIDEBAR -->
+        <div class="w-64 card p-0 overflow-hidden">
+          <div class="p-4 border-b border-red-900 orbitron text-lg flex justify-between">
+            <span>CHATS</span>
+            <button onclick="showFindPlayer()" class="text-xs text-cyan-400"><i class="fas fa-search"></i></button>
+          </div>
+          <div id="chat-list" class="overflow-y-auto h-96"></div>
+          <div class="p-3 border-t border-red-900">
+            <button onclick="createGroup()" class="w-full btn-red text-xs py-2"><i class="fas fa-users"></i> NEW GROUP</button>
+          </div>
         </div>
 
         <!-- CHAT AREA -->
         <div class="flex-1">
-          <h2 class="text-3xl orbitron glow-red mb-6"><i class="fas fa-comments mr-3"></i><span id="chat-title">SHADOW COMMS</span></h2>
-          <div class="card p-0 overflow-hidden neon-border h-96 md:h-full">
-            <div id="message-list" class="h-80 md:h-full overflow-y-auto p-6 space-y-4 bg-black bg-opacity-50"></div>
+          <h2 class="text-3xl orbitron glow-red mb-6"><span id="chat-title">Select Chat</span></h2>
+          <div class="card p-0 overflow-hidden h-96">
+            <div id="message-list" class="h-80 overflow-y-auto p-6 space-y-4 bg-black bg-opacity-50"></div>
             <div class="p-4 border-t border-red-900 flex gap-3">
-              <input type="text" id="msg-input" placeholder="Transmit..." class="flex-1 bg-black border border-red-900 px-5 py-3 rounded-lg tech text-sm" onkeypress="handleEnter(event)" />
+              <input type="text" id="msg-input" placeholder="Type..." class="flex-1 bg-black border border-red-900 px-5 py-3 rounded-lg text-sm" onkeypress="handleEnter(event)" />
               <button onclick="sendMessage()" class="btn-red px-8 orbitron"><i class="fas fa-paper-plane"></i></button>
             </div>
           </div>
@@ -150,93 +95,108 @@
   </div>
 </div>
 
-<!-- MOBILE BOTTOM NAV -->
-<div class="fixed bottom-0 left-0 right-0 bg-black bg-opacity-95 border-t border-red-900 z-40 md:hidden">
-  <div class="flex justify-around py-3 text-xs">
-    <button onclick="openTab('home')"     class="flex flex-col items-center text-gray-500"><i class="fas fa-home"></i><span>HOME</span></button>
-    <button onclick="openTab('videos')"   class="flex flex-col items-center text-gray-500"><i class="fas fa-video"></i><span>VIDEOS</span></button>
-    <button onclick="openTab('scripts')"  class="flex flex-col items-center text-gray-500"><i class="fas fa-code"></i><span>SCRIPTS</span></button>
-    <button onclick="openTab('messages')" class="flex flex-col items-center text-gray-500"><i class="fas fa-comments"></i><span>CHAT</span></button>
-  </div>
-</div>
-
 <script>
-// === MATRIX RAIN ===
+// === MATRIX RAIN (BACKGROUND) ===
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-const letters = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-const fontSize = 14; const columns = canvas.width / fontSize; const drops = Array(Math.floor(columns)).fill(1);
-function draw() {
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = '#ff0033'; ctx.font = fontSize + 'px monospace';
-  for (let i = 0; i < drops.length; i++) {
-    const text = letters[Math.floor(Math.random() * letters.length)];
-    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+canvas.width = innerWidth; canvas.height = innerHeight;
+const drops = Array(Math.floor(canvas.width / 14)).fill(1);
+setInterval(() => {
+  ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#ff0033'; ctx.font = '14px monospace';
+  drops.forEach((y, i) => {
+    ctx.fillText(['0','1','アイ','カ','ス','ネ','ハ','ム','ラ'][Math.floor(Math.random()*9)], i*14, y*14);
+    if (y*14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
     drops[i]++;
-  }
-}
-setInterval(draw, 33);
+  });
+}, 33);
 
-// === DB ===
-const DB = { get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }, set: (k,v) => localStorage.setItem(k, JSON.stringify(v)) };
-const OWNER = { user: "John", pass: "boss123" }; // JOHN IS GOD
+// === DB & CRYPTO ===
+const DB = { get: k => JSON.parse(localStorage.getItem(k)) || null, set: (k,v) => localStorage.setItem(k, JSON.stringify(v)) };
+const OWNER = { user: "John", pass: "boss123" };
 let currentUser = DB.get('currentUser');
-let activeDM = null;
+let activeChat = null;
+
+// Generate user keypair on register/login
+function getUserKeys(username) {
+  let keys = DB.get('keys') || {};
+  if (!keys[username]) {
+    const key = crypto.randomUUID().replace(/-/g, '').slice(0, 32);
+    keys[username] = { aesKey: key };
+    DB.set('keys', keys);
+  }
+  return keys[username];
+}
+
+// E2E Encrypt/Decrypt
+async function encrypt(text, recipient) {
+  const senderKey = getUserKeys(currentUser.username).aesKey;
+  const recipientKey = getUserKeys(recipient).aesKey;
+  const shared = xorStrings(senderKey, recipientKey);
+  const enc = new TextEncoder();
+  const data = enc.encode(text);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await crypto.subtle.importKey('raw', enc.encode(shared), 'AES-GCM', false, ['encrypt']);
+  const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, data);
+  return btoa(String.fromCharCode(...iv, ...new Uint8Array(encrypted)));
+}
+async function decrypt(ciphertext, sender) {
+  const senderKey = getUserKeys(sender).aesKey;
+  const recipientKey = getUserKeys(currentUser.username).aesKey;
+  const shared = xorStrings(senderKey, recipientKey);
+  const dec = new TextDecoder();
+  const data = Uint8Array.from(atob(ciphertext).split('').map(c => c.charCodeAt(0)));
+  const iv = data.slice(0, 12);
+  const encrypted = data.slice(12);
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(shared), 'AES-GCM', false, ['decrypt']);
+  const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, encrypted);
+  return dec.decode(decrypted);
+}
+function xorStrings(a, b) { return a.split('').map((c,i) => String.fromCharCode(c.charCodeAt(0) ^ b.charCodeAt(i%b.length))).join(''); }
 
 // === AUTH ===
 function renderAuth() {
   const el = document.getElementById('auth-section');
   if (currentUser) {
     const isOwner = currentUser.username === OWNER.user;
-    el.innerHTML = `
-      <div class="flex items-center gap-4 text-sm tech">
-        <i class="fas fa-user-secret text-red-500"></i>
-        <span class="text-red-400 font-bold">${currentUser.username}</span>
-        <input id="aura-input" value="${currentUser.aura}" class="bg-black border border-red-900 px-3 py-1 rounded text-xs w-20" onblur="saveAura(this.value)" />
-        ${isOwner ? '<span class="text-yellow-500 orbitron text-xs">[GOD]</span>' : ''}
-        <button onclick="logout()" class="text-gray-500 hover:text-red-400"><i class="fas fa-sign-out-alt"></i></button>
-      </div>
-    `;
-    if (isOwner) document.getElementById('owner-video-upload').classList.remove('hidden');
+    el.innerHTML = `<div class="flex items-center gap-3 text-sm">
+      <span class="text-red-400 font-bold">${currentUser.username}</span>
+      <input id="aura-input" value="${currentUser.aura}" class="bg-black border border-red-900 px-2 py-1 rounded text-xs w-16" onblur="saveAura(this.value)" />
+      ${isOwner ? '<span class="text-yellow-500">[GOD]</span>' : ''}
+      <button onclick="logout()" class="text-gray-500"><i class="fas fa-sign-out-alt"></i></button>
+    </div>`;
   } else {
-    el.innerHTML = `
-      <div class="flex gap-2 text-xs">
-        <input id="login-user" placeholder="user" class="bg-black border border-red-900 px-3 py-1 rounded" />
-        <input id="login-pass" type="password" placeholder="pass" class="bg-black border border-red-900 px-3 py-1 rounded" />
-        <button onclick="login()" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded">LOGIN</button>
-        <button onclick="register()" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded">REGISTER</button>
-      </div>
-    `;
+    el.innerHTML = `<div class="flex gap-2 text-xs">
+      <input id="login-user" placeholder="user" class="bg-black border border-red-900 px-3 py-1 rounded" />
+      <input id="login-pass" type="password" placeholder="pass" class="bg-black border border-red-900 px-3 py-1 rounded" />
+      <button onclick="login()" class="bg-red-600 px-3 py-1 rounded">LOGIN</button>
+      <button onclick="register()" class="bg-gray-700 px-3 py-1 rounded">REGISTER</button>
+    </div>`;
   }
-  updateAll();
+  updateChats();
 }
-
 function login() {
   const u = document.getElementById('login-user').value.trim();
   const p = document.getElementById('login-pass').value;
   const users = DB.get('users') || {};
   if (users[u] && users[u].pass === p) {
-    currentUser = { username: u, aura: users[u].aura || 'NEW', role: u === OWNER.user ? 'owner' : 'user' };
+    currentUser = { username: u, aura: users[u].aura || 'NEW' };
+    getUserKeys(u); // init key
     DB.set('currentUser', currentUser);
     renderAuth();
   } else alert("DENIED");
 }
-
 function register() {
-  const u = prompt("Username:");
-  const p = prompt("Password:");
+  const u = prompt("Username:"); const p = prompt("Password:");
   if (!u || !p) return;
   const users = DB.get('users') || {};
   if (users[u]) return alert("TAKEN");
-  users[u] = { pass: p, aura: 'NEW', joined: Date.now() };
+  users[u] = { pass: p, aura: 'NEW' };
   DB.set('users', users);
-  alert("FORGED. LOGIN.");
+  getUserKeys(u);
+  alert("REGISTERED");
 }
-
-function logout() { currentUser = null; DB.set('currentUser', null); activeDM = null; renderAuth(); }
-
+function logout() { currentUser = null; DB.set('currentUser', null); activeChat = null; renderAuth(); }
 function saveAura(aura) {
   if (!currentUser) return;
   currentUser.aura = aura;
@@ -249,185 +209,147 @@ function saveAura(aura) {
 function openTab(tab) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
   document.getElementById(tab).classList.remove('hidden');
-  document.querySelectorAll('[id^="tab-"], .bottom-nav button').forEach(t => t.classList.remove('tab-active', 'text-red-400'));
-  const tabBtn = document.getElementById('tab-' + tab);
-  if (tabBtn) { tabBtn.classList.add('tab-active', 'text-red-400'); }
-  document.querySelectorAll('.bottom-nav button').forEach(b => { if (b.innerText.includes(tab.toUpperCase())) b.classList.add('text-red-400'); });
-  if (tab === 'videos') loadVideos();
-  if (tab === 'scripts') loadScripts();
-  if (tab === 'messages') { loadUsers(); loadMessages(); }
+  document.querySelectorAll('[id^="tab-"]').forEach(t => t.classList.remove('tab-active', 'text-red-400'));
+  document.getElementById('tab-' + tab)?.classList.add('tab-active', 'text-red-400');
+  if (tab === 'messages') updateChats();
 }
 
-// === VIDEOS ===
-function uploadVideo() {
-  const file = document.getElementById('video-upload').files[0];
-  if (!file) return alert("SELECT");
-  const reader = new FileReader();
-  reader.onload = e => {
-    const videos = DB.get('videos') || [];
-    videos.push({ name: file.name, data: e.target.result, time: Date.now(), owner: currentUser.username });
-    DB.set('videos', videos);
-    loadVideos();
-  };
-  reader.readAsDataURL(file);
-}
-
-function loadVideos() {
-  const list = document.getElementById('video-list');
-  const videos = DB.get('videos') || [];
-  list.innerHTML = videos.map(v => `
-    <div class="card video-card cursor-pointer neon-border" onclick="playVideo('${v.data}')">
-      <div class="bg-gradient-to-br from-red-900 to-black h-48 rounded-t-xl flex items-center justify-center text-6xl text-red-500 glow-red">
-        <i class="fas fa-play-circle"></i>
-      </div>
-      <div class="p-4">
-        <div class="font-bold text-red-400 tech truncate">${v.name}</div>
-        <div class="text-xs text-gray-500">${v.owner} • ${new Date(v.time).toLocaleDateString()}</div>
-      </div>
-    </div>
-  `).join('');
-  updateStats();
-}
-
-function playVideo(dataUrl) {
-  const videoHTML = `<div class="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center p-10" onclick="this.remove()">
-    <video controls autoplay class="max-w-full max-h-full rounded-xl border-4 border-red-600 shadow-2xl">
-      <source src="${dataUrl}" type="video/mp4">
-    </video>
-  </div>`;
-  document.body.insertAdjacentHTML('beforeend', videoHTML);
-}
-
-// === SCRIPTS ===
-function toggleScriptForm() { document.getElementById('script-upload-form').classList.toggle('hidden'); }
-
-function saveScript() {
-  const name = document.getElementById('script-name').value.trim();
-  const code = document.getElementById('script-code').value;
-  if (!name || !code) return alert("FILL");
-  const scripts = DB.get('scripts') || [];
-  scripts.push({ name, code, author: currentUser.username, time: Date.now() });
-  DB.set('scripts', scripts);
-  document.getElementById('script-name').value = '';
-  document.getElementById('script-code').value = '';
-  toggleScriptForm();
-  loadScripts();
-}
-
-function loadScripts() {
-  const list = document.getElementById('script-list');
-  const scripts = DB.get('scripts') || [];
-  list.innerHTML = scripts.map(s => `
-    <div class="card flex justify-between items-start">
-      <div class="flex-1">
-        <div class="font-bold text-red-400">${s.name}</div>
-        <div class="text-xs text-gray-500">${s.author} • ${new Date(s.time).toLocaleString()}</div>
-        <pre class="mt-2 text-xs bg-black p-3 rounded overflow-x-auto border border-red-900">${s.code}</pre>
-      </div>
-      <div class="flex gap-2 ml-4">
-        <button onclick="copy('${btoa(s.code)}')" class="text-green-400 text-xs hover:underline">COPY</button>
-        <button onclick="download('${s.name}', '${btoa(s.code)}')" class="text-yellow-400 text-xs hover:underline">DL</button>
-        ${(currentUser?.username === s.author || currentUser?.role === 'owner') ? `<button onclick="delScript(${s.time})" class="text-red-400 text-xs hover:underline">DEL</button>` : ''}
-      </div>
-    </div>
-  `).join('');
-  updateStats();
-}
-
-function copy(b64) { navigator.clipboard.writeText(atob(b64)); alert("COPIED"); }
-function download(name, b64) {
-  const blob = new Blob([atob(b64)], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = name.endsWith('.js') ? name : name + '.js'; a.click();
-}
-function delScript(time) {
-  if (!confirm("DELETE?")) return;
-  let scripts = DB.get('scripts') || [];
-  scripts = scripts.filter(s => s.time !== time);
-  DB.set('scripts', scripts);
-  loadScripts();
-}
-
-// === MESSAGES + DMs ===
-function loadUsers() {
-  const list = document.getElementById('user-list');
+// === CHATS: PUBLIC, DM, GROUP ===
+function updateChats() {
+  const list = document.getElementById('chat-list');
   const users = Object.keys(DB.get('users') || {}).filter(u => u !== currentUser?.username);
-  list.innerHTML = `
-    <div class="p-3 cursor-pointer dm-active" onclick="openPublicChat()">
-      <i class="fas fa-globe text-red-500"></i> PUBLIC CHANNEL
-    </div>
-  ` + users.map(u => `
-    <div class="p-3 cursor-pointer hover:bg-gray-800" onclick="openDM('${u}')">
-      <i class="fas fa-user-secret text-green-500"></i> ${u}
+  const messages = DB.get('messages') || {};
+  const groups = DB.get('groups') || {};
+
+  let chats = [];
+
+  // Public
+  if (messages.public?.length) chats.push({ id: 'public', name: 'PUBLIC CHANNEL', type: 'public', last: messages.public.slice(-1)[0] });
+
+  // DMs
+  users.forEach(u => {
+    const key = `dm_${[currentUser.username, u].sort().join('_')}`;
+    if (messages[key]?.length) {
+      const last = messages[key].slice(-1)[0];
+      chats.push({ id: key, name: u, type: 'dm', last });
+    }
+  });
+
+  // Groups
+  Object.keys(groups).forEach(g => {
+    if (groups[g].members.includes(currentUser.username)) {
+      const key = `group_${g}`;
+      if (messages[key]?.length) {
+        const last = messages[key].slice(-1)[0];
+        chats.push({ id: key, name: g, type: 'group', last });
+      }
+    }
+  });
+
+  chats.sort((a,b) => (b.last?.time || 0) - (a.last?.time || 0));
+
+  list.innerHTML = chats.map(c => `
+    <div class="p-3 cursor-pointer hover:bg-gray-800 ${activeChat===c.id ? 'dm-active' : ''}" onclick="openChat('${c.id}', '${c.name}')">
+      <div class="flex justify-between">
+        <span><i class="fas ${c.type==='public'?'fa-globe':c.type==='dm'?'fa-user-secret':'fa-users'}"></i> ${c.name}</span>
+        <span class="text-xs text-gray-500">${new Date(c.last.time).toLocaleTimeString()}</span>
+      </div>
+      <div class="text-xs text-gray-400 truncate">${c.last.text}</div>
     </div>
   `).join('');
+
+  // Auto-create DM entry if none
+  if (activeChat?.startsWith('dm_') && !messages[activeChat]) {
+    messages[activeChat] = [];
+    DB.set('messages', messages);
+  }
 }
 
-function openPublicChat() {
-  activeDM = null;
-  document.getElementById('chat-title').textContent = 'SHADOW COMMS';
-  document.querySelectorAll('#user-list > div').forEach(d => d.classList.remove('dm-active'));
-  document.querySelector('#user-list > div:first-child').classList.add('dm-active');
+function openChat(id, name) {
+  activeChat = id;
+  document.getElementById('chat-title').textContent = name;
   loadMessages();
+  updateChats();
 }
 
-function openDM(target) {
-  activeDM = target;
-  document.getElementById('chat-title').textContent = `DM: ${target}`;
-  document.querySelectorAll('#user-list > div').forEach(d => d.classList.remove('dm-active'));
-  event.target.classList.add('dm-active');
+function createGroup() {
+  const name = prompt("Group Name:");
+  if (!name) return;
+  const groups = DB.get('groups') || {};
+  if (groups[name]) return alert("EXISTS");
+  groups[name] = { members: [currentUser.username], creator: currentUser.username };
+  DB.set('groups', groups);
+  updateChats();
+}
+
+function showFindPlayer() {
+  const query = prompt("Find Player:");
+  if (!query) return;
+  const users = Object.keys(DB.get('users') || {});
+  const found = users.find(u => u.toLowerCase().includes(query.toLowerCase()) && u !== currentUser.username);
+  if (!found) return alert("NOT FOUND");
+  const key = `dm_${[currentUser.username, found].sort().join('_')}`;
+  openChat(key, found);
+}
+
+// === MESSAGING ===
+async function sendMessage() {
+  const input = document.getElementById('msg-input');
+  const text = input.value.trim();
+  if (!text || !activeChat) return;
+  input.value = '';
+
+  const messages = DB.get('messages') || {};
+  if (!messages[activeChat]) messages[activeChat] = [];
+
+  let msg = { text, user: currentUser.username, aura: currentUser.aura, time: Date.now() };
+
+  // Encrypt if DM or Group
+  if (activeChat.startsWith('dm_')) {
+    const recipient = activeChat.split('_').find(u => u !== currentUser.username);
+    msg.ciphertext = await encrypt(text, recipient);
+    msg.encrypted = true;
+  } else if (activeChat.startsWith('group_')) {
+    const groupName = activeChat.replace('group_', '');
+    const group = DB.get('groups')[groupName];
+    msg.ciphertext = await encrypt(text, group.members.find(m => m !== currentUser.username) || group.members[0]);
+    msg.encrypted = true;
+  }
+
+  messages[activeChat].push(msg);
+  DB.set('messages', messages);
   loadMessages();
+  updateChats();
+}
+
+async function loadMessages() {
+  const list = document.getElementById('message-list');
+  if (!activeChat) { list.innerHTML = '<p class="text-gray-500 text-center">Select a chat</p>'; return; }
+  const messages = (DB.get('messages') || {})[activeChat] || [];
+  list.innerHTML = await Promise.all(messages.map(async m => {
+    let text = m.text;
+    if (m.encrypted) {
+      try { text = await decrypt(m.ciphertext, m.user); }
+      catch { text = "[DECRYPT FAILED]"; }
+    }
+    return `<div class="flex gap-3">
+      <div class="text-red-500 font-bold">${m.aura}</div>
+      <div>
+        <div class="text-sm"><span class="text-red-400">${m.user}</span>: ${text}</div>
+        <div class="text-xs text-gray-600">${new Date(m.time).toLocaleTimeString()}</div>
+      </div>
+    </div>`;
+  })).then(arr => arr.join(''));
+  list.scrollTop = list.scrollHeight;
 }
 
 function handleEnter(e) { if (e.key === 'Enter') sendMessage(); }
 
-function sendMessage() {
-  const input = document.getElementById('msg-input');
-  const text = input.value.trim();
-  if (!text) return;
-  const messages = DB.get('messages') || {};
-  const key = activeDM ? `dm_${[currentUser.username, activeDM].sort().join('_')}` : 'public';
-  if (!messages[key]) messages[key] = [];
-  messages[key].push({ text, user: currentUser.username, aura: currentUser.aura, time: Date.now() });
-  DB.set('messages', messages);
-  input.value = '';
-  loadMessages();
-}
-
-function loadMessages() {
-  const list = document.getElementById('message-list');
-  const messages = DB.get('messages') || {};
-  const key = activeDM ? `dm_${[currentUser.username, activeDM].sort().join('_')}` : 'public';
-  const msgs = messages[key] || [];
-  list.innerHTML = msgs.map(m => `
-    <div class="flex gap-3">
-      <div class="text-red-500 font-bold">${m.aura}</div>
-      <div>
-        <div class="text-sm"><span class="text-red-400">${m.user}</span>: ${m.text}</div>
-        <div class="text-xs text-gray-600">${new Date(m.time).toLocaleTimeString()}</div>
-      </div>
-    </div>
-  `).join('');
-  list.scrollTop = list.scrollHeight;
-  updateStats();
-}
-
-function updateStats() {
-  const messages = DB.get('messages') || {};
-  let total = 0;
-  for (let k in messages) total += messages[k].length;
-  document.getElementById('stat-videos').textContent = (DB.get('videos') || []).length;
-  document.getElementById('stat-scripts').textContent = (DB.get('scripts') || []).length;
-  document.getElementById('stat-messages').textContent = total;
-  document.getElementById('stat-users').textContent = Object.keys(DB.get('users') || {}).length;
-}
-
 // === INIT ===
 renderAuth();
 openTab('home');
-setInterval(() => { if (!document.getElementById('messages').classList.contains('hidden')) loadMessages(); }, 2000);
-window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+setInterval(() => { if (activeChat) loadMessages(); updateChats(); }, 3000);
+window.onresize = () => { canvas.width = innerWidth; canvas.height = innerHeight; };
 </script>
-
 </body>
 </html>
