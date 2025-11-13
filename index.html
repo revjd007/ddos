@@ -3,22 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HANGOUT_X | RED BLACK EMPIRE</title>
+  <title>John's Hangout | RED BLACK EMPIRE</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Roboto+Mono:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
     :root {
-      --red: #ff0033;
-      --darkred: #cc0022;
-      --black: #0a0a0a;
-      --gray: #1a1a1a;
+      --red: #ff0033; --darkred: #cc0022; --black: #0a0a0a; --gray: #1a1a1a;
       --glow: 0 0 15px rgba(255, 0, 51, 0.7), 0 0 30px rgba(255, 0, 51, 0.4);
     }
     body { 
       font-family: 'Roboto Mono', monospace; 
       background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
-      color: white; 
       min-height: 100vh;
       background-attachment: fixed;
     }
@@ -40,100 +36,69 @@
       background: repeating-linear-gradient(0deg, rgba(255,0,51,0.03), rgba(255,0,51,0.03) 2px, transparent 2px, transparent 4px);
       animation: scan 8s linear infinite;
     }
-    @keyframes pulse { 0%,100% { text-shadow: var(--glow); } 50% { text-shadow: 0 0 25px rgba(255, 0, 51, 0.9), 0 0 50px rgba(255, 0, 51, 0.6); } }
+    @keyframes pulse { 0%,100% { text-shadow: var(--glow); } 50% { text-shadow: 0 0 25px rgba(255, 0, 51, 0.9); } }
     @keyframes scan { from { transform: translateY(-100%); } to { transform: translateY(100%); } }
     @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     .floating { animation: float 6s ease-in-out infinite; }
     .neon-border { border: 1px solid; border-image: linear-gradient(45deg, #ff0033, #cc0022) 1; }
-    .matrix-rain {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.05;
-      pointer-events: none;
-    }
+    .matrix-rain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.05; pointer-events: none; }
+    .dm-active { background: #330011; border-left: 4px solid var(--red); }
   </style>
 </head>
 <body class="relative">
 
-<!-- MATRIX RAIN BACKGROUND -->
+<!-- MATRIX + SCANLINE -->
 <canvas class="matrix-rain" id="matrix"></canvas>
-
-<!-- SCANLINE EFFECT -->
 <div class="scanline"></div>
 
 <!-- NAVBAR -->
 <nav class="fixed top-0 w-full bg-black bg-opacity-90 border-b border-red-900 z-50 backdrop-blur-lg">
   <div class="container mx-auto px-6 py-4 flex justify-between items-center">
     <div class="flex items-center gap-3">
-      <i class="fas fa-skull-crossbones text-red-500 text-2xl glow-red"></i>
-      <h1 class="text-3xl orbitron glow-red">HANGOUT_X</h1>
+      <i class="fas fa-crown text-yellow-500 text-2xl glow-red"></i>
+      <h1 class="text-3xl orbitron glow-red">John's Hangout</h1>
     </div>
     <div id="auth-section" class="flex items-center gap-4"></div>
   </div>
 </nav>
 
-<!-- HERO HOME -->
+<!-- HERO -->
 <div id="home" class="tab-content min-h-screen flex items-center justify-center pt-20">
   <div class="text-center max-w-5xl px-6">
-    <h1 class="text-7xl orbitron glow-red mb-4 floating">HANGOUT_X</h1>
-    <p class="text-3xl tech text-red-400 mb-6 tracking-widest">THE FINAL FRONTIER OF DIGITAL CHAOS</p>
-    <p class="text-lg max-w-3xl mx-auto text-gray-300 leading-relaxed mb-10">
-      <span class="text-red-500">No rules.</span> No logs. No masters.<br>
-      Upload. Watch. Code. Speak.<br>
-      <span class="text-yellow-500 font-bold">OWNER IS GOD.</span>
+    <h1 class="text-7xl orbitron glow-red mb-4 floating">JOHN'S HANGOUT</h1>
+    <p class="text-3xl tech text-red-400 mb-6 tracking-widest">PRIVATE. SECURE. UNGOVERNED.</p>
+    <p class="text-lg max-w-3xl mx-auto text-gray-300 mb-10">
+      No logs. No Gmail. <span class="text-red-500">Owner is John.</span><br>
+      Videos. Scripts. Private DMs. Total control.
     </p>
 
-    <!-- STATS -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-      <div class="card text-center">
-        <div class="text-5xl text-red-500 mb-2"><i class="fas fa-video"></i></div>
-        <div class="text-2xl orbitron" id="stat-videos">0</div>
-        <p class="text-xs text-gray-400">VIDEOS LIVE</p>
-      </div>
-      <div class="card text-center">
-        <div class="text-5xl text-red-500 mb-2"><i class="fas fa-code"></i></div>
-        <div class="text-2xl orbitron" id="stat-scripts">0</div>
-        <p class="text-xs text-gray-400">SCRIPTS VAULTED</p>
-      </div>
-      <div class="card text-center">
-        <div class="text-5xl text-red-500 mb-2"><i class="fas fa-comments"></i></div>
-        <div class="text-2xl orbitron" id="stat-messages">0</div>
-        <p class="text-xs text-gray-400">MESSAGES SENT</p>
-      </div>
-      <div class="card text-center">
-        <div class="text-5xl text-red-500 mb-2"><i class="fas fa-users"></i></div>
-        <div class="text-2xl orbitron" id="stat-users">1</div>
-        <p class="text-xs text-gray-400">USERS ONLINE</p>
-      </div>
+      <div class="card text-center"><div class="text-5xl text-red-500 mb-2"><i class="fas fa-video"></i></div><div class="text-2xl orbitron" id="stat-videos">0</div><p class="text-xs text-gray-400">VIDEOS</p></div>
+      <div class="card text-center"><div class="text-5xl text-red-500 mb-2"><i class="fas fa-code"></i></div><div class="text-2xl orbitron" id="stat-scripts">0</div><p class="text-xs text-gray-400">SCRIPTS</p></div>
+      <div class="card text-center"><div class="text-5xl text-red-500 mb-2"><i class="fas fa-comments"></i></div><div class="text-2xl orbitron" id="stat-messages">0</div><p class="text-xs text-gray-400">MSGS</p></div>
+      <div class="card text-center"><div class="text-5xl text-red-500 mb-2"><i class="fas fa-users"></i></div><div class="text-2xl orbitron" id="stat-users">1</div><p class="text-xs text-gray-400">ONLINE</p></div>
     </div>
 
     <button onclick="openTab('videos')" class="btn-red text-xl px-10 py-4 orbitron tracking-wider">
-      ENTER THE VOID
+      ENTER JOHN'S DOMAIN
     </button>
   </div>
 </div>
 
-<!-- TABS NAV -->
-<div class="fixed bottom-0 left-0 right-0 bg-black bg-opacity-95 border-t border-red-900 z-40 md:hidden">
-  <div class="flex justify-around py-3 text-xs">
-    <button onclick="openTab('home')"    class="flex flex-col items-center text-gray-500"><i class="fas fa-home"></i><span>HOME</span></button>
-    <button onclick="openTab('videos')"  class="flex flex-col items-center text-gray-500"><i class="fas fa-video"></i><span>VIDEOS</span></button>
-    <button onclick="openTab('scripts')" class="flex flex-col items-center text-gray-500"><i class="fas fa-code"></i><span>SCRIPTS</span></button>
-    <button onclick="openTab('messages')"class="flex flex-col items-center text-gray-500"><i class="fas fa-comments"></i><span>CHAT</span></button>
-  </div>
-</div>
-
+<!-- TABS -->
 <div class="pt-24 pb-20 md:pb-10">
   <div class="container mx-auto px-6 hidden md:block">
     <div class="flex gap-10 border-b border-red-900 text-lg font-bold pb-2">
-      <button onclick="openTab('home')"    id="tab-home"    class="text-gray-500">HOME</button>
-      <button onclick="openTab('videos')"  id="tab-videos"  class="text-gray-500">VIDEOS</button>
-      <button onclick="openTab('scripts')" id="tab-scripts" class="text-gray-500">SCRIPTS</button>
-      <button onclick="openTab('messages')"id="tab-messages"class="text-gray-500">MESSAGES</button>
+      <button onclick="openTab('home')"     id="tab-home"     class="text-gray-500">HOME</button>
+      <button onclick="openTab('videos')"   id="tab-videos"   class="text-gray-500">VIDEOS</button>
+      <button onclick="openTab('scripts')"  id="tab-scripts"  class="text-gray-500">SCRIPTS</button>
+      <button onclick="openTab('messages')" id="tab-messages" class="text-gray-500">MESSAGES</button>
     </div>
   </div>
 
   <div class="container mx-auto px-6 max-w-7xl">
 
-    <!-- VIDEOS TAB -->
+    <!-- VIDEOS -->
     <div id="videos" class="tab-content hidden">
       <div class="flex justify-between items-center mb-8">
         <h2 class="text-3xl orbitron glow-red"><i class="fas fa-video mr-3"></i>VIDEO VAULT</h2>
@@ -145,28 +110,39 @@
       <div id="video-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
     </div>
 
-    <!-- SCRIPTS TAB -->
+    <!-- SCRIPTS -->
     <div id="scripts" class="tab-content hidden">
       <div class="flex justify-between items-center mb-8">
         <h2 class="text-3xl orbitron glow-red"><i class="fas fa-code mr-3"></i>SCRIPT FORGE</h2>
-        <button onclick="toggleScriptForm()" class="btn-red"><i class="fas fa-plus mr-2"></i>FORGE SCRIPT</button>
+        <button onclick="toggleScriptForm()" class="btn-red"><i class="fas fa-plus mr-2"></i>FORGE</button>
       </div>
       <div id="script-upload-form" class="hidden card mb-8 neon-border">
         <input type="text" id="script-name" placeholder="Script Name" class="w-full mb-4 bg-black border border-red-900 px-4 py-3 rounded-lg tech" />
-        <textarea id="script-code" placeholder="Drop your weaponized code..." class="w-full h-48 bg-black border border-red-900 px-4 py-3 rounded-lg font-mono text-sm text-green-400"></textarea>
-        <button onclick="saveScript()" class="mt-4 btn-red w-full orbitron">DEPLOY SCRIPT</button>
+        <textarea id="script-code" placeholder="Drop code..." class="w-full h-48 bg-black border border-red-900 px-4 py-3 rounded-lg font-mono text-sm text-green-400"></textarea>
+        <button onclick="saveScript()" class="mt-4 btn-red w-full orbitron">DEPLOY</button>
       </div>
       <div id="script-list" class="space-y-6"></div>
     </div>
 
-    <!-- MESSAGES TAB -->
+    <!-- MESSAGES + DMs -->
     <div id="messages" class="tab-content hidden">
-      <h2 class="text-3xl orbitron glow-red mb-6"><i class="fas fa-comments mr-3"></i>SHADOW COMMS</h2>
-      <div class="card p-0 overflow-hidden neon-border" style="max-height: 80vh;">
-        <div id="message-list" class="h-96 md:h-full overflow-y-auto p-6 space-y-4 bg-black bg-opacity-50"></div>
-        <div class="p-4 border-t border-red-900 flex gap-3">
-          <input type="text" id="msg-input" placeholder="Transmit..." class="flex-1 bg-black border border-red-900 px-5 py-3 rounded-lg tech text-sm" onkeypress="if(event.key==='Enter') sendMessage()" />
-          <button onclick="sendMessage()" class="btn-red px-8 orbitron"><i class="fas fa-paper-plane"></i></button>
+      <div class="flex gap-6 h-full">
+        <!-- USER LIST -->
+        <div class="w-64 card p-0 overflow-hidden hidden md:block">
+          <div class="p-4 border-b border-red-900 orbitron text-lg">USERS</div>
+          <div id="user-list" class="overflow-y-auto h-96"></div>
+        </div>
+
+        <!-- CHAT AREA -->
+        <div class="flex-1">
+          <h2 class="text-3xl orbitron glow-red mb-6"><i class="fas fa-comments mr-3"></i><span id="chat-title">SHADOW COMMS</span></h2>
+          <div class="card p-0 overflow-hidden neon-border h-96 md:h-full">
+            <div id="message-list" class="h-80 md:h-full overflow-y-auto p-6 space-y-4 bg-black bg-opacity-50"></div>
+            <div class="p-4 border-t border-red-900 flex gap-3">
+              <input type="text" id="msg-input" placeholder="Transmit..." class="flex-1 bg-black border border-red-900 px-5 py-3 rounded-lg tech text-sm" onkeypress="handleEnter(event)" />
+              <button onclick="sendMessage()" class="btn-red px-8 orbitron"><i class="fas fa-paper-plane"></i></button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -174,22 +150,26 @@
   </div>
 </div>
 
+<!-- MOBILE BOTTOM NAV -->
+<div class="fixed bottom-0 left-0 right-0 bg-black bg-opacity-95 border-t border-red-900 z-40 md:hidden">
+  <div class="flex justify-around py-3 text-xs">
+    <button onclick="openTab('home')"     class="flex flex-col items-center text-gray-500"><i class="fas fa-home"></i><span>HOME</span></button>
+    <button onclick="openTab('videos')"   class="flex flex-col items-center text-gray-500"><i class="fas fa-video"></i><span>VIDEOS</span></button>
+    <button onclick="openTab('scripts')"  class="flex flex-col items-center text-gray-500"><i class="fas fa-code"></i><span>SCRIPTS</span></button>
+    <button onclick="openTab('messages')" class="flex flex-col items-center text-gray-500"><i class="fas fa-comments"></i><span>CHAT</span></button>
+  </div>
+</div>
+
 <script>
 // === MATRIX RAIN ===
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 const letters = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-const fontSize = 14;
-const columns = canvas.width / fontSize;
-const drops = Array(Math.floor(columns)).fill(1);
-
+const fontSize = 14; const columns = canvas.width / fontSize; const drops = Array(Math.floor(columns)).fill(1);
 function draw() {
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = '#ff0033';
-  ctx.font = fontSize + 'px monospace';
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#ff0033'; ctx.font = fontSize + 'px monospace';
   for (let i = 0; i < drops.length; i++) {
     const text = letters[Math.floor(Math.random() * letters.length)];
     ctx.fillText(text, i * fontSize, drops[i] * fontSize);
@@ -199,11 +179,13 @@ function draw() {
 }
 setInterval(draw, 33);
 
-// === REST OF JS (SAME LOGIC, UPGRADED UI) ===
-const DB = { get: k => JSON.parse(localStorage.getItem(k)) || null, set: (k,v) => localStorage.setItem(k, JSON.stringify(v)) };
-const OWNER = { user: "admin", pass: "boss123" };
+// === DB ===
+const DB = { get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }, set: (k,v) => localStorage.setItem(k, JSON.stringify(v)) };
+const OWNER = { user: "John", pass: "boss123" }; // JOHN IS GOD
 let currentUser = DB.get('currentUser');
+let activeDM = null;
 
+// === AUTH ===
 function renderAuth() {
   const el = document.getElementById('auth-section');
   if (currentUser) {
@@ -212,8 +194,7 @@ function renderAuth() {
       <div class="flex items-center gap-4 text-sm tech">
         <i class="fas fa-user-secret text-red-500"></i>
         <span class="text-red-400 font-bold">${currentUser.username}</span>
-        <input id="aura-input" value="${currentUser.aura}" class="bg-black border border-red-900 px-3 py-1 rounded text-xs w-20" 
-               onblur="saveAura(this.value)" placeholder="aura" />
+        <input id="aura-input" value="${currentUser.aura}" class="bg-black border border-red-900 px-3 py-1 rounded text-xs w-20" onblur="saveAura(this.value)" />
         ${isOwner ? '<span class="text-yellow-500 orbitron text-xs">[GOD]</span>' : ''}
         <button onclick="logout()" class="text-gray-500 hover:text-red-400"><i class="fas fa-sign-out-alt"></i></button>
       </div>
@@ -229,26 +210,68 @@ function renderAuth() {
       </div>
     `;
   }
-  updateStats();
+  updateAll();
 }
 
-function login() { /* SAME */ const u = document.getElementById('login-user').value.trim(); const p = document.getElementById('login-pass').value; const users = DB.get('users') || {}; if (users[u] && users[u].pass === p) { currentUser = { username: u, aura: users[u].aura || 'NEW', role: u === OWNER.user ? 'owner' : 'user' }; DB.set('currentUser', currentUser); renderAuth(); } else alert("DENIED"); }
-function register() { const u = prompt("Username:"); const p = prompt("Password:"); if (!u || !p) return; const users = DB.get('users') || {}; if (users[u]) return alert("TAKEN"); users[u] = { pass: p, aura: 'NEW', joined: Date.now() }; DB.set('users', users); alert("FORGED. LOGIN."); }
-function logout() { currentUser = null; DB.set('currentUser', null); renderAuth(); }
-function saveAura(aura) { if (!currentUser) return; currentUser.aura = aura; const users = DB.get('users') || {}; users[currentUser.username].aura = aura; DB.set('users', users); DB.set('currentUser', currentUser); }
+function login() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const users = DB.get('users') || {};
+  if (users[u] && users[u].pass === p) {
+    currentUser = { username: u, aura: users[u].aura || 'NEW', role: u === OWNER.user ? 'owner' : 'user' };
+    DB.set('currentUser', currentUser);
+    renderAuth();
+  } else alert("DENIED");
+}
 
+function register() {
+  const u = prompt("Username:");
+  const p = prompt("Password:");
+  if (!u || !p) return;
+  const users = DB.get('users') || {};
+  if (users[u]) return alert("TAKEN");
+  users[u] = { pass: p, aura: 'NEW', joined: Date.now() };
+  DB.set('users', users);
+  alert("FORGED. LOGIN.");
+}
+
+function logout() { currentUser = null; DB.set('currentUser', null); activeDM = null; renderAuth(); }
+
+function saveAura(aura) {
+  if (!currentUser) return;
+  currentUser.aura = aura;
+  const users = DB.get('users') || {};
+  users[currentUser.username].aura = aura;
+  DB.set('users', users); DB.set('currentUser', currentUser);
+}
+
+// === TABS ===
 function openTab(tab) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
   document.getElementById(tab).classList.remove('hidden');
-  document.querySelectorAll('[id^="tab-"], .bottom-nav button').forEach(t => t.classList.remove('tab-active', 'text-red-400'));  
-  document.getElementById('tab-' + tab)?.classList.add('tab-active', 'text-red-400');
+  document.querySelectorAll('[id^="tab-"], .bottom-nav button').forEach(t => t.classList.remove('tab-active', 'text-red-400'));
+  const tabBtn = document.getElementById('tab-' + tab);
+  if (tabBtn) { tabBtn.classList.add('tab-active', 'text-red-400'); }
   document.querySelectorAll('.bottom-nav button').forEach(b => { if (b.innerText.includes(tab.toUpperCase())) b.classList.add('text-red-400'); });
   if (tab === 'videos') loadVideos();
   if (tab === 'scripts') loadScripts();
-  if (tab === 'messages') loadMessages();
+  if (tab === 'messages') { loadUsers(); loadMessages(); }
 }
 
-function uploadVideo() { /* SAME */ }
+// === VIDEOS ===
+function uploadVideo() {
+  const file = document.getElementById('video-upload').files[0];
+  if (!file) return alert("SELECT");
+  const reader = new FileReader();
+  reader.onload = e => {
+    const videos = DB.get('videos') || [];
+    videos.push({ name: file.name, data: e.target.result, time: Date.now(), owner: currentUser.username });
+    DB.set('videos', videos);
+    loadVideos();
+  };
+  reader.readAsDataURL(file);
+}
+
 function loadVideos() {
   const list = document.getElementById('video-list');
   const videos = DB.get('videos') || [];
@@ -259,7 +282,7 @@ function loadVideos() {
       </div>
       <div class="p-4">
         <div class="font-bold text-red-400 tech truncate">${v.name}</div>
-        <div class="text-xs text-gray-500 flex items-center gap-2"><i class="fas fa-user"></i> ${v.owner} • ${new Date(v.time).toLocaleDateString()}</div>
+        <div class="text-xs text-gray-500">${v.owner} • ${new Date(v.time).toLocaleDateString()}</div>
       </div>
     </div>
   `).join('');
@@ -275,24 +298,131 @@ function playVideo(dataUrl) {
   document.body.insertAdjacentHTML('beforeend', videoHTML);
 }
 
+// === SCRIPTS ===
 function toggleScriptForm() { document.getElementById('script-upload-form').classList.toggle('hidden'); }
-function saveScript() { /* SAME */ }
-function loadScripts() { /* SAME WITH GLOW */ }
-function copy(b64) { navigator.clipboard.writeText(atob(b64)); alert("COPIED"); }
-function download(name, b64) { /* SAME */ }
-function delScript(time) { /* SAME */ }
 
-function sendMessage() { /* SAME */ }
-function loadMessages() { /* SAME WITH AURA ICONS */ }
+function saveScript() {
+  const name = document.getElementById('script-name').value.trim();
+  const code = document.getElementById('script-code').value;
+  if (!name || !code) return alert("FILL");
+  const scripts = DB.get('scripts') || [];
+  scripts.push({ name, code, author: currentUser.username, time: Date.now() });
+  DB.set('scripts', scripts);
+  document.getElementById('script-name').value = '';
+  document.getElementById('script-code').value = '';
+  toggleScriptForm();
+  loadScripts();
+}
+
+function loadScripts() {
+  const list = document.getElementById('script-list');
+  const scripts = DB.get('scripts') || [];
+  list.innerHTML = scripts.map(s => `
+    <div class="card flex justify-between items-start">
+      <div class="flex-1">
+        <div class="font-bold text-red-400">${s.name}</div>
+        <div class="text-xs text-gray-500">${s.author} • ${new Date(s.time).toLocaleString()}</div>
+        <pre class="mt-2 text-xs bg-black p-3 rounded overflow-x-auto border border-red-900">${s.code}</pre>
+      </div>
+      <div class="flex gap-2 ml-4">
+        <button onclick="copy('${btoa(s.code)}')" class="text-green-400 text-xs hover:underline">COPY</button>
+        <button onclick="download('${s.name}', '${btoa(s.code)}')" class="text-yellow-400 text-xs hover:underline">DL</button>
+        ${(currentUser?.username === s.author || currentUser?.role === 'owner') ? `<button onclick="delScript(${s.time})" class="text-red-400 text-xs hover:underline">DEL</button>` : ''}
+      </div>
+    </div>
+  `).join('');
+  updateStats();
+}
+
+function copy(b64) { navigator.clipboard.writeText(atob(b64)); alert("COPIED"); }
+function download(name, b64) {
+  const blob = new Blob([atob(b64)], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = name.endsWith('.js') ? name : name + '.js'; a.click();
+}
+function delScript(time) {
+  if (!confirm("DELETE?")) return;
+  let scripts = DB.get('scripts') || [];
+  scripts = scripts.filter(s => s.time !== time);
+  DB.set('scripts', scripts);
+  loadScripts();
+}
+
+// === MESSAGES + DMs ===
+function loadUsers() {
+  const list = document.getElementById('user-list');
+  const users = Object.keys(DB.get('users') || {}).filter(u => u !== currentUser?.username);
+  list.innerHTML = `
+    <div class="p-3 cursor-pointer dm-active" onclick="openPublicChat()">
+      <i class="fas fa-globe text-red-500"></i> PUBLIC CHANNEL
+    </div>
+  ` + users.map(u => `
+    <div class="p-3 cursor-pointer hover:bg-gray-800" onclick="openDM('${u}')">
+      <i class="fas fa-user-secret text-green-500"></i> ${u}
+    </div>
+  `).join('');
+}
+
+function openPublicChat() {
+  activeDM = null;
+  document.getElementById('chat-title').textContent = 'SHADOW COMMS';
+  document.querySelectorAll('#user-list > div').forEach(d => d.classList.remove('dm-active'));
+  document.querySelector('#user-list > div:first-child').classList.add('dm-active');
+  loadMessages();
+}
+
+function openDM(target) {
+  activeDM = target;
+  document.getElementById('chat-title').textContent = `DM: ${target}`;
+  document.querySelectorAll('#user-list > div').forEach(d => d.classList.remove('dm-active'));
+  event.target.classList.add('dm-active');
+  loadMessages();
+}
+
+function handleEnter(e) { if (e.key === 'Enter') sendMessage(); }
+
+function sendMessage() {
+  const input = document.getElementById('msg-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const messages = DB.get('messages') || {};
+  const key = activeDM ? `dm_${[currentUser.username, activeDM].sort().join('_')}` : 'public';
+  if (!messages[key]) messages[key] = [];
+  messages[key].push({ text, user: currentUser.username, aura: currentUser.aura, time: Date.now() });
+  DB.set('messages', messages);
+  input.value = '';
+  loadMessages();
+}
+
+function loadMessages() {
+  const list = document.getElementById('message-list');
+  const messages = DB.get('messages') || {};
+  const key = activeDM ? `dm_${[currentUser.username, activeDM].sort().join('_')}` : 'public';
+  const msgs = messages[key] || [];
+  list.innerHTML = msgs.map(m => `
+    <div class="flex gap-3">
+      <div class="text-red-500 font-bold">${m.aura}</div>
+      <div>
+        <div class="text-sm"><span class="text-red-400">${m.user}</span>: ${m.text}</div>
+        <div class="text-xs text-gray-600">${new Date(m.time).toLocaleTimeString()}</div>
+      </div>
+    </div>
+  `).join('');
+  list.scrollTop = list.scrollHeight;
+  updateStats();
+}
 
 function updateStats() {
+  const messages = DB.get('messages') || {};
+  let total = 0;
+  for (let k in messages) total += messages[k].length;
   document.getElementById('stat-videos').textContent = (DB.get('videos') || []).length;
   document.getElementById('stat-scripts').textContent = (DB.get('scripts') || []).length;
-  document.getElementById('stat-messages').textContent = (DB.get('messages') || []).length;
+  document.getElementById('stat-messages').textContent = total;
   document.getElementById('stat-users').textContent = Object.keys(DB.get('users') || {}).length;
 }
 
-// INIT
+// === INIT ===
 renderAuth();
 openTab('home');
 setInterval(() => { if (!document.getElementById('messages').classList.contains('hidden')) loadMessages(); }, 2000);
