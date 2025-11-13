@@ -3,112 +3,128 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BLACKOUT HUB</title>
+  <title>Social Gaming Hub</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-black text-white min-h-screen overflow-hidden">
 
-  <!-- LOGIN -->
-  <div id="loginModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-50">
-    <div class="bg-gradient-to-br from-gray-900 to-black p-10 rounded-3xl w-full max-w-md border-2 border-red-600 shadow-2xl">
-      <h2 class="text-4xl font-extrabold text-center mb-8 bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">BLACKOUT</h2>
-      <input id="loginEmail" type="email" placeholder="Email" class="input mb-4"/>
-      <input id="loginPass" type="password" placeholder="Password" class="input mb-6"/>
-      <button onclick="Auth.login()" class="btn-red w-full text-lg font-bold">ENTER VOID</button>
-      <p class="text-center mt-6 text-sm">New? <span onclick="Auth.showRegister()" class="text-red-400 cursor-pointer hover:underline font-semibold">JOIN</span></p>
+  <!-- NAVBAR -->
+  <nav class="bg-gradient-to-r from-red-900 to-black p-4 border-b border-red-700 shadow-lg">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-red-500" style="font-family: 'Orbitron', sans-serif;">SocialHub</h1>
+      <div class="space-x-2">
+        <button onclick="App.setView('home')" class="nav-btn">Home</button>
+        <button onclick="App.setView('hub')" class="nav-btn">Hub</button>
+        <button onclick="App.setView('chat')" class="nav-btn">Chat</button>
+        <button onclick="App.toggleTheme()" class="nav-btn">Toggle</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="flex-1 flex items-center justify-center p-6">
+    <div class="bg-gradient-to-br from-red-900/50 to-black p-12 rounded-3xl w-full max-w-md border-2 border-red-600 shadow-2xl backdrop-blur">
+      <h2 class="text-5xl font-extrabold text-center mb-10 bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent" style="font-family: 'Orbitron', sans-serif;">
+        Social Gaming Hub
+      </h2>
+      <input id="usernameInput" type="text" placeholder="Choose Username" class="input mb-6"/>
+      <button onclick="Auth.quickJoin()" class="btn-red w-full text-xl font-bold py-4">JOIN</button>
     </div>
   </div>
 
-  <!-- REGISTER -->
-  <div id="registerModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-50 hidden">
-    <div class="bg-gradient-to-br from-gray-900 to-black p-10 rounded-3xl w-full max-w-md border-2 border-red-600 shadow-2xl">
-      <h2 class="text-4xl font-extrabold text-center mb-8 bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">JOIN BLACKOUT</h2>
-      <input id="regEmail" type="email" placeholder="Email" class="input mb-4"/>
-      <input id="regPass" type="password" placeholder="Password" class="input mb-6"/>
-      <button onclick="Auth.register()" class="btn-red w-full text-lg font-bold">SECURE ACCESS</button>
-      <p class="text-center mt-6 text-sm">Back? <span onclick="Auth.showLogin()" class="text-red-400 cursor-pointer hover:underline font-semibold">LOGIN</span></p>
-    </div>
-  </div>
-
-  <!-- APP -->
+  <!-- MAIN APP -->
   <div id="app" class="hidden h-screen flex">
 
     <!-- SIDEBAR -->
-    <div class="w-20 md:w-64 bg-black border-r border-red-900/50 flex flex-col">
-      <div class="p-4 border-b border-red-900/30">
+    <div class="w-20 md:w-72 bg-black border-r border-red-800 flex flex-col">
+      <div class="p-4 border-b border-red-800">
         <div class="hidden md:flex items-center gap-3">
-          <img id="navAvatar" src="" class="w-12 h-12 rounded-full border-2 border-red-600">
+          <img id="navAvatar" src="" class="w-14 h-14 rounded-full border-2 border-red-600">
           <div>
-            <div id="navName" class="font-bold text-red-400">User</div>
-            <div class="text-xs opacity-70">ONLINE</div>
+            <div id="navName" class="font-bold text-red-400 text-lg"></div>
+            <div id="navRole" class="text-xs text-red-300"></div>
           </div>
         </div>
         <div class="md:hidden flex justify-center">
-          <img id="navAvatarSm" src="" class="w-10 h-10 rounded-full border-2 border-red-600">
+          <img id="navAvatarSm" src="" class="w-12 h-12 rounded-full border-2 border-red-600">
         </div>
       </div>
 
-      <div class="flex md:flex-col flex-row md:p-4 p-2 gap-2 md:gap-0">
-        <button onclick="App.setTab('servers')" class="tab-icon md:tab p-4 rounded-xl" data-tab="servers">
-          <i class="fas fa-hashtag text-xl"></i><span class="hidden md:inline ml-3">Servers</span>
+      <div class="flex md:flex-col flex-row md:p-4 p-2 gap-2">
+        <button onclick="App.setTab('players')" class="tab-icon md:tab p-4 rounded-xl" data-tab="players">
+          <i class="fas fa-users text-xl"></i><span class="hidden md:inline ml-3">Find Players</span>
         </button>
         <button onclick="App.setTab('dms')" class="tab-icon md:tab p-4 rounded-xl" data-tab="dms">
           <i class="fas fa-envelope text-xl"></i><span class="hidden md:inline ml-3">DMs</span>
         </button>
-        <button onclick="App.setTab('content')" class="tab-icon md:tab p-4 rounded-xl" data-tab="content">
-          <i class="fas fa-video text-xl"></i><span class="hidden md:inline ml-3">Content</span>
+        <button onclick="App.setTab('profile')" class="tab-icon md:tab p-4 rounded-xl" data-tab="profile">
+          <i class="fas fa-user text-xl"></i><span class="hidden md:inline ml-3">Profile</span>
+        </button>
+        <button onclick="App.setTab('settings')" class="tab-icon md:tab p-4 rounded-xl" data-tab="settings">
+          <i class="fas fa-cog text-xl"></i><span class="hidden md:inline ml-3">Settings</span>
         </button>
       </div>
 
-      <div id="tabContent" class="flex-1 overflow-y-auto p-4 hidden md:block"></div>
+      <div id="tabContent" class="flex-1 overflow-y-auto p-4"></div>
     </div>
 
-    <!-- MAIN -->
-    <div class="flex-1 flex flex-col bg-gradient-to-b from-black to-gray-950">
-      <div class="p-4 border-b border-red-900/30 flex items-center justify-between backdrop-blur-sm">
-        <h1 id="mainTitle" class="text-2xl font-extrabold bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">General</h1>
-        <button onclick="App.showSettings()" class="p-3 rounded-xl hover:bg-red-900/30">
-          <i class="fas fa-cog text-xl text-red-500"></i>
-        </button>
+    <!-- MAIN CONTENT -->
+    <div class="flex-1 flex flex-col bg-gradient-to-b from-black to-red-950/20">
+      <div class="p-6 border-b border-red-800 backdrop-blur-sm">
+        <h1 id="mainTitle" class="text-3xl font-extrabold bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent" style="font-family: 'Orbitron', sans-serif;">
+          Find Players
+        </h1>
       </div>
 
       <div id="mainContent" class="flex-1 overflow-y-auto p-6 space-y-6">
-        <div id="chatView"><div id="messages" class="space-y-4"></div></div>
-        <div id="dmView" class="hidden"><div id="dmMessages" class="space-y-4"></div></div>
-        <div id="contentFeed" class="hidden space-y-8"></div>
+        <!-- Players List -->
+        <div id="playersView">
+          <input id="searchPlayers" oninput="Users.search()" placeholder="Search players..." class="input mb-6"/>
+          <div id="playerList" class="space-y-4"></div>
+        </div>
 
-        <div class="mt-6 p-4 bg-black/50 rounded-2xl border border-red-900/50 backdrop-blur">
-          <div class="flex gap-3">
-            <input id="msgInput" onkeypress="Message.handleEnter(event)" placeholder="Send..." class="flex-1 input"/>
-            <button onclick="Message.send()" class="btn-red p-3 rounded-xl"><i class="fas fa-paper-plane"></i></button>
+        <!-- DM View -->
+        <div id="dmView" class="hidden">
+          <div id="dmMessages" class="space-y-4"></div>
+          <div class="mt-6 p-4 bg-black/50 rounded-2xl border border-red-800 backdrop-blur">
+            <div class="flex gap-3">
+              <input id="dmInput" onkeypress="Message.handleEnter(event)" placeholder="Type a message..." class="flex-1 input"/>
+              <button onclick="Message.send()" class="btn-red p-3 rounded-xl">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- SETTINGS -->
-    <div id="settingsPanel" class="fixed right-0 top-0 h-full w-80 bg-black/95 backdrop-blur-xl border-l border-red-900/50 p-6 z-50 hidden translate-x-full transition-all">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-extrabold text-red-500">SETTINGS</h2>
-        <button onclick="App.closeSettings()" class="p-2 hover:bg-red-900/30 rounded-xl"><i class="fas fa-times"></i></button>
-      </div>
-      <button onclick="Auth.logout()" class="btn-red w-full text-lg font-bold">LOGOUT</button>
-    </div>
-  </div>
+        <!-- Profile View -->
+        <div id="profileView" class="hidden">
+          <div class="bg-gradient-to-br from-red-900/30 to-black p-8 rounded-3xl border border-red-700">
+            <div class="flex items-center gap-6 mb-6">
+              <img id="profileAvatar" src="" class="w-32 h-32 rounded-full border-4 border-red-600">
+              <div>
+                <h2 id="profileName" class="text-3xl font-bold text-red-400"></h2>
+                <p id="profileEmail" class="text-sm opacity-70"></p>
+                <p id="profileRole" class="text-sm text-red-300 font-bold"></p>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-4 text-center">
+              <div><div class="text-2xl font-bold text-red-500" id="profilePosts">0</div><div class="text-xs">Posts</div></div>
+              <div><div class="text-2xl font-bold text-red-500" id="profileFriends">0</div><div class="text-xs">Friends</div></div>
+              <div><div class="text-2xl font-bold text-red-500" id="profileMessages">0</div><div class="text-xs">Messages</div></div>
+            </div>
+          </div>
+        </div>
 
-  <!-- UPLOAD MODAL -->
-  <div id="uploadModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-50 hidden">
-    <div class="bg-gradient-to-br from-gray-900 to-black p-8 rounded-3xl w-full max-w-lg border border-red-600 shadow-2xl">
-      <h3 class="text-2xl font-extrabold text-red-500 mb-6">UPLOAD</h3>
-      <select id="contentType" class="input mb-4"><option value="video">Video</option><option value="script">Script</option></select>
-      <input id="uploadTitle" placeholder="Title" class="input mb-4"/>
-      <input id="uploadFile" type="file" class="input mb-6"/>
-      <div class="flex gap-3">
-        <button onclick="Video.upload()" class="btn-red flex-1">UPLOAD</button>
-        <button onclick="App.closeModal('uploadModal')" class="btn-gray flex-1">CANCEL</button>
+        <!-- Settings View -->
+        <div id="settingsView" class="hidden space-y-6">
+          <div class="bg-gradient-to-br from-red-900/30 to-black p-8 rounded-3xl border border-red-700">
+            <h3 class="text-xl font-bold mb-4">Account</h3>
+            <button onclick="Auth.logout()" class="btn-red w-full">LOGOUT</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
