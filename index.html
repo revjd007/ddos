@@ -1,92 +1,36 @@
 <!DOCTYPE html>
 <html lang="en" class="bg-black text-white overflow-hidden">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>John's Hangout | v13.0 FINAL</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <style>
-    :root { --red: #ff0033; --dark: #0a0000; --void: #0f0000; }
-    body { font-family: 'Roboto Mono', monospace; background: #000; color: white; margin: 0; overflow: hidden; }
-    .orbitron { font-family: 'Orbitron', sans-serif; }
-    .glow { text-shadow: 0 0 20px var(--red); }
-    .tab-active { border-bottom: 4px solid var(--red); color: var(--red); }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>John's Hangout | v13.0 FINAL</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
-    /* MESSAGE BOX */
-    .message-box {
-      height: calc(100vh - 380px);
-      background: rgba(15,0,0,0.9);
-      border: 2px solid #330011;
-      border-radius: 12px;
-      padding: 20px;
-      overflow-y: auto;
-      margin-bottom: 16px;
-      backdrop-filter: blur(8px);
-    }
-    .message {
-      margin-bottom: 16px;
-      padding: 12px 16px;
-      border-radius: 12px;
-      max-width: 80%;
-      display: inline-block;
-    }
-    .message.sent { background: #330011; margin-left: auto; text-align: right; }
-    .message.received { background: #1a0000; }
-
-    /* INPUT */
-    .input-box {
-      background: rgba(15,0,0,0.9) !important;
-      border: 2px solid #330011 !important;
-      border-radius: 12px !important;
-      padding: 16px 20px !important;
-      font-size: 16px !important;
-      color: white !important;
-      outline: none !important;
-      transition: all 0.3s !important;
-      width: 100% !important;
-    }
-    .input-box:focus { border-color: var(--red) !important; box-shadow: 0 0 20px rgba(255,0,51,0.4) !important; }
-
-    /* SEND BUTTON */
-    .send-btn {
-      background: linear-gradient(45deg, #ff0033, #cc0022) !important;
-      color: white !important;
-      font-weight: bold !important;
-      padding: 16px 32px !important;
-      border-radius: 12px !important;
-      cursor: pointer !important;
-      transition: all 0.2s !important;
-      border: none !important;
-    }
-    .send-btn:hover { transform: scale(1.05) !important; box-shadow: 0 0 30px rgba(255,0,51,0.6) !important; }
-
-    /* VOICE BAR */
-    .voice-bar {
-      background: rgba(20,0,0,0.95) !important;
-      border-top: 1px solid #330011 !important;
-      padding: 12px 20px !important;
-      display: flex !important;
-      align-items: center !important;
-      gap: 16px !important;
-      font-size: 14px !important;
-    }
-    .live-dot {
-      width: 16px !important; height: 16px !important;
-      background: radial-gradient(circle, #00ff00, #00cc00) !important;
-      border-radius: 50% !important;
-      box-shadow: 0 0 20px #00ff00 !important;
-      animation: pulse-live 1.5s infinite !important;
-    }
-    @keyframes pulse-live { 0%,100% { opacity: 0.8; } 50% { opacity: 1; } }
-
-    .card { background: rgba(15,0,0,0.7); border: 1px solid #330011; border-radius: 12px; padding: 16px; backdrop-filter: blur(8px); }
-    .btn-red { @apply bg-gradient-to-r from-red-600 to-red-800 text-white font-bold py-2 px-6 rounded-lg transition transform hover:scale-105; }
-
-    .typing { color: #00ff00; font-style: italic; font-size: 0.9em; }
-  </style>
+<style>
+:root { --red: #ff0033; --dark: #0a0000; --void: #0f0000; }
+body { font-family: 'Roboto Mono', monospace; background: #000; color: white; margin: 0; overflow: hidden; }
+.orbitron { font-family: 'Orbitron', sans-serif; }
+.glow { text-shadow: 0 0 20px var(--red); }
+.tab-active { border-bottom: 4px solid var(--red); color: var(--red); }
+.message-box { height: calc(100vh - 380px); background: rgba(15,0,0,0.9); border: 2px solid #330011; border-radius: 12px; padding: 20px; overflow-y: auto; margin-bottom: 16px; backdrop-filter: blur(8px); }
+.message { margin-bottom: 16px; padding: 12px 16px; border-radius: 12px; max-width: 80%; display: inline-block; }
+.message.sent { background: #330011; margin-left: auto; text-align: right; }
+.message.received { background: #1a0000; }
+.input-box { background: rgba(15,0,0,0.9); border: 2px solid #330011; border-radius: 12px; padding: 16px 20px; font-size: 16px; color: white; outline: none; width: 100%; }
+.input-box:focus { border-color: var(--red); box-shadow: 0 0 20px rgba(255,0,51,0.4); }
+.send-btn { background: linear-gradient(45deg, #ff0033, #cc0022); color: white; font-weight: bold; padding: 16px 32px; border-radius: 12px; cursor: pointer; border: none; }
+.send-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,0,51,0.6); }
+.voice-bar { background: rgba(20,0,0,0.95); border-top: 1px solid #330011; padding: 12px 20px; display: flex; align-items: center; gap: 16px; font-size: 14px; }
+.live-dot { width: 16px; height: 16px; background: radial-gradient(circle, #00ff00, #00cc00); border-radius: 50%; box-shadow: 0 0 20px #00ff00; animation: pulse-live 1.5s infinite; }
+@keyframes pulse-live { 0%,100% { opacity: 0.8; } 50% { opacity: 1; } }
+.card { background: rgba(15,0,0,0.7); border: 1px solid #330011; border-radius: 12px; padding: 16px; backdrop-filter: blur(8px); }
+.btn-red { background: linear-gradient(90deg, #b91c1c, #7f1d1d); color: white; font-weight: bold; padding: 0.5rem 1.5rem; border-radius: 0.5rem; }
+.typing { color: #00ff00; font-style: italic; font-size: 0.9em; }
+</style>
 </head>
+
 <body>
 
 <!-- NAVBAR -->
@@ -100,336 +44,46 @@
   </div>
 </nav>
 
-<!-- TABS -->
-<div class="fixed top-16 left-0 right-0 bg-black bg-opacity-95 border-b border-red-900 z-40">
-  <div class="container mx-auto px-6 flex gap-8 text-lg font-bold">
-    <button onclick="openTab('home')" id="tab-home" class="py-3 text-gray-500">HOME</button>
-    <button onclick="openTab('videos')" id="tab-videos" class="py-3 text-gray-500">VIDEOS</button>
-    <button onclick="openTab('scripts')" id="tab-scripts" class="py-3 text-gray-500">SCRIPTS</button>
-    <button onclick="openTab('messages')" id="tab-messages" class="py-3 text-gray-500">MESSAGES</button>
-  </div>
-</div>
-
 <!-- CONTENT -->
 <div class="pt-32 container mx-auto px-6">
-
-  <!-- HOME -->
-  <div id="home" class="tab-content py-20 text-center">
-    <h1 class="text-7xl orbitron glow mb-6">JOHN'S HANGOUT</h1>
-    <p class="text-2xl text-red-400 mb-8">v13.0 • FINAL • UNBREAKABLE</p>
-    <button onclick="openTab('messages')" class="btn-red text-xl px-12 py-4 orbitron">ENTER</button>
-  </div>
-
-  <!-- VIDEOS -->
-  <div id="videos" class="tab-content hidden">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-3xl orbitron glow">VIDEO VAULT</h2>
-      <div id="owner-video-upload" class="hidden">
-        <input type="file" id="video-upload" accept="video/*" class="file:mr-4 file:py-2 file:px-4 file:rounded file:bg-red-600 file:text-white" />
-        <button onclick="uploadVideo()" class="btn-red">UPLOAD</button>
-      </div>
-    </div>
-    <div id="video-list" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
-  </div>
-
-  <!-- SCRIPTS -->
-  <div id="scripts" class="tab-content hidden">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-3xl orbitron glow">SCRIPT FORGE</h2>
-      <button onclick="toggleScriptForm()" class="btn-red">+ FORGE</button>
-    </div>
-    <div id="script-upload-form" class="hidden card mb-6">
-      <input type="text" id="script-name" placeholder="Name" class="w-full mb-4 input-box" />
-      <textarea id="script-code" placeholder="Code..." class="w-full h-48 input-box font-mono text-sm text-green-400"></textarea>
-      <button onclick="saveScript()" class="mt-4 btn-red w-full">DEPLOY</button>
-    </div>
-    <div id="script-list" class="space-y-6"></div>
-  </div>
-
-  <!-- MESSAGES -->
-  <div id="messages" class="tab-content hidden">
-    <div class="flex gap-6 h-[calc(100vh-200px)]">
-      <!-- SIDEBAR -->
-      <div class="w-64 card p-0 flex flex-col">
-        <div class="p-4 border-b border-red-900 orbitron text-lg flex justify-between">
-          <span>CHATS</span>
-          <button onclick="showFindPlayer()" class="text-cyan-400"><i class="fas fa-search"></i></button>
-        </div>
-        <div id="chat-list" class="flex-1 overflow-y-auto p-2"></div>
-        <div class="p-3 border-t border-red-900">
-          <button onclick="createGroup()" class="w-full btn-red text-xs py-2">NEW GROUP</button>
-        </div>
-
-        <!-- VOICE CHANNEL -->
-        <div class="p-4 border-t border-red-900">
-          <div class="flex justify-between items-center mb-2">
-            <span class="orbitron text-sm">VOICE CHANNEL</span>
-            <button id="voice-join-btn" onclick="toggleVoiceChannel()" class="text-xs btn-red px-3 py-1">JOIN</button>
-          </div>
-          <div id="voice-users" class="space-y-1 text-sm"></div>
-        </div>
-      </div>
-
-      <!-- CHAT AREA -->
-      <div class="flex-1 flex flex-col">
-        <h2 class="text-3xl orbitron glow mb-4"><span id="chat-title">Select Chat</span></h2>
-
-        <!-- MESSAGE DISPLAY BOX -->
-        <div id="message-box" class="message-box">
-          <div class="text-center text-gray-500 py-20">
-            <i class="fas fa-comments text-6xl mb-4"></i>
-            <p>Select a chat to begin</p>
-          </div>
-        </div>
-
-        <!-- TYPING INDICATOR -->
-        <div id="typing-indicator" class="px-6 pb-2 typing hidden">● <span id="typing-user"></span> is typing...</div>
-
-        <!-- VOICE BAR -->
-        <div class="voice-bar">
-          <button onclick="toggleVoice()" class="flex items-center gap-3 text-white">
-            <i id="voice-icon" class="fas fa-microphone-slash text-xl"></i>
-            <span id="voice-text">STOP</span>
-          </button>
-          <div class="flex items-center gap-3 ml-auto">
-            <div class="live-dot"></div>
-            <span id="live-text">LIVE</span>
-          </div>
-        </div>
-
-        <!-- INPUT -->
-        <div class="p-4 bg-black border-t border-red-900 flex gap-4">
-          <input type="text" id="msg-input" placeholder="Type a message..." class="input-box flex-1"
-                 onkeydown="handleKeyDown(event)" onkeyup="handleTyping(event)" />
-          <button onclick="sendMessage()" class="send-btn orbitron">SEND</button>
-        </div>
-      </div>
+  <div id="messages" class="tab-content">
+    <h2 class="text-3xl orbitron glow mb-4"><span id="chat-title">PUBLIC</span></h2>
+    <div id="message-box" class="message-box"></div>
+    <div id="typing-indicator" class="px-6 pb-2 typing hidden">● <span id="typing-user"></span> is typing...</div>
+    <div class="p-4 bg-black border-t border-red-900 flex gap-4">
+      <input type="text" id="msg-input" placeholder="Type a message..." class="input-box flex-1" onkeydown="handleKeyDown(event)" onkeyup="handleTyping(event)" />
+      <button onclick="sendMessage()" class="send-btn orbitron">SEND</button>
     </div>
   </div>
 </div>
 
 <script>
-<script>
-// === DB & STATE ===
-const DB = { 
-  get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }, 
-  set: (k,v) => localStorage.setItem(k, JSON.stringify(v)) 
-};
-const OWNER = { user: "John", pass: "boss123" };
-let currentUser = DB.get('currentUser');
-let activeChat = null;
-let voiceOn = false;
-let voiceChannelUsers = new Set(DB.get('voiceChannel') || []);
-let typingTimeout = null;
+const DB = { get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }, set: (k,v) => localStorage.setItem(k, JSON.stringify(v)) };
+let currentUser = { username: "Guest", aura: "SOUL" };
+let activeChat = "public";
 let typingUsers = new Set();
+let typingTimeout = null;
 
-// === AUTH ===
-function renderAuth() {
-  const el = document.getElementById('auth-section');
-  if (currentUser) {
-    const isOwner = currentUser.username === OWNER.user;
-    el.innerHTML = `<div class="flex items-center gap-3 text-sm">
-      <span class="text-red-400 font-bold">${currentUser.username}</span>
-      <input id="aura-input" value="${currentUser.aura}" class="bg-black border border-red-900 px-2 py-1 rounded text-xs w-16" onblur="saveAura(this.value)" />
-      ${isOwner ? '<span class="text-yellow-500">[GOD]</span>' : ''}
-      <button onclick="logout()" class="text-gray-500"><i class="fas fa-sign-out-alt"></i></button>
-    </div>`;
-    if (isOwner) document.getElementById('owner-video-upload')?.classList.remove('hidden');
-  } else {
-    el.innerHTML = `<div class="flex gap-2 text-xs">
-      <input id="login-user" placeholder="user" class="bg-black border border-red-900 px-3 py-1 rounded" />
-      <input id="login-pass" type="password" placeholder="pass" class="bg-black border border-red-900 px-3 py-1 rounded" />
-      <button onclick="login()" class="bg-red-600 px-3 py-1 rounded">LOGIN</button>
-      <button onclick="register()" class="bg-gray-700 px-3 py-1 rounded">REGISTER</button>
-    </div>`;
-  }
-  updateAll();
-}
-
-function login() {
-  const u = document.getElementById('login-user').value.trim();
-  const p = document.getElementById('login-pass').value;
-  const users = DB.get('users') || {};
-  if (users[u] && users[u].pass === p) {
-    currentUser = { username: u, aura: users[u].aura || 'NEW' };
-    DB.set('currentUser', currentUser);
-    renderAuth();
-  } else alert("DENIED");
-}
-
-function register() {
-  const u = prompt("Username:"); const p = prompt("Password:");
-  if (!u || !p) return;
-  const users = DB.get('users') || {};
-  if (users[u]) return alert("TAKEN");
-  users[u] = { pass: p, aura: 'NEW' };
-  DB.set('users', users);
-  alert("REGISTERED");
-}
-
-function logout() { currentUser = null; DB.set('currentUser', null); activeChat = null; leaveVoiceChannel(); renderAuth(); }
-function saveAura(aura) {
-  if (!currentUser) return;
-  currentUser.aura = aura || 'NEW';
-  const users = DB.get('users') || {};
-  users[currentUser.username].aura = aura || 'NEW';
-  DB.set('users', users); DB.set('currentUser', currentUser);
-}
-
-// === TABS ===
-function openTab(tab) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-  document.getElementById(tab).classList.remove('hidden');
-  document.querySelectorAll('[id^="tab-"]').forEach(t => t.classList.remove('tab-active', 'text-red-400'));
-  document.getElementById('tab-' + tab)?.classList.add('tab-active', 'text-red-400');
-  if (tab === 'videos') loadVideos();
-  if (tab === 'scripts') loadScripts();
-  if (tab === 'messages') { updateChats(); updateVoiceUsers(); }
-}
-
-// === VIDEOS ===
-function uploadVideo() {
-  const file = document.getElementById('video-upload').files[0];
-  if (!file) return alert("SELECT");
-  const reader = new FileReader();
-  reader.onload = e => {
-    const videos = DB.get('videos') || [];
-    videos.push({ name: file.name, data: e.target.result, time: Date.now(), owner: currentUser.username });
-    DB.set('videos', videos);
-    loadVideos();
-  };
-  reader.readAsDataURL(file);
-}
-function loadVideos() {
-  const list = document.getElementById('video-list');
-  const videos = DB.get('videos') || [];
-  list.innerHTML = videos.map(v => `
-    <div class="card cursor-pointer" onclick="playVideo('${v.data}')">
-      <div class="bg-gradient-to-br from-red-900 to-black h-48 rounded-t-xl flex items-center justify-center text-6xl text-red-500 glow-red">
-        <i class="fas fa-play-circle"></i>
-      </div>
-      <div class="p-4">
-        <div class="font-bold text-red-400 truncate">${v.name}</div>
-        <div class="text-xs text-gray-500">${v.owner}</div>
-      </div>
-    </div>
-  `).join('');
-}
-function playVideo(url) {
-  const div = document.createElement('div');
-  div.className = 'fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center p-10';
-  div.onclick = () => div.remove();
-  div.innerHTML = `<video controls autoplay class="max-w-full max-h-full rounded-xl border-4 border-red-600">
-    <source src="${url}" type="video/mp4">
-  </video>`;
-  document.body.appendChild(div);
-}
-
-// === SCRIPTS ===
-function toggleScriptForm() { document.getElementById('script-upload-form').classList.toggle('hidden'); }
-function saveScript() {
-  const name = document.getElementById('script-name').value.trim();
-  const code = document.getElementById('script-code').value;
-  if (!name || !code) return alert("FILL");
-  const scripts = DB.get('scripts') || [];
-  scripts.push({ name, code, author: currentUser.username, time: Date.now() });
-  DB.set('scripts', scripts);
-  document.getElementById('script-name').value = '';
-  document.getElementById('script-code').value = '';
-  toggleScriptForm();
-  loadScripts();
-}
-function loadScripts() {
-  const list = document.getElementById('script-list');
-  const scripts = DB.get('scripts') || [];
-  list.innerHTML = scripts.map(s => `
-    <div class="card">
-      <div class="font-bold text-red-400">${s.name}</div>
-      <div class="text-xs text-gray-500">${s.author} • ${new Date(s.time).toLocaleString()}</div>
-      <pre class="mt-2 text-xs bg-black p-3 rounded overflow-x-auto border border-red-900">${s.code}</pre>
-    </div>
-  `).join('');
-}
-
-// === CHATS ===
-function updateChats() {
-  const list = document.getElementById('chat-list');
-  const users = Object.keys(DB.get('users') || {}).filter(u => u !== currentUser?.username);
-  const messages = DB.get('messages') || {};
-  const groups = DB.get('groups') || {};
-
-  let chats = [{ id: 'public', name: 'PUBLIC', type: 'public' }];
-
-  users.forEach(u => {
-    const key = `dm_${[currentUser.username, u].sort().join('_')}`;
-    if (messages[key]?.length) chats.push({ id: key, name: u, type: 'dm' });
-  });
-
-  Object.keys(groups).forEach(g => {
-    if (groups[g].members.includes(currentUser.username)) {
-      chats.push({ id: `group_${g}`, name: g, type: 'group' });
-    }
-  });
-
-  list.innerHTML = chats.map(c => `
-    <div class="p-3 cursor-pointer hover:bg-gray-800 ${activeChat===c.id ? 'bg-red-900/30' : ''}" onclick="openChat('${c.id}', '${c.name}')">
-      <div class="flex justify-between">
-        <span><i class="fas ${c.type==='public'?'fa-globe':c.type==='dm'?'fa-user-secret':'fa-users'}"></i> ${c.name}</span>
-        ${messages[c.id]?.length ? `<span class="text-xs text-gray-500">${new Date(messages[c.id].slice(-1)[0].time).toLocaleTimeString()}</span>` : ''}
-      </div>
-    </div>
-  `).join('');
-}
-
-function openChat(id, name) {
-  activeChat = id;
-  document.getElementById('chat-title').textContent = name;
-  loadMessages();
-  updateChats();
-}
-
-function createGroup() {
-  const name = prompt("Group Name:");
-  if (!name) return;
-  const groups = DB.get('groups') || {};
-  if (groups[name]) return alert("EXISTS");
-  groups[name] = { members: [currentUser.username] };
-  DB.set('groups', groups);
-  updateChats();
-  openChat(`group_${name}`, name);
-}
-
-// === MESSAGING ===
+// --- Send Message ---
 function sendMessage() {
   const input = document.getElementById('msg-input');
   const text = input.value.trim();
-  if (!text || !activeChat || !currentUser) return;
-
+  if (!text) return;
   const messages = DB.get('messages') || {};
   if (!messages[activeChat]) messages[activeChat] = [];
-  
   messages[activeChat].push({
-    text,
-    user: currentUser.username,
-    aura: currentUser.aura,
-    time: Date.now()
+    text, user: currentUser.username, aura: currentUser.aura, time: Date.now()
   });
-  
   DB.set('messages', messages);
   input.value = '';
-  clearTyping();
   loadMessages();
-  updateChats();
 }
 
+// --- Load Messages ---
 function loadMessages() {
   const box = document.getElementById('message-box');
-  if (!activeChat) {
-    box.innerHTML = '<div class="text-center text-gray-500 py-20"><i class="fas fa-comments text-6xl mb-4"></i><p>Select a chat</p></div>';
-    return;
-  }
-  const msgs = (DB.get('messages') || {})[activeChat] || [];
-  box.innerHTML = msgs.map(m => `
+  const messages = (DB.get('messages') || {})[activeChat] || [];
+  box.innerHTML = messages.map(m => `
     <div class="message ${m.user === currentUser.username ? 'sent' : 'received'}">
       <div class="text-red-400 font-bold text-sm">${m.aura}</div>
       <div class="text-white">${m.text}</div>
@@ -439,69 +93,36 @@ function loadMessages() {
   box.scrollTop = box.scrollHeight;
 }
 
-// === TYPING ===
+// --- Handle Enter Key ---
 function handleKeyDown(e) {
   if (e.key === 'Enter') {
     e.preventDefault();
     sendMessage();
   }
 }
+
+// --- Typing Indicator ---
 function handleTyping(e) {
-  if (!currentUser || !activeChat) return;
-  const typing = e.target.value.trim().length > 0;
-  if (typing) {
+  if (e.target.value.trim().length > 0) {
     typingUsers.add(currentUser.username);
     showTyping();
     clearTimeout(typingTimeout);
-    typingTimeout = setTimeout(() => {
-      typingUsers.delete(currentUser.username);
-      if (typingUsers.size === 0) clearTyping();
-      else showTyping();
-    }, 2000);
+    typingTimeout = setTimeout(clearTyping, 1500);
   } else {
-    typingUsers.delete(currentUser.username);
-    if (typingUsers.size === 0) clearTyping();
+    clearTyping();
   }
 }
 function showTyping() {
-  const indicator = document.getElementById('typing-indicator');
-  const user = Array.from(typingUsers).join(', ');
-  document.getElementById('typing-user').textContent = user;
-  indicator.classList.remove('hidden');
+  document.getElementById('typing-user').textContent = Array.from(typingUsers).join(', ');
+  document.getElementById('typing-indicator').classList.remove('hidden');
 }
 function clearTyping() {
+  typingUsers.clear();
   document.getElementById('typing-indicator').classList.add('hidden');
 }
 
-// === VOICE ===
-function toggleVoiceChannel() {
-  const btn = document.getElementById('voice-join-btn');
-  if (voiceChannelUsers.has(currentUser.username)) {
-    voiceChannelUsers.delete(currentUser.username);
-    btn.textContent = 'JOIN';
-  } else {
-    voiceChannelUsers.add(currentUser.username);
-    btn.textContent = 'LEAVE';
-  }
-  DB.set('voiceChannel', Array.from(voiceChannelUsers));
-  updateVoiceUsers();
-}
-function updateVoiceUsers() {
-  const list = document.getElementById('voice-users');
-  list.innerHTML = Array.from(voiceChannelUsers).map(u => `<div>${u}</div>`).join('') || '<div class="text-gray-500">Empty</div>';
-}
-function toggleVoice() {
-  voiceOn = !voiceOn;
-  document.getElementById('voice-icon').className = voiceOn ? 'fas fa-microphone text-xl' : 'fas fa-microphone-slash text-xl';
-  document.getElementById('voice-text').textContent = voiceOn ? 'MUTE' : 'STOP';
-}
-
-// === INIT ===
-function updateAll() { loadVideos(); loadScripts(); updateChats(); updateVoiceUsers(); }
-renderAuth();
-openTab('home');
-openChat('public', 'PUBLIC'); // ✅ auto-open public chat
-setInterval(() => { if (activeChat) loadMessages(); updateChats(); updateVoiceUsers(); }, 1000);
+// --- Init ---
+loadMessages();
 </script>
 </body>
 </html>
